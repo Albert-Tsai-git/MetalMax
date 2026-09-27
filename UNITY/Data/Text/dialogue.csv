@@ -1,0 +1,11 @@
+dialogue_id,node_id,type,speaker,text_key,next,condition,effects
+DLG_Act1_Intro,01,line,CHR_Hunter,DLG_Act1_Intro.01,02,,
+DLG_Act1_Intro,02,line,CHR_Mechanic,DLG_Act1_Intro.02,03,,
+DLG_Act1_Intro,03,line,CHR_Mechanic,DLG_Act1_Intro.03,,,
+DLG_Act1_Report,01,line,,DLG_Act1_Report.01,02,,
+DLG_Act1_Report,02,line,CHR_Hunter,DLG_Act1_Report.02,03,,
+DLG_Act1_Report,03,line,CHR_Mechanic,DLG_Act1_Report.03,,,
+DLG_Qupo,01,line,NPC_Qupo,DLG_Qupo.Report.01,02,flag:act1_got_log & !flag:act1_reported,
+DLG_Qupo,02,line,CHR_Hunter,DLG_Qupo.Report.02,03,flag:act1_got_log & !flag:act1_reported,
+DLG_Qupo,03,line,NPC_Qupo,DLG_Qupo.Report.03,04,flag:act1_got_log & !flag:act1_reported,set:act1_reported
+DLG_Qupo,04,line,NPC_Qupo,DLG_Qupo.Banter,,,

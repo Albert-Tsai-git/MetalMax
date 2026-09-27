@@ -116,6 +116,22 @@ def weapon(name):
         box(root, 'GEO_Receiver', (0, .23, .31), (.32, .28, .55), 'metal')
         cylinder(root, 'GEO_Barrel', (0, .25, .89), .055, .78, 'dark', 10)
         box(root, 'GEO_AmmoBox', (.24, .09, .29), (.24, .31, .34), 'patch')
+    elif name == 'WPN_Flamethrower':
+        cylinder(root, 'GEO_TurretBase', (0, .04, 0), .40, .12, 'heavy', 12, (math.pi/2, 0, 0))
+        box(root, 'GEO_Receiver', (0, .22, .18), (.48, .34, .52), 'body')
+        cylinder(root, 'GEO_Nozzle', (0, .22, .73), .105, .72, 'metal', 10)
+        cylinder(root, 'GEO_FlareGuard', (0, .22, 1.08), .17, .16, 'orange', 10)
+        for side, tag in [(-1, 'L'), (1, 'R')]:
+            cylinder(root, f'GEO_FuelCanister_{tag}', (side*.31, .24, .08), .16, .60, 'patch', 10, (math.pi/2, 0, 0))
+            cylinder(root, f'GEO_HoseCoupler_{tag}', (side*.31, .24, .40), .07, .12, 'orange', 8)
+    elif name == 'WPN_ShockCannon':
+        cylinder(root, 'GEO_TurretBase', (0, .05, 0), .52, .14, 'heavy', 12, (math.pi/2, 0, 0))
+        box(root, 'GEO_Breech', (0, .24, .20), (.64, .46, .62), 'body')
+        cylinder(root, 'GEO_Emitter', (0, .22, .83), .13, 1.12, 'metal', 10)
+        for z in (.45, .73, 1.01):
+            cylinder(root, f'GEO_Coil_{int(z*100)}', (0, .22, z), .21, .08, 'orange', 10)
+        box(root, 'GEO_Capacitor_L', (-.38, .21, .31), (.16, .34, .45), 'patch')
+        box(root, 'GEO_Capacitor_R', (.38, .21, .31), (.16, .34, .45), 'patch')
     else:
         box(root, 'GEO_Rack', (0, .12, .20), (.82, .25, .73), 'heavy')
         for side, tag in [(-1, 'L'), (1, 'R')]:
@@ -130,7 +146,5 @@ def save(name):
     bpy.ops.wm.save_as_mainfile(filepath=str(OUT / f'{name}.blend'))
 
 
-chassis('TNK_Chassis_Light')
-chassis('TNK_Chassis_Heavy', heavy=True)
-for weapon_id in ('WPN_Cannon_75', 'WPN_MG_77', 'WPN_SE_Missile'):
+for weapon_id in ('WPN_Flamethrower', 'WPN_ShockCannon'):
     weapon(weapon_id)

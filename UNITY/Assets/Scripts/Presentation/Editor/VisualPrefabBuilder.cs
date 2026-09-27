@@ -11,7 +11,8 @@ namespace Game.Presentation
     {
         private static readonly string[] Ids =
         {
-            "TNK_Chassis_Light", "TNK_Chassis_Heavy", "WPN_Cannon_75", "WPN_MG_77", "WPN_SE_Missile"
+            "TNK_Chassis_Light", "TNK_Chassis_Heavy", "WPN_Cannon_75", "WPN_MG_77", "WPN_SE_Missile",
+            "WPN_Flamethrower", "WPN_ShockCannon"
         };
 
         public static void Build()

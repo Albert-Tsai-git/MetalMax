@@ -36,3 +36,26 @@
 
 - 开发版运行日志仅加载 18 个中文文本键，尚未包含最新 `text_zh.csv` 的商店与操作提示。已发消息请 Claude 重跑数据导入。
 - 完整场景试玩、F5/F9 存读档、战斗、商店/车库与美术场景融合等待下一轮运行测试。
+
+
+## T05：新武器与挂装预览
+
+- 操作：Blender 4.5.10 后台生成 `WPN_Flamethrower`、`WPN_ShockCannon`，运行源层级校验并导出 FBX；Unity `VisualPrefabBuilder.Build` 导入并生成同 ID 预制体；Unity 预览场景将两种新武器挂到重型车并渲染。
+- 预期：两个源文件根节点单位变换、炮口沿 +Z；预制体可由 Resources 加载，米制尺寸合理；预览中武器与车体可辨。
+- 实际：两模型各 8 个网格，源结构检查通过；Unity 边界分别为 `0.92 × 0.60 × 1.56 m` 与 `1.04 × 0.49 × 1.91 m`，预制体保存/加载成功；重型战车挂装截图中可辨认电击炮与火焰喷射器。
+- 结论：通过模型、导入及渲染检查。
+
+## T06：泵站美术场景
+
+- 操作：Unity 打开 `Assets/Scenes/Art/Dungeon_PumpStation_Art.unity`，遍历全场景 Collider 并渲染预览。
+- 预期：场景可打开，包含走廊、管线、泵体与维护灯；不含 Collider。
+- 实际：检查无 Collider 后生成 960×720 预览；墙、管线、泵体、地面标识及琥珀色维护灯可见。
+- 结论：通过美术场景结构与预览检查；逻辑场景叠加运行待 Claude RebuildAll 后复验。
+
+## T07：新增内容后的 Windows 启动
+
+- 操作：Unity `PlayerLaunchCheck.Build` 构建开发版，运行 `ArtSource/TestBuild/MetalMax.exe` 10 秒后关闭。
+- 预期：构建成功，玩家进程保持运行。
+- 实际：构建 `Succeeded`，0 错误、2 警告；玩家进程运行超过 10 秒。
+- 限制：本轮实际构建早于 Claude 对新 `text_zh.csv`、`dialogue.csv` 的 RebuildAll 重导入；没有键鼠驱动工具，未验证移动/交互、存读档、战斗或真实屏幕 UI。
+- 结论：启动路径通过；完整垂直切片交互 `BLOCKED-无法真实验证`，需待 Claude 重建并提供可交互窗口测试。

@@ -4,11 +4,8 @@ from pathlib import Path
 
 base = Path(__file__).resolve().parent
 mounts = {
-    'TNK_Chassis_Light': {'Mount_Main', 'Mount_Sub'},
-    'TNK_Chassis_Heavy': {'Mount_Main', 'Mount_Sub', 'Mount_SE'},
-    'WPN_Cannon_75': set(),
-    'WPN_MG_77': set(),
-    'WPN_SE_Missile': set(),
+    'WPN_Flamethrower': set(),
+    'WPN_ShockCannon': set(),
 }
 
 for name, required in mounts.items():

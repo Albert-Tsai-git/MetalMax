@@ -6,7 +6,7 @@ source = Path(__file__).resolve().parent
 output = source.parent / 'UNITY' / 'Assets' / 'Models'
 output.mkdir(parents=True, exist_ok=True)
 
-for name in ('TNK_Chassis_Light', 'TNK_Chassis_Heavy', 'WPN_Cannon_75', 'WPN_MG_77', 'WPN_SE_Missile'):
+for name in ('WPN_Flamethrower', 'WPN_ShockCannon'):
     bpy.ops.wm.open_mainfile(filepath=str(source / f'{name}.blend'))
     path = output / f'{name}.fbx'
     bpy.ops.export_scene.fbx(

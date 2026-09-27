@@ -1,4 +1,4 @@
-"""Render review images from the five editable Blender sources without Unity."""
+"""Render review images from the the two new editable Blender weapon sources without Unity."""
 import bpy
 from mathutils import Matrix, Vector
 from pathlib import Path
@@ -7,12 +7,12 @@ base = Path(__file__).resolve().parent
 out = base / 'Previews'
 out.mkdir(exist_ok=True)
 
-for name in ('TNK_Chassis_Light', 'TNK_Chassis_Heavy', 'WPN_Cannon_75', 'WPN_MG_77', 'WPN_SE_Missile'):
+for name in ('WPN_Flamethrower', 'WPN_ShockCannon'):
     bpy.ops.wm.open_mainfile(filepath=str(base / f'{name}.blend'))
     root = bpy.data.objects[name]
-    bpy.ops.object.camera_add(location=(6.6, 6.1, 7.8) if name.startswith('TNK') else (2.4, 2.5, 3.3))
+    bpy.ops.object.camera_add(location=(2.4, 2.5, 3.3))
     camera = bpy.context.object
-    target = Vector((0, .8, 0) if name.startswith('TNK') else (0, .2, .6))
+    target = Vector((0, .2, .75))
     forward = (target - camera.location).normalized()
     right = forward.cross(Vector((0, 1, 0))).normalized()
     up = (-forward).cross(right).normalized()

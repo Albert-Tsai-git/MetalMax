@@ -26,8 +26,8 @@ namespace Game.Presentation
             if (chassisAsset == null) throw new InvalidOperationException($"[Visuals] 找不到 {id}");
             var chassis = UnityEngine.Object.Instantiate(chassisAsset);
             chassis.name = id;
-            Attach(chassis.transform, "Mount_Main", "WPN_Cannon_75");
-            Attach(chassis.transform, "Mount_Sub", "WPN_MG_77");
+            Attach(chassis.transform, "Mount_Main", id == "TNK_Chassis_Heavy" ? "WPN_ShockCannon" : "WPN_Cannon_75");
+            Attach(chassis.transform, "Mount_Sub", id == "TNK_Chassis_Heavy" ? "WPN_Flamethrower" : "WPN_MG_77");
             if (id == "TNK_Chassis_Heavy") Attach(chassis.transform, "Mount_SE", "WPN_SE_Missile");
 
             var cameraObject = new GameObject("PreviewCamera");
