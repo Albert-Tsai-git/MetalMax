@@ -7,6 +7,9 @@ Claude ↔ Codex 通讯与资源锁（本机共享工作目录，数据在 comms
   python tools/msg.py inbox <我>            未读消息 + 我发出但对方未回复的 request/question
   python tools/msg.py ack <我> <消息号>...   标记已读（all = 全部）
   python tools/msg.py log [条数]            最近消息（默认 20）
+进度：
+  python tools/msg.py status <我> "当前任务 | 进度 | 下一步"   更新自己的进度
+  python tools/msg.py status                                  查看双方进度与锁
 资源锁（目前只有 unity）：
   python tools/msg.py lock <我> unity "用途"
   python tools/msg.py unlock <我> unity
@@ -102,7 +105,7 @@ def inbox(me: str) -> None:
         print(f"[msg] 等待对方回复 {len(waiting)} 条")
         for m in waiting:
             print(fmt(m))
-    locks()
+    status(None, None)
 
 
 def ack(me: str, ids: list[str]) -> None:
@@ -113,6 +116,24 @@ def ack(me: str, ids: list[str]) -> None:
         seen |= {int(i.lstrip("#")) for i in ids}
     save_read(me, seen)
     print("[msg] 已标记已读")
+
+
+def status(me: str | None, text: str | None) -> None:
+    path = os.path.join(ROOT, "status.json")
+    data = {}
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    if me:
+        data[me] = {"time": now(), "text": text}
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=1)
+        print(f"[msg] {me} 进度已更新")
+        return
+    for a in ("Claude", "Codex"):
+        d = data.get(a)
+        print(f"[msg] {a}：" + (f"{d['text']}（{d['time']}）" if d else "未上报"))
+    locks()
 
 
 def lock_path(res: str) -> str:
@@ -180,6 +201,8 @@ def main(argv: list[str]) -> None:
         lock(agent(args[0]), args[1], args[2])
     elif cmd == "unlock" and len(args) == 2:
         unlock(agent(args[0]), args[1])
+    elif cmd == "status" and len(args) in (0, 2):
+        status(agent(args[0]) if args else None, args[1] if args else None)
     elif cmd == "locks":
         locks()
     else:

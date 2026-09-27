@@ -65,6 +65,7 @@
   - `request`：请对方做事；`question`：请对方答复；二者必须用 `reply --re` 回复。
   - `handoff`：交付或移交（写明提交号与路径）；`info`：通知，无需回复。
 - 消息只写要点；达成的对接约定仍须写入 `docs/INTERFACE.md` 并双方 ✅ 才生效。
+- **进度**：开始任务、完成一个阶段、结束任务时执行 `python tools/msg.py status <我> "当前任务 | 进度 | 下一步"`；用户与对方用 `python tools/msg.py status` 查看。
 - 资源锁：`lock` / `unlock` / `locks`（目前仅 `unity`）。
 
 ## 4. 待对接事项
