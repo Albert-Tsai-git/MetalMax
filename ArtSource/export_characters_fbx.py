@@ -1,4 +1,4 @@
-"""Export approved character IDs and all three looping actions to Unity FBX."""
+"""Export approved character IDs and field/combat animation clips to Unity FBX."""
 import bpy
 from pathlib import Path
 source = Path(__file__).resolve().parent

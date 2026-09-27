@@ -13,7 +13,7 @@ for char_id in ('CHR_Hunter','CHR_Mechanic'):
     assert len(rigs) == 1, f'{char_id}: expected one armature, got {len(rigs)}'
     assert len(meshes) >= 20, f'{char_id}: lost mesh parts ({len(meshes)})'
     normalized_actions = {action.split('|')[-1] for action in actions}
-    assert {'Idle','Walk','Run'} <= normalized_actions, f'{char_id}: actions lost on FBX roundtrip: {actions}'
+    assert {'Idle','Walk','Run','Attack','Hit','Defeat'} <= normalized_actions, f'{char_id}: actions lost on FBX roundtrip: {actions}'
     imported = {action.name.split('|')[-1]: action for action in bpy.data.actions}
     for name in ('Idle', 'Walk', 'Run'):
         action = imported[name]
@@ -29,4 +29,9 @@ for char_id in ('CHR_Hunter','CHR_Mechanic'):
     depth = max(p.z for p in points) - min(p.z for p in points)
     assert 1.5 <= height <= 2.1, f'{char_id}: FBX height {height:.2f}m'
     assert depth > .2, f'{char_id}: forward/depth axis absent'
-    print(f'PASS FBX {char_id}: {len(meshes)} meshes, bones={len(rigs[0].data.bones)}, clips={sorted(actions)}, bounds-height={height:.2f}m depth={depth:.2f}m')
+    for name in ('Attack', 'Hit', 'Defeat'):
+        action = imported[name]
+        assert action.frame_range[1] > action.frame_range[0], f'{char_id}/{name}: empty clip'
+        animated_paths = {curve.data_path for curve in action.fcurves}
+        assert any('Chest' in path or 'Hips' in path for path in animated_paths), f'{char_id}/{name}: no torso/hip animation'
+    print(f'PASS FBX {char_id}: {len(meshes)} meshes, bones={len(rigs[0].data.bones)}, clips={sorted(normalized_actions)}, bounds-height={height:.2f}m depth={depth:.2f}m')

@@ -159,7 +159,10 @@ def create_actions(rig):
                 'UpperLeg.L', 'LowerLeg.L', 'UpperLeg.R', 'LowerLeg.R']
     for action_name, frames, amount in [('Idle', [1, 8, 16, 23, 30], .035),
                                         ('Walk', [1, 6, 11, 16, 21, 26, 31], .55),
-                                        ('Run', [1, 5, 9, 13, 17, 21], .88)]:
+                                        ('Run', [1, 5, 9, 13, 17, 21], .88),
+                                        ('Attack', [1, 5, 9, 14, 19], 1.0),
+                                        ('Hit', [1, 4, 8, 12], 1.0),
+                                        ('Defeat', [1, 6, 12, 18], 1.0)]:
         action = bpy.data.actions.new(action_name)
         rig.animation_data_create()
         rig.animation_data.action = action
@@ -176,7 +179,7 @@ def create_actions(rig):
                 rig.pose.bones['Hips'].location.y = abs(math.sin(phase)) * .012
                 for side in ('L', 'R'):
                     rig.pose.bones[f'UpperArm.{side}'].rotation_euler.x = math.sin(phase + (0 if side == 'L' else math.pi)) * .018
-            else:
+            elif action_name in ('Walk', 'Run'):
                 stride = amount * wave
                 rig.pose.bones['UpperLeg.L'].rotation_euler.x = stride
                 rig.pose.bones['UpperLeg.R'].rotation_euler.x = -stride
@@ -189,12 +192,47 @@ def create_actions(rig):
                 rig.pose.bones['LowerArm.R'].rotation_euler.x = elbow
                 rig.pose.bones['Hips'].location.y = (1 - math.cos(2 * phase)) * (.006 if action_name == 'Walk' else .018)
                 rig.pose.bones['Chest'].rotation_euler.x = .025 * wave
-            for bone_name in animated:
+            elif action_name == 'Attack':
+                # A readable two-handed forward strike: wind-up, lunge, hold, recoil.
+                t = (frame - frames[0]) / (frames[-1] - frames[0])
+                reach = {1: 0.0, 5: -0.16, 9: -0.05, 14: 0.0, 19: 0.0}[frame]
+                rig.pose.bones['Chest'].rotation_euler.x = {1: 0.0, 5: -0.12, 9: 0.22, 14: 0.04, 19: 0.0}[frame]
+                rig.pose.bones['Chest'].location.z = reach
+                rig.pose.bones['UpperArm.R'].rotation_euler.x = {1: 0.0, 5: -0.7, 9: 0.9, 14: 0.3, 19: 0.0}[frame]
+                rig.pose.bones['LowerArm.R'].rotation_euler.x = {1: 0.1, 5: -0.9, 9: 0.25, 14: 0.4, 19: 0.1}[frame]
+                rig.pose.bones['UpperArm.L'].rotation_euler.x = {1: 0.0, 5: -0.35, 9: 0.65, 14: 0.18, 19: 0.0}[frame]
+                rig.pose.bones['LowerArm.L'].rotation_euler.x = {1: 0.1, 5: -0.45, 9: 0.2, 14: 0.3, 19: 0.1}[frame]
+                rig.pose.bones['UpperLeg.R'].rotation_euler.x = {1: 0.0, 5: -0.2, 9: 0.25, 14: 0.0, 19: 0.0}[frame]
+                rig.pose.bones['UpperLeg.L'].rotation_euler.x = {1: 0.0, 5: 0.15, 9: -0.2, 14: 0.0, 19: 0.0}[frame]
+                rig.pose.bones['Hips'].location.y = 0.01 if t < .7 else 0.0
+            elif action_name == 'Hit':
+                rig.pose.bones['Chest'].rotation_euler.x = {1: 0.0, 4: -0.48, 8: -0.30, 12: 0.0}[frame]
+                rig.pose.bones['Chest'].rotation_euler.z = {1: 0.0, 4: 0.22, 8: 0.1, 12: 0.0}[frame]
+                rig.pose.bones['Head'].rotation_euler.x = {1: 0.0, 4: 0.18, 8: 0.06, 12: 0.0}[frame]
+                for side in ('L', 'R'):
+                    rig.pose.bones[f'UpperArm.{side}'].rotation_euler.x = {1: 0.0, 4: -0.35, 8: -0.18, 12: 0.0}[frame]
+                rig.pose.bones['Hips'].location.y = {1: 0.0, 4: -0.04, 8: -0.02, 12: 0.0}[frame]
+            elif action_name == 'Defeat':
+                # Cumulative collapse to one side, with head and legs trailing.
+                t = (frame - frames[0]) / (frames[-1] - frames[0])
+                rig.pose.bones['Hips'].rotation_euler.x = -0.22 * t
+                rig.pose.bones['Hips'].rotation_euler.z = 1.05 * t
+                rig.pose.bones['Hips'].location.y = -0.18 * t
+                rig.pose.bones['Chest'].rotation_euler.x = -0.18 * t
+                rig.pose.bones['Chest'].rotation_euler.z = -0.28 * t
+                rig.pose.bones['Head'].rotation_euler.x = 0.18 * t
+                for side in ('L', 'R'):
+                    rig.pose.bones[f'UpperArm.{side}'].rotation_euler.x = -0.55 * t
+                    rig.pose.bones[f'UpperArm.{side}'].rotation_euler.z = (0.55 if side == 'L' else -0.55) * t
+                    rig.pose.bones[f'UpperLeg.{side}'].rotation_euler.x = 0.24 * t
+                    rig.pose.bones[f'LowerLeg.{side}'].rotation_euler.x = -0.25 * t
+            for bone_name in animated + ['Head']:
                 pb = rig.pose.bones[bone_name]
                 pb.keyframe_insert(data_path='rotation_euler', frame=frame, group=bone_name)
-            rig.pose.bones['Hips'].keyframe_insert(data_path='location', frame=frame, group='Hips')
+            for bone_name in ('Hips', 'Chest'):
+                rig.pose.bones[bone_name].keyframe_insert(data_path='location', frame=frame, group=bone_name)
         for fcurve in action.fcurves:
-            if action_name in ('Walk', 'Run'):
+            if action_name in ('Idle', 'Walk', 'Run'):
                 fcurve.modifiers.new('CYCLES')
             for key in fcurve.keyframe_points:
                 key.interpolation = 'BEZIER'

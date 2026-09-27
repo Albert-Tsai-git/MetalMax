@@ -60,7 +60,7 @@ namespace Game.Presentation
                     throw new InvalidOperationException($"[Characters] {id} has duplicate imported clip name '{stableName}'");
                 clips.Add(stableName, clip);
             }
-            foreach (var name in new[] { "Idle", "Walk", "Run" })
+            foreach (var name in new[] { "Idle", "Walk", "Run", "Attack", "Hit", "Defeat" })
                 if (!clips.ContainsKey(name))
                     throw new InvalidOperationException($"[Characters] {id} FBX is missing the {name} clip. Imported: {string.Join(", ", clips.Keys)}");
 
@@ -117,6 +117,9 @@ namespace Game.Presentation
             controller.AddParameter("Moving", AnimatorControllerParameterType.Bool);
             controller.AddParameter("Running", AnimatorControllerParameterType.Bool);
             controller.AddParameter("OnFoot", AnimatorControllerParameterType.Bool);
+            controller.AddParameter("Attack", AnimatorControllerParameterType.Trigger);
+            controller.AddParameter("Hit", AnimatorControllerParameterType.Trigger);
+            controller.AddParameter("Defeat", AnimatorControllerParameterType.Trigger);
 
             var machine = controller.layers[0].stateMachine;
             machine.states = Array.Empty<ChildAnimatorState>();
@@ -128,6 +131,12 @@ namespace Game.Presentation
             var run = machine.AddState("Run");
             run.motion = clips["Run"];
             run.speed = 1f;
+            var attack = machine.AddState("Attack");
+            attack.motion = clips["Attack"];
+            var hit = machine.AddState("Hit");
+            hit.motion = clips["Hit"];
+            var defeated = machine.AddState("Defeat");
+            defeated.motion = clips["Defeat"];
             machine.defaultState = idle;
 
             AddTransition(idle, walk, (AnimatorConditionMode.If, "Moving"), (AnimatorConditionMode.IfNot, "Running"));
@@ -136,6 +145,11 @@ namespace Game.Presentation
             AddTransition(walk, run, (AnimatorConditionMode.If, "Moving"), (AnimatorConditionMode.If, "Running"));
             AddTransition(run, idle, (AnimatorConditionMode.IfNot, "Moving"));
             AddTransition(run, walk, (AnimatorConditionMode.If, "Moving"), (AnimatorConditionMode.IfNot, "Running"));
+            AddTriggerTransition(machine, attack, "Attack");
+            AddTriggerTransition(machine, hit, "Hit");
+            AddTriggerTransition(machine, defeated, "Defeat");
+            AddReturnTransition(attack, idle);
+            AddReturnTransition(hit, idle);
             EditorUtility.SetDirty(controller);
             return controller;
         }
@@ -150,6 +164,27 @@ namespace Game.Presentation
             transition.offset = 0;
             transition.interruptionSource = TransitionInterruptionSource.None;
             foreach (var (mode, parameter) in conditions) transition.AddCondition(mode, 0, parameter);
+        }
+
+        private static void AddTriggerTransition(AnimatorStateMachine machine, AnimatorState destination, string trigger)
+        {
+            var transition = machine.AddAnyStateTransition(destination);
+            transition.hasExitTime = false;
+            transition.hasFixedDuration = true;
+            transition.duration = .04f;
+            transition.canTransitionToSelf = false;
+            transition.interruptionSource = TransitionInterruptionSource.None;
+            transition.AddCondition(AnimatorConditionMode.If, 0, trigger);
+        }
+
+        private static void AddReturnTransition(AnimatorState source, AnimatorState destination)
+        {
+            var transition = source.AddTransition(destination);
+            transition.hasExitTime = true;
+            transition.exitTime = 1f;
+            transition.hasFixedDuration = true;
+            transition.duration = .08f;
+            transition.interruptionSource = TransitionInterruptionSource.None;
         }
 
         private static void EnsureFolder(string path)

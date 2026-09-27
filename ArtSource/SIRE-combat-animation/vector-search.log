@@ -1,0 +1,3 @@
+{"ts": "2026-09-27 19:06:32", "run_id": "SIRE-combat-animation", "query": "Unity turn based combat presentation animation characters attack hit reaction defeated BattleEvents tanks", "db": "D:\\sire\\AI\\AI\\sire\\data\\sire_vectors.sqlite3", "hits": 5}
+{"ts": "2026-09-27 19:07:29", "run_id": "SIRE-combat-animation", "query": "Unity combat animation character Blender attack hit defeat", "db": "D:\\sire\\AI\\AI\\sire\\data\\sire_vectors.sqlite3", "hits": 5}
+{"ts": "2026-09-27 19:12:40", "run_id": "SIRE-combat-animation", "query": "Unity UI icon font map interface natural terrain heightmap heightfield Blender Unity TerrainCollider", "db": "D:\\sire\\AI\\AI\\sire\\data\\sire_vectors.sqlite3", "hits": 5}
