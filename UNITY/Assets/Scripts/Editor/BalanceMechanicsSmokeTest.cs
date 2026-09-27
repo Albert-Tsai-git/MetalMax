@@ -76,6 +76,21 @@ namespace Game.EditorTools
                   && cannon.currentAmmo == cannonData.maxAmmo, "补满并扣费");
             Check(GarageService.Refill(s, tank, out _) == OpResult.NothingToDo, "满弹时无需补给");
 
+            // 战斗中修理：机械师回复 SP；SP 满且等级够时修好损坏部件；猎人修理量较少
+            var mech = party[1];
+            var mechData = GameDB.Character("CHR_Mechanic");
+            mech.level = mechData.partRepairLevel;
+            mech.speed = 999;
+            mech.hp = mech.maxHp;
+            tank.currentSp = 0;
+            new BattleSystem(party, new List<Combatant> { Tough("ENM_Ant") }, 5).SubmitCommands(new List<BattleAction> { BattleAction.Repair(mech, hunter) });
+            Check(tank.currentSp == Math.Min(tank.MaxSp, mechData.RepairAmount(mech.level)), "机械师战斗中修理回复 SP");
+            tank.currentSp = tank.MaxSp;
+            tank.engine.condition = PartCondition.Damaged;
+            new BattleSystem(party, new List<Combatant> { Tough("ENM_Ant") }, 6).SubmitCommands(new List<BattleAction> { BattleAction.Repair(mech, hunter) });
+            Check(tank.engine.condition == PartCondition.Normal, "SP 满时修好损坏部件");
+            Check(GameDB.Character("CHR_Hunter").RepairAmount(5) < mechData.RepairAmount(5), "猎人修理量少于机械师");
+
             Debug.Log("[BalanceTest] 全部通过");
         }
 
