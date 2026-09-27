@@ -85,11 +85,9 @@ namespace Game.EditorTools
                 new Color(0.3f, 0.45f, 0.8f), 0.2f);
             town.AddComponent<TownGate>().townId = PlayerState.DefaultTown;
 
-            // 第一幕：首次进镇播放开场并开始任务；带回维护日志后进镇回报。对话缺失时效果照常执行。
+            // 第一幕：首次进镇播放开场并开始任务；带回维护日志后找曲婆（DLG_Qupo 条件节点）回报。对话缺失时效果照常执行。
             Story("act1_intro", town.transform.position, "", "DLG_Act1_Intro",
                 "quest:start:QST_Act1_Signal; set:act1_heard_signal");
-            Story("act1_report", town.transform.position, "flag:act1_got_log & !flag:act1_reported", "DLG_Act1_Report",
-                "set:act1_reported");
 
             // 废弃泵站入口（听到信号后开放）
             var portal = TriggerBox("Portal_PumpStation", new Vector3(22, 0, 24), new Vector3(4, 3, 4),

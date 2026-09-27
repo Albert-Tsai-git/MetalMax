@@ -53,7 +53,11 @@ namespace Game.EditorTools
                     $"{scene} 的传送口指向 {target}/{spawn} 存在");
             Check(chests.Count == 3 && chests.Select(c => c.id).Distinct().Count() == chests.Count, "3 个宝箱且 ID 唯一");
             Check(bountyScenes.SequenceEqual(new[] { GameSession.PumpStationSceneName }), "铁钳巨蟹只在泵站");
-            Check(triggers.ContainsKey("act1_intro") && triggers.ContainsKey("act1_report"), "第一幕剧情触发器存在");
+            Check(triggers.ContainsKey("act1_intro") && !triggers.ContainsKey("act1_report"), "第一幕开场触发器存在，回报不走镇口触发器");
+            // 回报由曲婆对话的条件节点承接
+            var qupo = GameDB.Dialogue("DLG_Qupo");
+            var reportNode = qupo?.nodes.Find(n => n.effects != null && n.effects.Contains("set:act1_reported"));
+            Check(reportNode != null && !string.IsNullOrEmpty(reportNode.condition), "曲婆对话含条件回报节点");
 
             // 第一幕流程（纯逻辑，按场景中的实际配置执行）
             StoryService.AbortDialogue();
@@ -62,7 +66,7 @@ namespace Game.EditorTools
             Check(!Conditions.Evaluate(pumpPortal.condition, s), "开场前泵站未开放");
             Effects.Apply(triggers["act1_intro"].effects, s);
             Check(Conditions.Evaluate(pumpPortal.condition, s), "开场后泵站开放");
-            Check(!Conditions.Evaluate(triggers["act1_report"].condition, s), "未得到日志时不触发回报");
+            Check(!Conditions.Evaluate(reportNode.condition, s), "未得到日志时不触发回报");
 
             foreach (var (id, contents) in chests)
                 Check(TreasureChest.Open(s, id, contents) == OpResult.Ok, $"打开宝箱 {id}");
@@ -71,10 +75,10 @@ namespace Game.EditorTools
                   && ItemService.Count(s, "ITM_Tonic") == 3, "宝箱内容到账");
 
             BountyService.OnVictory(s, new List<Combatant> { GameDB.Enemy("ENM_Bounty_IronCrab").CreateCombatant() });
-            Check(s.flags.Contains("act1_got_log") && Conditions.Evaluate(triggers["act1_report"].condition, s), "击败巨蟹得到日志，可回报");
-            Effects.Apply(triggers["act1_report"].effects, s);
+            Check(s.flags.Contains("act1_got_log") && Conditions.Evaluate(reportNode.condition, s), "击败巨蟹得到日志，可回报");
+            Effects.Apply(reportNode.effects, s);
             Check(StoryService.Quest(s, "QST_Act1_Signal")?.state == QuestState.Completed, "回报后第一幕任务完成");
-            Check(!Conditions.Evaluate(triggers["act1_report"].condition, s), "回报后不再触发");
+            Check(!Conditions.Evaluate(reportNode.condition, s), "回报后不再触发");
 
             // 场景传送的出生点只取一次
             SceneTravel.SetPendingSpawn("entrance");
