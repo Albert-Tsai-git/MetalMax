@@ -33,6 +33,8 @@ namespace Game.Core
         public List<ItemStack> items = new();
         /// <summary>战车停放状态：parked 为真表示玩家下车步行，战车停在 scene 的 position</summary>
         public VehicleState vehicle = new();
+        /// <summary>装备袋：未装备的人类装备（按 ID 计数）</summary>
+        public List<Game.Items.ItemStack> gearBag = new();
         /// <summary>最后到访的城镇，全灭后在此复活</summary>
         public string lastTown = DefaultTown;
         /// <summary>赏金首进度（未出现在列表中的视为通缉中）</summary>

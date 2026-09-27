@@ -23,6 +23,7 @@ namespace Game.Core.Save
                 flags = new List<string>(s.flags),
                 quests = new List<Game.Story.QuestRecord>(s.quests),
                 items = s.items.ConvertAll(i => new Game.Items.ItemStack { id = i.id, count = i.count }),
+                gearBag = s.gearBag.ConvertAll(i => new Game.Items.ItemStack { id = i.id, count = i.count }),
                 vehicle = new VehicleState { parked = s.vehicle.parked, scene = s.vehicle.scene, position = s.vehicle.position, yaw = s.vehicle.yaw },
             };
             foreach (var c in s.party) d.party.Add(ToSave(c));
@@ -38,6 +39,7 @@ namespace Game.Core.Save
             if (d.bounties != null) s.bounties.AddRange(d.bounties);
             if (d.flags != null) s.flags.AddRange(d.flags);
             s.vehicle = d.vehicle ?? new VehicleState();
+            if (d.gearBag != null) s.gearBag.AddRange(d.gearBag);
             if (d.quests != null) s.quests.AddRange(d.quests);
             if (d.items != null)
                 foreach (var i in d.items)
@@ -76,6 +78,13 @@ namespace Game.Core.Save
             }
             if (d.version < 5) d.items ??= new List<Game.Items.ItemStack>(); // v4 → v5：新增道具
             if (d.version < 6) d.vehicle = new VehicleState(); // v5 → v6：新增战车停放，旧存档视为在车上
+            if (d.version < 7)
+            {
+                // v6 → v7：新增人类装备，旧存档按角色初始装备补发
+                d.gearBag ??= new List<Game.Items.ItemStack>();
+                foreach (var c in d.party)
+                    c.gear = new List<string>(GameDB.Character(c.id)?.startGear ?? new List<string>());
+            }
             if (string.IsNullOrEmpty(d.lastTown)) d.lastTown = PlayerState.DefaultTown;
             d.version = SaveData.CurrentVersion;
         }
@@ -86,6 +95,7 @@ namespace Game.Core.Save
             level = c.level, exp = c.exp,
             maxHp = c.maxHp, hp = c.hp, attack = c.attack, defense = c.defense, speed = c.speed, evade = c.evade,
             inTank = c.inTank,
+            gear = new List<string>(c.gear),
             hasTank = c.tank != null,
             tank = c.tank == null ? null : ToSave(c.tank),
         };
@@ -98,6 +108,7 @@ namespace Game.Core.Save
                 level = Mathf.Max(1, c.level), exp = Mathf.Max(0, c.exp),
                 maxHp = c.maxHp, hp = c.hp, attack = c.attack, defense = c.defense, speed = c.speed, evade = c.evade,
                 inTank = c.inTank,
+                gear = new List<string>(c.gear ?? new List<string>()),
             };
             if (c.hasTank && c.tank != null) r.tank = FromSave(c.tank);
             if (r.tank == null) r.inTank = false;

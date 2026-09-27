@@ -12,6 +12,7 @@ namespace Game.Economy
         public string shopId;
         public List<TankPartData> goods = new();
         public List<ItemData> items = new();
+        public List<Game.Equipment.GearData> gear = new();
 
         public string DisplayName => TextDB.Name(shopId);
     }

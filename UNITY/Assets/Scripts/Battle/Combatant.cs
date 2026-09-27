@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Tank;
 
 namespace Game.Battle
@@ -29,6 +30,8 @@ namespace Game.Battle
         public TankLoadout tank;
         /// <summary>当前是否在车上</summary>
         public bool inTank;
+        /// <summary>身上的人类装备 ID（每个位置至多一件），步行时生效</summary>
+        public List<string> gear = new();
 
         /// <summary>击败后的奖励（敌人用）</summary>
         public int expReward;
@@ -54,12 +57,38 @@ namespace Game.Battle
         /// <summary>单位还能行动（人活着即可；车全毁时人会被迫下车）</summary>
         public bool CanAct => IsAlive;
 
+        /// <summary>某位置的装备，没有为 null</summary>
+        public Game.Equipment.GearData GearIn(Game.Equipment.GearSlot slot)
+        {
+            foreach (var id in gear)
+            {
+                var g = Game.Core.GameDB.Gear(id);
+                if (g != null && g.slot == slot) return g;
+            }
+            return null;
+        }
+
+        private int GearSum(System.Func<Game.Equipment.GearData, int> f)
+        {
+            int n = 0;
+            foreach (var id in gear)
+            {
+                var g = Game.Core.GameDB.Gear(id);
+                if (g != null) n += f(g);
+            }
+            return n;
+        }
+
+        /// <summary>步行攻击力：基础攻击 + 装备攻击</summary>
+        public int FootAttack => attack + GearSum(g => g.attack);
+
         /// <summary>当前总回避：乘车时加上 C 装置加成</summary>
         public int TotalEvade
         {
             get
             {
                 int e = evade;
+                if (!IsTankActive) e += GearSum(g => g.evade);
                 if (IsTankActive && tank.cUnit is { IsFunctional: true } c)
                     e += (int)(((CUnitData)c.data).evadeBonus * c.PerformanceRate);
                 return e;
@@ -71,7 +100,7 @@ namespace Game.Battle
         {
             get
             {
-                if (!IsTankActive) return defense;
+                if (!IsTankActive) return defense + GearSum(g => g.defense);
                 int d = 0;
                 foreach (var p in tank.AllParts())
                     d += (int)(p.data.defense * p.PerformanceRate);

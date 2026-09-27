@@ -130,7 +130,7 @@ namespace Game.Battle
             switch (a.type)
             {
                 case ActionType.HumanAttack:
-                    DoHumanAttack(a.actor, RetargetIfDead(a));
+                    DoHumanAttack(a);
                     break;
                 case ActionType.TankWeapon:
                     DoTankWeapon(a);
@@ -173,16 +173,25 @@ namespace Game.Battle
             }
         }
 
-        private void DoHumanAttack(Combatant actor, Combatant target)
+        /// <summary>人类攻击：步行时用手持武器（范围、属性），乘车中不会走到这里</summary>
+        private void DoHumanAttack(BattleAction a)
         {
-            if (target == null) return;
-            if (!DamageCalculator.RollHit(DamageCalculator.HumanBaseAccuracy, target.TotalEvade, _rng))
+            var actor = a.actor;
+            var weapon = actor.side == Side.Player ? actor.GearIn(Game.Equipment.GearSlot.Weapon) : null;
+            var range = weapon != null ? weapon.range : AttackRange.Single;
+            var element = weapon != null ? weapon.element : Element.Normal;
+            int power = actor.side == Side.Player ? actor.FootAttack : actor.attack;
+            if (weapon != null) Log($"{actor} 使用 {weapon.DisplayName}！");
+            foreach (var target in ExpandTargets(a, range).Where(t => t != null && t.IsAlive))
             {
-                Log($"{actor} 攻击 {target}，没有命中");
-                BattleEvents.RaiseMissed(actor, target);
-                return;
+                if (!DamageCalculator.RollHit(DamageCalculator.HumanBaseAccuracy, target.TotalEvade, _rng))
+                {
+                    Log($"{actor} 攻击 {target}，没有命中");
+                    BattleEvents.RaiseMissed(actor, target);
+                    continue;
+                }
+                ApplyElementDamage(actor, target, power, target.TotalDefense, element);
             }
-            ApplyElementDamage(actor, target, actor.attack, target.TotalDefense, Element.Normal);
         }
 
         private void DoTankWeapon(BattleAction a)

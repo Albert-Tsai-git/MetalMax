@@ -26,5 +26,6 @@ namespace Game.Core
         ChoiceRequired,     // 对话节点有选项，需要选择
         StackFull,          // 道具已达持有上限
         InvalidTarget,      // 目标无效
+        CannotEquip,        // 该角色不能装备
     }
 }

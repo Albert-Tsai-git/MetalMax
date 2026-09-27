@@ -7,6 +7,7 @@ using System.Text;
 using Game.Battle;
 using Game.Core;
 using Game.Economy;
+using Game.Equipment;
 using Game.Items;
 using Game.Progression;
 using Game.Story;
@@ -37,6 +38,7 @@ namespace Game.EditorTools
             int n = 0;
             n += Import("skills.csv", $"{OutDir}/Skills", CreateSkill);
             n += Import("items.csv", $"{OutDir}/Items", CreateItem);
+            n += Import("gear.csv", $"{OutDir}/Gear", CreateGear);
             n += Import("parts.csv", $"{OutDir}/Parts", CreatePart);
             n += Import("enemies.csv", $"{OutDir}/Enemies", CreateEnemy);
             n += Import("characters.csv", $"{OutDir}/Characters", CreateCharacter);
@@ -195,11 +197,19 @@ namespace Game.EditorTools
             // part_id 列：ITM_ 开头为道具，其余为部件
             var groups = new Dictionary<string, List<TankPartData>>();
             var itemGroups = new Dictionary<string, List<ItemData>>();
+            var gearGroups = new Dictionary<string, List<GearData>>();
             foreach (var r in ReadCsv(path))
             {
                 string shopId = r.Str("shop_id"), goodsId = r.Str("part_id");
                 if (shopId == "") continue;
-                if (!groups.ContainsKey(shopId)) { groups[shopId] = new List<TankPartData>(); itemGroups[shopId] = new List<ItemData>(); }
+                if (!groups.ContainsKey(shopId)) { groups[shopId] = new List<TankPartData>(); itemGroups[shopId] = new List<ItemData>(); gearGroups[shopId] = new List<GearData>(); }
+                if (goodsId.StartsWith("EQP_"))
+                {
+                    var gear = AssetDatabase.LoadAssetAtPath<GearData>($"{OutDir}/Gear/{goodsId}.asset");
+                    if (gear == null) { Debug.LogError($"[Import] shops.csv 第 {r.Line} 行：装备 {goodsId} 不存在"); continue; }
+                    gearGroups[shopId].Add(gear);
+                    continue;
+                }
                 if (goodsId.StartsWith("ITM_"))
                 {
                     var item = AssetDatabase.LoadAssetAtPath<ItemData>($"{OutDir}/Items/{goodsId}.asset");
@@ -220,6 +230,7 @@ namespace Game.EditorTools
                 shop.shopId = shopId;
                 shop.goods = goods;
                 shop.items = itemGroups[shopId];
+                shop.gear = gearGroups[shopId];
                 shop.name = shopId;
                 if (isNew) AssetDatabase.CreateAsset(shop, assetPath);
                 EditorUtility.SetDirty(shop);
@@ -358,6 +369,7 @@ namespace Game.EditorTools
             c.repair = r.Int("repair");
             c.repairPerLevel = r.Int("repair_up");
             c.partRepairLevel = r.Int("part_repair_level", 99);
+            c.startGear = SplitList(r.Str("gear"));
             c.maxLevel = r.Int("max_level", 99);
             c.expBase = r.Int("exp_base", 20);
             c.expGrowth = r.Float("exp_growth", 1.5f);
@@ -403,6 +415,25 @@ namespace Game.EditorTools
             t.hasBountyOffice = r.Bool("bounty_office");
             t.name = t.townId;
             return t;
+        }
+
+        private static List<string> SplitList(string s) =>
+            s.Split('|', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Where(x => x != "").ToList();
+
+        private static ScriptableObject CreateGear(Row r, ScriptableObject existing)
+        {
+            var g = Reuse<GearData>(existing);
+            g.gearId = r.Str("id");
+            g.slot = ParseEnum(r.Str("slot"), GearSlot.Weapon, r);
+            g.price = r.Int("price");
+            g.attack = r.Int("attack");
+            g.defense = r.Int("defense");
+            g.evade = r.Int("evade");
+            g.range = ParseEnum(r.Str("range", "Single"), AttackRange.Single, r);
+            g.element = ParseEnum(r.Str("element", "Normal"), Element.Normal, r);
+            g.users = SplitList(r.Str("users"));
+            g.name = g.gearId;
+            return g;
         }
 
         private static ScriptableObject CreateMapEntry(Row r, ScriptableObject existing)

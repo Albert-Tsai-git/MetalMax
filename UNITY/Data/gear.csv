@@ -1,0 +1,16 @@
+id,slot,price,attack,defense,evade,range,element,users
+# 人类装备（原作风格：武器 + 头/身/手/脚四件防具）。users 为空表示全员可装备，否则用 | 分隔角色 ID,,,,,,,,
+# 武器：单体高伤 / 群体低伤 / 属性克制各有场景,,,,,,,,
+EQP_Knife,Weapon,50,6,0,0,Single,Normal,
+EQP_Wrench,Weapon,40,5,0,0,Single,Normal,
+EQP_Pistol,Weapon,300,16,0,0,Single,Normal,
+EQP_Shotgun,Weapon,650,11,0,0,Group,Normal,
+EQP_Flamegun,Weapon,900,13,0,0,Group,Fire,CHR_Mechanic
+EQP_Stungun,Weapon,800,18,0,0,Single,Electric,CHR_Hunter
+# 防具：重甲高防低闪避，轻装有闪避,,,,,,,,
+EQP_Bandana,Head,30,0,2,1,,,
+EQP_Helmet,Head,260,0,6,0,,,
+EQP_Jacket,Body,80,0,5,0,,,
+EQP_Vest,Body,450,0,12,-2,,,
+EQP_Gloves,Arms,60,1,2,0,,,
+EQP_Boots,Legs,70,0,2,3,,,

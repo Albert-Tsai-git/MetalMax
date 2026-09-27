@@ -45,6 +45,9 @@ namespace Game.Progression
             level >= maxLevel ? -1 : Mathf.Max(1, Mathf.RoundToInt(expBase * Mathf.Pow(level, expGrowth)));
 
         /// <summary>生成 1 级角色</summary>
+        [Tooltip("初始装备（人类装备 ID）")]
+        public System.Collections.Generic.List<string> startGear = new();
+
         public Combatant CreateCombatant() => new()
         {
             id = characterId,
@@ -52,6 +55,7 @@ namespace Game.Progression
             side = Side.Player,
             level = 1,
             maxHp = hp, hp = hp, attack = attack, defense = defense, speed = speed, evade = evade,
+            gear = new System.Collections.Generic.List<string>(startGear),
         };
     }
 }

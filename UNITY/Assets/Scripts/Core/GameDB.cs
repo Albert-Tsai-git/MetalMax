@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Game.Battle;
 using Game.Economy;
+using Game.Equipment;
 using Game.Items;
 using Game.Progression;
 using Game.Story;
@@ -27,6 +28,7 @@ namespace Game.Core
         private static Dictionary<string, ItemData> _items;
         private static Dictionary<string, DialogueData> _dialogues;
         private static Dictionary<string, WorldMapData> _mapEntries;
+        private static Dictionary<string, GearData> _gear;
 
         public static TankPartData Part(string id) => Find(ref _parts, "GameData/Parts", id);
         public static EnemyData Enemy(string id) => Find(ref _enemies, "GameData/Enemies", id);
@@ -38,6 +40,7 @@ namespace Game.Core
         public static ItemData Item(string id) => Find(ref _items, "GameData/Items", id);
         public static DialogueData Dialogue(string id) => Find(ref _dialogues, "GameData/Dialogues", id);
 
+        public static GearData Gear(string id) => Find(ref _gear, "GameData/Gear", id);
         public static WorldMapData MapEntry(string id) => Find(ref _mapEntries, "GameData/WorldMap", id);
 
         public static IEnumerable<WorldMapData> AllMapEntries()
@@ -65,6 +68,7 @@ namespace Game.Core
             _items = null;
             _dialogues = null;
             _mapEntries = null;
+            _gear = null;
         }
 
         private static T Find<T>(ref Dictionary<string, T> map, string folder, string id) where T : ScriptableObject
