@@ -28,7 +28,7 @@ EDITOR = sys.argv[1] if len(sys.argv) > 1 else r"D:\software\unity\Editor\6000.6
 DOTNET = os.path.join(EDITOR, "Data", "NetCoreRuntime", "dotnet.exe")
 CSC = glob.glob(os.path.join(EDITOR, "Data", "DotNetSdk", "sdk", "*", "Roslyn", "bincore", "csc.dll"))
 # 按依赖顺序编译，后者引用前者的输出
-ASSEMBLIES = [("Game.Runtime", "Assets/Scripts", ["Assets/Scripts/Editor", "Assets/Scripts/Presentation"]),
+ASSEMBLIES = [("Game.Runtime", "Assets/Scripts", ["Assets/Scripts/Editor", "Assets/Scripts/Presentation", "Assets/Scripts/Tests"]),
               ("Game.Presentation", "Assets/Scripts/Presentation", []),
               ("Game.Editor", "Assets/Scripts/Editor", [])]
 
