@@ -1,0 +1,15 @@
+{
+  "run_id": "R20260927-192149",
+  "project": "GAME",
+  "title": "Prepare Codex UI and wasteland terrain assets for I-22/I-23",
+  "status": "SOURCE_PACKAGE_REVIEWED; UNITY_INTEGRATION_BLOCKED",
+  "artifacts": [
+    "ArtSource/UI_Terrain_Package/Export/Icons",
+    "ArtSource/UI_Terrain_Package/Export/MAP_Wasteland_Base.png",
+    "ArtSource/UI_Terrain_Package/Export/Field_Wasteland_513.raw",
+    "ArtSource/UI_Terrain_Package/Export/NotoSansSC-VF.ttf",
+    "ArtSource/UI_Terrain_Package/README.md"
+  ],
+  "validation": "Offline asset validation and independent review passed. Actual Unity terrain import, Sprite/TMP integration, and play-path validation are blocked while Claude uses Unity in a separate checkout.",
+  "archive_blocker": "Machine SIRE archive target is unconfigured; user allowlist excludes shared database writes."
+}
