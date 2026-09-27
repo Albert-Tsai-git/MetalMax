@@ -71,8 +71,8 @@ namespace Game.EditorTools
                     v1.lastTown = null;
                     v1.bounties = null;
                     File.WriteAllText(SaveSystem.PathOf(1), JsonUtility.ToJson(v1));
-                    Check(SaveSystem.Load(1, out var d1, out var r1) == OpResult.Ok && d1.version == 2
-                          && r1.lastTown == PlayerState.DefaultTown && r1.bounties.Count == 0, "v1 存档迁移到 v2");
+                    Check(SaveSystem.Load(1, out var d1, out var r1) == OpResult.Ok && d1.version == SaveData.CurrentVersion
+                          && r1.lastTown == PlayerState.DefaultTown && r1.bounties.Count == 0, "v1 存档迁移到当前版本");
                 }
                 finally
                 {

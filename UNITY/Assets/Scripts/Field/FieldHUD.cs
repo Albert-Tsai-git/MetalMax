@@ -47,7 +47,7 @@ namespace Game.Field
         {
             var s = GameSession.Instance;
             var lines = s.party.Select(p =>
-                $"{p.name} HP {p.hp}/{p.maxHp}" + (p.tank != null ? $"  {p.tank.tankName} SP {p.tank.currentSp}/{p.tank.MaxSp}" : ""));
+                $"{p.name} Lv{p.level} HP {p.hp}/{p.maxHp}" + (p.tank != null ? $"  {p.tank.tankName} SP {p.tank.currentSp}/{p.tank.MaxSp}" : ""));
             var style = new GUIStyle(GUI.skin.box) { fontSize = 16, alignment = TextAnchor.UpperLeft };
             GUI.Box(new Rect(10, 10, 420, 130),
                 $"金钱 {s.gold}G    经验 {s.exp}\n{string.Join("\n", lines)}\n\n{_msg}", style);

@@ -11,7 +11,7 @@ namespace Game.Core.Save
     [Serializable]
     public class SaveData
     {
-        public const int CurrentVersion = 2;
+        public const int CurrentVersion = 3;
 
         public int version = CurrentVersion;
         public string savedAt;
@@ -30,6 +30,7 @@ namespace Game.Core.Save
     public class CombatantSave
     {
         public string id;
+        public int level, exp;  // v3
         public int maxHp, hp, attack, defense, speed, evade;
         public bool inTank;
         /// <summary>没有战车时为 null（JsonUtility 会写成空对象，用 hasTank 区分）</summary>

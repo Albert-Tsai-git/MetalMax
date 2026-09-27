@@ -1,0 +1,4 @@
+id,hp,attack,defense,speed,evade,hp_up,attack_up,defense_up,speed_up,evade_up,max_level,exp_base,exp_growth
+# 数值为占位，平衡阶段再调,,,,,,,,,,,,,
+CHR_Hunter,80,18,8,12,5,8,2,1,1,0,99,20,1.5
+CHR_Mechanic,60,12,6,9,5,6,1,1,1,0,99,20,1.5

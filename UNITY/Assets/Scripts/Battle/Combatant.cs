@@ -15,6 +15,9 @@ namespace Game.Battle
         public string id;
         public string name;
         public Side side;
+        /// <summary>等级与当前等级内的经验（玩家角色用）</summary>
+        public int level = 1;
+        public int exp;
         public int maxHp;
         public int hp;
         public int attack;

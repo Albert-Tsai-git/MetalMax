@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Game.Battle;
 using Game.Core.Save;
 using Game.Tank;
+using Game.Progression;
 using Game.Town;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -70,7 +71,7 @@ namespace Game.Core
         {
             if (result == BattleState.Victory)
             {
-                exp += expGain;
+                LevelService.AwardBattleExp(State, expGain);
                 gold += goldGain;
                 if (PendingEnemies != null) BountyService.OnVictory(State, PendingEnemies);
             }
@@ -129,20 +130,15 @@ namespace Game.Core
     /// <summary>演示用的初始队伍与战车</summary>
     public static class DemoFactory
     {
-        public static List<Combatant> CreateParty() => new()
+        /// <summary>初始队伍：猎人（乘一号车）与机械师，属性来自 characters.csv</summary>
+        public static List<Combatant> CreateParty()
         {
-            new Combatant
-            {
-                id = "CHR_Hunter", name = TextDB.Name("CHR_Hunter"), side = Side.Player,
-                maxHp = 80, hp = 80, attack = 18, defense = 8, speed = 12,
-                tank = CreateTank(), inTank = true,
-            },
-            new Combatant
-            {
-                id = "CHR_Mechanic", name = TextDB.Name("CHR_Mechanic"), side = Side.Player,
-                maxHp = 60, hp = 60, attack = 12, defense = 6, speed = 9,
-            },
-        };
+            var hunter = GameDB.Character("CHR_Hunter").CreateCombatant();
+            hunter.tank = CreateTank();
+            hunter.inTank = true;
+            var mechanic = GameDB.Character("CHR_Mechanic").CreateCombatant();
+            return new List<Combatant> { hunter, mechanic };
+        }
 
         /// <summary>初始战车：轻型底盘 + V8 + 基础 C 装置 + 75mm 炮 + 7.7mm 机枪</summary>
         public static TankLoadout CreateTank()

@@ -52,6 +52,11 @@ namespace Game.Core.Save
                 d.lastTown = PlayerState.DefaultTown;
                 d.bounties ??= new List<Game.Town.BountyRecord>();
             }
+            if (d.version < 3)
+            {
+                // v2 → v3：新增角色等级与经验，旧存档从 1 级开始
+                foreach (var c in d.party) { c.level = 1; c.exp = 0; }
+            }
             if (string.IsNullOrEmpty(d.lastTown)) d.lastTown = PlayerState.DefaultTown;
             d.version = SaveData.CurrentVersion;
         }
@@ -59,6 +64,7 @@ namespace Game.Core.Save
         private static CombatantSave ToSave(Combatant c) => new()
         {
             id = c.id,
+            level = c.level, exp = c.exp,
             maxHp = c.maxHp, hp = c.hp, attack = c.attack, defense = c.defense, speed = c.speed, evade = c.evade,
             inTank = c.inTank,
             hasTank = c.tank != null,
@@ -70,6 +76,7 @@ namespace Game.Core.Save
             var r = new Combatant
             {
                 id = c.id, name = TextDB.Name(c.id), side = Side.Player,
+                level = Mathf.Max(1, c.level), exp = Mathf.Max(0, c.exp),
                 maxHp = c.maxHp, hp = c.hp, attack = c.attack, defense = c.defense, speed = c.speed, evade = c.evade,
                 inTank = c.inTank,
             };

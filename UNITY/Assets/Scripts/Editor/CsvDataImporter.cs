@@ -7,6 +7,7 @@ using System.Text;
 using Game.Battle;
 using Game.Core;
 using Game.Economy;
+using Game.Progression;
 using Game.Tank;
 using Game.Town;
 using UnityEditor;
@@ -33,6 +34,7 @@ namespace Game.EditorTools
             int n = 0;
             n += Import("parts.csv", $"{OutDir}/Parts", CreatePart);
             n += Import("enemies.csv", $"{OutDir}/Enemies", CreateEnemy);
+            n += Import("characters.csv", $"{OutDir}/Characters", CreateCharacter);
             n += ImportShops();
             n += Import("towns.csv", $"{OutDir}/Towns", CreateTown);
             n += ImportTexts();
@@ -131,7 +133,7 @@ namespace Game.EditorTools
             }
             Directory.CreateDirectory(TextOutDir);
             var ids = new HashSet<string>();
-            foreach (var file in new[] { "parts.csv", "enemies.csv" })
+            foreach (var file in new[] { "parts.csv", "enemies.csv", "characters.csv" })
             {
                 string path = Path.Combine(DataDir, file);
                 if (File.Exists(path)) foreach (var r in ReadCsv(path)) if (r.Str("id") != "") ids.Add(r.Str("id"));
@@ -223,6 +225,27 @@ namespace Game.EditorTools
             p.upgradeCostBase = r.Int("up_cost", 200);
             p.name = p.partId;
             return p;
+        }
+
+        private static ScriptableObject CreateCharacter(Row r, ScriptableObject existing)
+        {
+            var c = Reuse<CharacterData>(existing);
+            c.characterId = r.Str("id");
+            c.hp = r.Int("hp", 50);
+            c.attack = r.Int("attack");
+            c.defense = r.Int("defense");
+            c.speed = r.Int("speed");
+            c.evade = r.Int("evade", 5);
+            c.hpPerLevel = r.Int("hp_up");
+            c.attackPerLevel = r.Int("attack_up");
+            c.defensePerLevel = r.Int("defense_up");
+            c.speedPerLevel = r.Int("speed_up");
+            c.evadePerLevel = r.Int("evade_up");
+            c.maxLevel = r.Int("max_level", 99);
+            c.expBase = r.Int("exp_base", 20);
+            c.expGrowth = r.Float("exp_growth", 1.5f);
+            c.name = c.characterId;
+            return c;
         }
 
         private static ScriptableObject CreateTown(Row r, ScriptableObject existing)
