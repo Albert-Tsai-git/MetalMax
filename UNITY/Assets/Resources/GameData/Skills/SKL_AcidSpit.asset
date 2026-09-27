@@ -16,6 +16,7 @@ MonoBehaviour:
   power: 70
   hits: 1
   range: 0
+  element: 0
   accuracyBonus: 0
   partBreakChance: 0
   pierceTank: 1

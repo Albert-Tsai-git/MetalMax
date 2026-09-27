@@ -24,6 +24,9 @@ MonoBehaviour:
   skills:
   - skillId: SKL_TwinShot
     weight: 1
+  weak: 03000000i
+  resist: 0100000000000000i
+  immune: 
   expReward: 25
   goldReward: 60
   isBounty: 0

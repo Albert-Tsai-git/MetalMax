@@ -22,6 +22,8 @@ MonoBehaviour:
   weaponType: 1
   range: 1
   attack: 25
+  element: 0
   accuracy: 85
   maxAmmo: -1
+  ammoPrice: 0
   attackPerUpgrade: 5

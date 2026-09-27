@@ -28,6 +28,9 @@ MonoBehaviour:
     weight: 1
   - skillId: SKL_ShellMend
     weight: 1
+  weak: 03000000i
+  resist: 01000000i
+  immune: 
   expReward: 300
   goldReward: 1000
   isBounty: 1

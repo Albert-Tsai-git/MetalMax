@@ -24,6 +24,9 @@ MonoBehaviour:
   skills:
   - skillId: SKL_Howl
     weight: 1
+  weak: 04000000i
+  resist: 
+  immune: 
   expReward: 8
   goldReward: 15
   isBounty: 0

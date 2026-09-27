@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 562857c854a7bff488186900d5ae161d, type: 3}
-  m_Name: WPN_SE_Missile
-  m_EditorClassIdentifier: Assembly-CSharp::Game.Tank.WeaponData
-  partId: WPN_SE_Missile
-  weight: 1.5
-  price: 4000
+  m_Name: WPN_Flamethrower
+  m_EditorClassIdentifier: Game.Runtime::Game.Tank.WeaponData
+  partId: WPN_Flamethrower
+  weight: 0.8
+  price: 900
   defense: 0
   maxUpgradeLevel: 5
-  weightPerUpgrade: 0.2
-  upgradeCostBase: 500
-  weaponType: 2
-  range: 2
-  attack: 45
+  weightPerUpgrade: 0.1
+  upgradeCostBase: 200
+  weaponType: 1
+  range: 1
+  attack: 18
   element: 1
-  accuracy: 90
-  maxAmmo: 4
-  ammoPrice: 150
-  attackPerUpgrade: 8
+  accuracy: 80
+  maxAmmo: -1
+  ammoPrice: 0
+  attackPerUpgrade: 4

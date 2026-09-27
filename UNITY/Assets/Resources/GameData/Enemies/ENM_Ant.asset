@@ -24,6 +24,9 @@ MonoBehaviour:
   skills:
   - skillId: SKL_AcidSpit
     weight: 1
+  weak: 01000000i
+  resist: 
+  immune: 
   expReward: 10
   goldReward: 20
   isBounty: 0
