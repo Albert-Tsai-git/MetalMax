@@ -55,6 +55,13 @@ namespace Game.EditorTools
 
         private static void OnPlayModeChanged(PlayModeStateChange change)
         {
+            // 进入 Play 后自动聚焦 Game 视图，免得要先点一下画面才能接收键盘
+            if (change == PlayModeStateChange.EnteredPlayMode)
+            {
+                EditorApplication.delayCall += () =>
+                    EditorWindow.FocusWindowIfItsOpen(System.Type.GetType("UnityEditor.GameView,UnityEditor"));
+                return;
+            }
             if (change != PlayModeStateChange.ExitingEditMode || !Enabled) return;
             string active = EditorSceneManager.GetActiveScene().name;
             if (PrototypeSceneBuilder.LogicScenes.Contains(active)) return;
