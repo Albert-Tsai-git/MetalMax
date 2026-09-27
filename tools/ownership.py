@@ -23,6 +23,7 @@ RULES = [
     ("docs/COLLABORATION.md", "shared"),
     ("docs/GDD.md", "shared"),
     ("docs/STORY.md", "Codex"),
+    ("docs/balance/*", "Claude"),
     ("docs/ART_BIBLE.md", "Codex"),
     ("UNITY/Packages/*", "shared"),
     # 仓库管理
