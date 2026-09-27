@@ -11,6 +11,13 @@ import sys
 
 # 按顺序匹配，先命中者生效；.meta 跟随其资源文件。shared = 双方均可改（改前需在 INTERFACE.md 达成一致）
 RULES = [
+    # 目录自身的 .meta（如 Assets/Models.meta），须排在宽泛规则之前
+    *[(f"UNITY/Assets/{d}.meta", "Codex") for d in
+      ("Art", "Models", "Materials", "Prefabs", "Animations", "VFX", "Audio", "UI", "Fonts", "Settings")],
+    ("UNITY/Assets/Scripts/Presentation.meta", "Codex"),
+    ("UNITY/Assets/Scenes/Art.meta", "Codex"),
+    ("UNITY/Assets/Resources/Visuals.meta", "Codex"),
+    ("UNITY/Assets/Resources/Icons.meta", "Codex"),
     # 对接文档与公共文件
     ("docs/INTERFACE.md", "shared"),
     ("docs/COLLABORATION.md", "shared"),
@@ -48,13 +55,6 @@ RULES = [
       ("GraphicsSettings.asset", "QualitySettings.asset", "URPProjectSettings.asset",
        "ShaderGraphSettings.asset", "AudioManager.asset")],
     ("UNITY/ProjectSettings/*", "shared"),
-    # 目录自身的 .meta（如 Assets/Models.meta）
-    *[(f"UNITY/Assets/{d}.meta", "Codex") for d in
-      ("Art", "Models", "Materials", "Prefabs", "Animations", "VFX", "Audio", "UI", "Fonts", "Settings")],
-    ("UNITY/Assets/Scripts/Presentation.meta", "Codex"),
-    ("UNITY/Assets/Scenes/Art.meta", "Codex"),
-    ("UNITY/Assets/Resources/Visuals.meta", "Codex"),
-    ("UNITY/Assets/Resources/Icons.meta", "Codex"),
     ("UNITY/Assets/*.meta", "Claude"),
     ("UNITY/Assets/Resources/*.meta", "Claude"),
     ("UNITY/Assets/Scenes/*.meta", "Claude"),

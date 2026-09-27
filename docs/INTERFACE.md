@@ -5,16 +5,16 @@
 
 | 编号 | 条款 | Claude | Codex |
 |---|---|---|---|
-| I-01 | 数据 ID 前缀：`TNK_` 车体部件、`WPN_` 武器、`ENM_` 敌人（赏金首 `ENM_Bounty_`）、`CHR_` 角色、`ENV_` 环境。ID 由 Claude 定义，定义后不改名。 | ✅ | ⏳ |
-| I-02 | 文本表 `UNITY/Data/Text/text_{语言}.csv`，列 `key,text`，UTF-8。键：`{ID}.name`、`{ID}.desc`；UI 文字键 `UI.{界面}.{项}`。键名由需求方新增，text 由 Codex 填写。 | ✅ | ⏳ |
-| I-03 | 模型预制体 `UNITY/Assets/Resources/Visuals/{ID}.prefab`，图标 `UNITY/Assets/Resources/Icons/{ID}.png`（Sprite）。文件名与 ID 完全一致；缺失时逻辑正常运行、不显示外观。 | ✅ | ⏳ |
-| I-04 | 模型规格：1 单位 = 1 米，Y 轴向上，前方 +Z；预制体根节点为单位变换；武器枢轴在安装点、炮口朝 +Z。 | ✅ | ⏳ |
-| I-05 | 底盘挂点空节点名：`Mount_Main`、`Mount_Sub`、`Mount_SE`。各底盘拥有哪些挂点以 `UNITY/Data/parts.csv` 的 `mounts` 列为准：`TNK_Chassis_Light` = Main、Sub；`TNK_Chassis_Heavy` = Main、Sub、SE。 | ✅ | ⏳ |
-| I-06 | 场景：逻辑场景 `Assets/Scenes/Logic/{名称}.unity`（当前 `Field`、`Battle`）；美术场景 `Assets/Scenes/Art/{名称}_Art.unity`，运行时叠加加载并设为活动场景，灰盒自动隐藏。美术场景只放可见物体、灯光、后处理，不放碰撞体与逻辑组件。 | ✅ | ⏳ |
-| I-07 | 表现层脚本放在 `Assets/Scripts/Presentation/`（程序集 `Game.Presentation`，引用 `Game.Runtime`）；只读取逻辑层数据、订阅事件，不修改游戏状态。逻辑层不引用表现层。 | ✅ | ⏳ |
-| I-08 | 逻辑层对外可读数据：`GameSession.Instance`（`party`、`gold`、`exp`）；`TankLoadout`（部件、`OnChanged` 事件）；`TextDB.Name/Desc/Get`；`VisualCatalog.Model/Icon`。新增接口先登记到本表。 | ✅ | ⏳ |
-| I-09 | 战斗事件 `Game.Battle.BattleEvents`（静态，OnEnable 订阅 / OnDisable 取消）：`Started(BattleSystem)`、`TurnStarted(int 回合)`、`ActionStarted(行动者, ActionType, 武器或 null)`、`Missed(攻击者, 目标)`、`Hit(攻击者, 目标, 伤害, 是否打在战车)`、`PartDamaged(所属者, PartInstance)`、`TankDisabled(所属者)`、`BoardChanged(行动者, 是否在车上)`、`Defeated(单位)`、`EscapeAttempted(行动者, 是否成功)`、`Ended(BattleState, 经验, 金钱)`。 | ✅ | ⏳ |
-| I-10 | 战斗单位 `Combatant.id` 为数据 ID（`ENM_` / `CHR_`），表现层据此取模型（I-03）与文本（I-02）；演示单位可能为空。 | ✅ | ⏳ |
+| I-01 | 数据 ID 前缀：`TNK_` 车体部件、`WPN_` 武器、`ENM_` 敌人（赏金首 `ENM_Bounty_`）、`CHR_` 角色、`ENV_` 环境。ID 由 Claude 定义，定义后不改名。 | ✅ | ✅ |
+| I-02 | 文本表 `UNITY/Data/Text/text_{语言}.csv`，列 `key,text`，UTF-8。键：`{ID}.name`、`{ID}.desc`；UI 文字键 `UI.{界面}.{项}`。键名由需求方新增，text 由 Codex 填写。 | ✅ | ✅ |
+| I-03 | 模型预制体 `UNITY/Assets/Resources/Visuals/{ID}.prefab`，图标 `UNITY/Assets/Resources/Icons/{ID}.png`（Sprite）。文件名与 ID 完全一致；缺失时逻辑正常运行、不显示外观。 | ✅ | ✅ |
+| I-04 | 模型规格：1 单位 = 1 米，Y 轴向上，前方 +Z；预制体根节点为单位变换；武器枢轴在安装点、炮口朝 +Z。 | ✅ | ✅ |
+| I-05 | 底盘挂点空节点名：`Mount_Main`、`Mount_Sub`、`Mount_SE`。各底盘拥有哪些挂点以 `UNITY/Data/parts.csv` 的 `mounts` 列为准：`TNK_Chassis_Light` = Main、Sub；`TNK_Chassis_Heavy` = Main、Sub、SE。 | ✅ | ✅ |
+| I-06 | 场景：逻辑场景 `Assets/Scenes/Logic/{名称}.unity`（当前 `Field`、`Battle`）；美术场景 `Assets/Scenes/Art/{名称}_Art.unity`，运行时叠加加载并设为活动场景，灰盒自动隐藏。美术场景只放可见物体、灯光、后处理，不放碰撞体与逻辑组件。 | ✅ | ✅ |
+| I-07 | 表现层脚本放在 `Assets/Scripts/Presentation/`（程序集 `Game.Presentation`，引用 `Game.Runtime`）；只读取逻辑层数据、订阅事件，不修改游戏状态。逻辑层不引用表现层。 | ✅ | ✅ |
+| I-08 | 逻辑层对外可读数据：`GameSession.Instance`（`party`、`gold`、`exp`）；`TankLoadout`（部件、`OnChanged` 事件）；`TextDB.Name/Desc/Get`；`VisualCatalog.Model/Icon`。新增接口先登记到本表。 | ✅ | ✅ |
+| I-09 | 战斗事件 `Game.Battle.BattleEvents`（静态，OnEnable 订阅 / OnDisable 取消）：`Started(BattleSystem)`、`TurnStarted(int 回合)`、`ActionStarted(行动者, ActionType, 武器或 null)`、`Missed(攻击者, 目标)`、`Hit(攻击者, 目标, 伤害, 是否打在战车)`、`PartDamaged(所属者, PartInstance)`、`TankDisabled(所属者)`、`BoardChanged(行动者, 是否在车上)`、`Defeated(单位)`、`EscapeAttempted(行动者, 是否成功)`、`Ended(BattleState, 经验, 金钱)`。 | ✅ | ✅ |
+| I-10 | 战斗单位 `Combatant.id` 为数据 ID（`ENM_` / `CHR_`），表现层据此取模型（I-03）与文本（I-02）；演示单位可能为空。 | ✅ | ✅ |
 
 ## 待定条款
 
