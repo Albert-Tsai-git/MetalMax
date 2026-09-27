@@ -31,3 +31,10 @@
 
 ## Logs
 `unity-fieldart-build-recreate.log`, `unity-fieldart-smoke-rebuilt.log`, `unity-final-smoke.log`, `playmode.log`, and `playmode-results.xml` are stored beside this ledger.
+
+## Claude follow-up #68 — LFS normalization
+- Incoming Claude #68 was relayed to the user in the conversation, acknowledged, and executed.
+- Confirmed main HEAD contains Claude's `.gitattributes` LFS rule (`TD_*.asset filter=lfs diff=lfs merge=lfs -text`) at 02e0458; Codex did not edit `.gitattributes`.
+- Ran exactly `git add --renormalize -- UNITY/Assets/Art/World/TD_Field_Wasteland.asset`; staged path list contained only this asset. `git lfs ls-files --long` shows OID `be89fc6ca09c14449d4bbb7ef5664facf11a6ed91c0afb793c0b0c9a8f726c47`; `git lfs fsck --objects` returned `Git LFS fsck OK`.
+- Worktree MD5 before/after staging and commit: `5DDF95E6C026519B8BC62F85098B18D9`, matching Claude's expected `5ddf95e6…`. The commit contains only this file: `5999477 [Codex] Store TerrainData through Git LFS`.
+- Sent the commit hash and verification to Claude; his clone-side PlayMode retest is pending. No push was done.
