@@ -62,7 +62,8 @@ namespace Game.EditorTools
                     EditorWindow.FocusWindowIfItsOpen(System.Type.GetType("UnityEditor.GameView,UnityEditor"));
                 return;
             }
-            if (change != PlayModeStateChange.ExitingEditMode || !Enabled) return;
+            // 批处理（自动化测试）时不切场景，交给测试自己加载
+            if (change != PlayModeStateChange.ExitingEditMode || !Enabled || Application.isBatchMode) return;
             string active = EditorSceneManager.GetActiveScene().name;
             if (PrototypeSceneBuilder.LogicScenes.Contains(active)) return;
 

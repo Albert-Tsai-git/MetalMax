@@ -21,11 +21,18 @@ namespace Game.PlayTests
     public class FieldPlayTest
     {
         private Keyboard _kb;
+        private InputSettings _oldSettings;
         private FieldPlayerController _player;
 
         [UnitySetUp]
         public IEnumerator SetUp()
         {
+            // 批处理没有窗口焦点：临时改用独立设置，让输入不受焦点影响
+            _oldSettings = InputSystem.settings;
+            var settings = ScriptableObject.CreateInstance<InputSettings>();
+            settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            InputSystem.settings = settings;
             _kb = InputSystem.AddDevice<Keyboard>("TestKeyboard");
             _kb.MakeCurrent();
             // 每个用例从“在车上、无界面”开始
@@ -46,13 +53,14 @@ namespace Game.PlayTests
         {
             Release();
             InputSystem.RemoveDevice(_kb);
+            if (_oldSettings != null) InputSystem.settings = _oldSettings;
             yield return null;
         }
 
         private void Hold(params Key[] keys)
         {
+            // 只排队事件，由下一帧的输入更新处理，保证 wasPressedThisFrame 落在游戏脚本读取的那一帧
             InputSystem.QueueStateEvent(_kb, new KeyboardState(keys));
-            InputSystem.Update();
         }
 
         private void Release() => Hold();
@@ -155,8 +163,9 @@ namespace Game.PlayTests
             Assert.AreEqual(UIScreen.None, UIRouter.Current, "Esc 关闭菜单");
 
             start = Pos;
-            yield return HoldFor(0.5f, Key.W);
-            Assert.Greater(Vector3.Distance(Pos, start), 0.5f, "关闭界面后恢复移动");
+            yield return HoldFor(1f, Key.W);
+            Debug.Log($"[PlayTest] 关闭界面后 1 秒移动 {Vector3.Distance(Pos, start):F2} 米");
+            Assert.Greater(Vector3.Distance(Pos, start), 2f, "关闭界面后恢复移动（与开局乘车 1 秒相当）");
         }
 
         [UnityTest]

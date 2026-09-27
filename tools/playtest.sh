@@ -8,7 +8,7 @@ mkdir -p "$LOGS"
 # 先导入数据并生成场景，保证与当前代码一致
 "$UNITY_EXE" -batchmode -projectPath "$ROOT/UNITY" -executeMethod Game.EditorTools.BatchTasks.RebuildAll -quit -logFile "$LOGS/playtest_rebuild.log" >/dev/null
 echo "[playtest] 重建退出码 $?"
-"$UNITY_EXE" -batchmode -projectPath "$ROOT/UNITY" -runTests -testPlatform PlayMode -testResults "$LOGS/playtest_results.xml" -logFile "$LOGS/playtest.log" >/dev/null
+"$UNITY_EXE" -batchmode -projectPath "$ROOT/UNITY" -runTests -testPlatform PlayMode -assemblyNames Game.PlayTests -testResults "$LOGS/playtest_results.xml" -logFile "$LOGS/playtest.log" >/dev/null
 code=$?
 grep -o '<test-run [^>]*' "$LOGS/playtest_results.xml" | grep -oE '(total|passed|failed)="[0-9]+"' | tr '\n' ' '
 echo
