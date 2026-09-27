@@ -8,48 +8,67 @@ namespace Game.Presentation
 {
     /// <summary>
     /// 【临时接入，用户授权 Claude 代做，待 Codex 接手或替换】
-    /// 野外/迷宫场景加载后，把队伍中第一辆战车的模型（TankVisual，按 ID 从 Resources/Visuals 加载）挂到玩家身上；
-    /// 成功生成模型时隐藏玩家的灰盒胶囊，没有对应模型时保留胶囊。
-    /// 只读取逻辑层数据，不修改游戏状态。
+    /// 野外/迷宫中显示战车模型（TankVisual，按 ID 从 Resources/Visuals 加载）：
+    /// 乘车时模型挂在玩家身上并隐藏玩家灰盒胶囊；下车时模型挂到停放的战车上（隐藏其灰盒箱体），玩家显示为灰盒胶囊。
+    /// 没有对应模型时保留灰盒外观。只读取逻辑层数据与事件，不修改游戏状态。
     /// </summary>
     public static class FieldTankVisualBootstrap
     {
-        /// <summary>玩家碰撞体底部相对玩家中心的高度（CharacterController 默认高 2、中心 0）</summary>
+        /// <summary>模型底部相对玩家/停放战车中心的高度（CharacterController 默认高 2、中心 0）</summary>
         private const float GroundOffset = -1f;
+
+        private static TankVisual _visual;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Init()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
-            Attach();
+            FieldEvents.ModeChanged -= Apply;
+            FieldEvents.ModeChanged += Apply;
+            Create();
         }
 
         private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (mode == LoadSceneMode.Single) Attach();
+            if (mode == LoadSceneMode.Single) Create();
         }
 
-        private static void Attach()
+        /// <summary>场景加载时创建模型；挂到哪里由 ModeChanged（玩家 Start 时广播）决定</summary>
+        private static void Create()
         {
             var player = Object.FindAnyObjectByType<FieldPlayerController>();
             if (player == null) return; // 战斗等没有野外玩家的场景
-
             var owner = GameSession.Instance.party.FirstOrDefault(p => p.tank != null);
             if (owner == null) return;
 
             var holder = new GameObject("TankVisual");
             holder.transform.SetParent(player.transform, false);
-            holder.transform.localPosition = new Vector3(0, GroundOffset, 0);
-            var visual = holder.AddComponent<TankVisual>();
-            visual.Bind(owner.tank);
+            _visual = holder.AddComponent<TankVisual>();
+            _visual.Bind(owner.tank);
+            Apply(player.OnFoot);
+        }
 
-            bool hasModel = holder.transform.childCount > 0;
-            var greybox = player.transform.Find("Player_Greybox");
-            if (greybox != null) greybox.gameObject.SetActive(!hasModel);
-            Debug.Log(hasModel
-                ? $"[Visual] 玩家使用战车模型 {owner.tank.chassis?.data.partId}"
-                : "[Visual] 当前底盘没有模型，保留灰盒外观");
+        private static void Apply(bool onFoot)
+        {
+            var player = Object.FindAnyObjectByType<FieldPlayerController>();
+            if (player == null || _visual == null) return;
+            bool hasModel = _visual.transform.childCount > 0;
+            var parked = ParkedTank.Current;
+
+            Transform anchor = onFoot ? parked != null ? parked.transform : null : player.transform;
+            _visual.gameObject.SetActive(anchor != null);
+            if (anchor != null)
+            {
+                _visual.transform.SetParent(anchor, false);
+                _visual.transform.localPosition = new Vector3(0, GroundOffset, 0);
+                _visual.transform.localRotation = Quaternion.identity;
+            }
+            // 玩家：乘车且有模型时隐藏胶囊；停放战车：有模型时隐藏灰盒箱体
+            var capsule = player.transform.Find("Player_Greybox");
+            if (capsule != null) capsule.gameObject.SetActive(onFoot || !hasModel);
+            if (parked != null && parked.Greybox != null) parked.Greybox.SetActive(!hasModel);
+            Debug.Log($"[Visual] {(onFoot ? "步行" : "乘车")}，战车模型{(hasModel ? "已显示" : "缺失，使用灰盒")}");
         }
     }
 }
