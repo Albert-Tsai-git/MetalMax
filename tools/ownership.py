@@ -92,6 +92,7 @@ def check(agent: str) -> int:
 
 
 if __name__ == "__main__":
+    sys.stdout.reconfigure(encoding="utf-8")
     if len(sys.argv) >= 3 and sys.argv[1] == "check":
         sys.exit(check(sys.argv[2]))
     if len(sys.argv) >= 3 and sys.argv[1] == "who":

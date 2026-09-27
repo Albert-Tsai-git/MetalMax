@@ -238,7 +238,7 @@
 | 相机 | 固定俯视跟随 | 原型使用手写跟随组件；Cinemachine 可评估，不是已确认依赖 |
 | 战斗与车辆 | 纯逻辑类 + 场景表现层 | 已有部分逻辑脚本，详见“当前原型状态” |
 | 数据 | CSV → ScriptableObject | 已有部件/敌人 CSV 和 Editor 导入工具 |
-| 场景 | Field/Battle 分场景 | 原型场景已生成于 `Assets/Scenes/Prototype/` 并加入 Build Settings；正式场景待搭建 |
+| 场景 | Field/Battle 分场景 | 逻辑场景 `Assets/Scenes/Logic/`（Claude），美术场景 `Assets/Scenes/Art/{名称}_Art`（Codex）叠加加载；美术场景待搭建 |
 | 存档 | JSON + 稳定 ID | 尚未实现 |
 | 对话 | Yarn Spinner 或自研轻量数据格式 | 待定 |
 | 大量资源 | Addressables | 暂不启用，内容规模需要后再评估 |
@@ -262,9 +262,9 @@
 | Unity 版本 | 6000.6.3f1（`ProjectSettings/ProjectVersion.txt`） |
 | 渲染 | URP 17.6.0；`Assets/Settings/` 含 PC / Mobile 两套 RP Asset 与 Renderer |
 | 输入 | Input System 1.20.0；`activeInputHandler: 1`（仅新输入系统）；已有 `InputSystem_Actions.inputactions` |
-| 场景 | `Assets/Scenes/Prototype/Field.unity`、`Battle.unity` 已生成并加入 Build Settings |
+| 场景 | `Assets/Scenes/Logic/Field.unity`、`Battle.unity` 由“Game/生成逻辑场景”生成并加入 Build Settings |
 | 数据资产 | `Assets/GameData/` 已由 CSV 导入生成 9 个部件、4 个敌人 ScriptableObject |
-| 美术 | 仅有概念图 `Assets/Art/Concepts/TNK_Light_Rover_Concept_v01.svg`；所有部件与敌人的 `modelPrefab` 均未赋值 |
+| 美术 | 仅有概念图 `Assets/Art/Concepts/TNK_Light_Rover_Concept_v01.svg`；部件与敌人模型尚未制作（按 ID 放入 `Resources/Visuals/`，见 `docs/INTERFACE.md` I-03） |
 | 版本管理 | 仍未检测到 Git 元数据 |
 
 ### 系统状态
