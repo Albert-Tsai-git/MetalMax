@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Core;
+using Game.Tank;
 using UnityEngine;
 
 namespace Game.Battle
@@ -33,6 +34,18 @@ namespace Game.Battle
         [Tooltip("普通攻击的权重，与技能权重一起抽取")]
         [Min(0)] public int attackWeight = 1;
         public List<WeightedSkill> skills = new();
+
+        [Header("属性抗性")]
+        public List<Element> weak = new();
+        public List<Element> resist = new();
+        public List<Element> immune = new();
+
+        public const float WeakRate = 1.5f;
+        public const float ResistRate = 0.5f;
+
+        /// <summary>受到该属性攻击的伤害倍率</summary>
+        public float ElementRate(Element e) =>
+            immune.Contains(e) ? 0f : weak.Contains(e) ? WeakRate : resist.Contains(e) ? ResistRate : 1f;
 
         [Header("奖励")]
         [Min(0)] public int expReward = 10;

@@ -35,6 +35,11 @@ namespace Game.Battle
         public int goldReward;
         /// <summary>敌人配置（技能与 AI），玩家与演示单位为空；不存档</summary>
         [NonSerialized] public EnemyData enemyData;
+        /// <summary>战斗中的分组序号：同一场战斗中同种敌人为一组（从 0 开始）；玩家方全部为 0</summary>
+        [NonSerialized] public int groupIndex;
+
+        /// <summary>受到该属性攻击的伤害倍率（没有敌人配置时为 1）</summary>
+        public float ElementRate(Element e) => enemyData?.ElementRate(e) ?? 1f;
 
         public bool IsAlive => hp > 0;
 

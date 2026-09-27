@@ -207,7 +207,7 @@ namespace Game.Battle
                 GUILayout.Label("选择目标：", _label);
                 foreach (var e in _battle.AliveEnemies)
                 {
-                    if (!GUILayout.Button($"{e.name} (HP {e.hp})", _btn)) continue;
+                    if (!GUILayout.Button($"[{(char)('A' + e.groupIndex)}组] {e.name} (HP {e.hp})", _btn)) continue;
                     Commit(_chosenType == ActionType.TankWeapon
                         ? BattleAction.Fire(_current, _chosenWeapon, e)
                         : BattleAction.Attack(_current, e));
@@ -230,8 +230,8 @@ namespace Game.Battle
                     if (GUILayout.Button($"{wd.DisplayName}  [{ammo}]", _btn))
                     {
                         _chosenWeapon = wp;
-                        // 非单体武器不需要选目标
-                        if (wd.range == AttackRange.Single) _chosenType = ActionType.TankWeapon;
+                        // 单体与一组武器需要选目标（一组打目标所在组），全体武器直接发射
+                        if (wd.range != AttackRange.All) _chosenType = ActionType.TankWeapon;
                         else Commit(BattleAction.Fire(_current, wp, _battle.AliveEnemies.First()));
                     }
                     GUI.enabled = true;

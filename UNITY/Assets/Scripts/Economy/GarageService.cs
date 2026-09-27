@@ -46,7 +46,18 @@ namespace Game.Economy
             return OpResult.Ok;
         }
 
-        /// <summary>修理全部部件并补满 SP 与弹药；金钱不足时不修理</summary>
+        /// <summary>补满全部武器弹药，按每发价格收费；金钱不足时不补</summary>
+        public static OpResult Refill(PlayerState s, TankLoadout tank, out int cost)
+        {
+            cost = tank.RefillCost();
+            if (cost == 0) return OpResult.NothingToDo;
+            if (!s.TrySpend(cost)) return OpResult.NotEnoughGold;
+            tank.RefillAll();
+            Debug.Log($"[Garage] {tank.tankName} 补充弹药，花费 {cost}G");
+            return OpResult.Ok;
+        }
+
+        /// <summary>修理全部部件并补满 SP；金钱不足时不修理（弹药用 Refill 另行补给）</summary>
         public static OpResult Repair(PlayerState s, TankLoadout tank, out int cost)
         {
             cost = tank.RepairCost();

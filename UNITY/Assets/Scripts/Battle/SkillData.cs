@@ -13,6 +13,7 @@ namespace Game.Battle
         [Tooltip("连击次数，每次单独判定命中")]
         [Min(1)] public int hits = 1;
         public AttackRange range = AttackRange.Single;
+        public Element element = Element.Normal;
         [Tooltip("命中修正（百分点）")]
         public int accuracyBonus;
         [Tooltip("命中战车时额外损坏部件的概率（0~100），与 SP 无关")]

@@ -145,10 +145,11 @@ namespace Game.EditorTools
             ez.encounterRatePerMeter = 0.05f;
             ez.groups = new List<EncounterZone.EnemyGroup>
             {
-                Group(3, "ENM_Ant", "ENM_Ant"),
+                // 各组合考验不同武器：蚁群（一组、怕火）→ 副炮；炮台虫（硬、怕电）→ 主炮；混编两组 → SE
+                Group(3, "ENM_Ant", "ENM_Ant", "ENM_Ant", "ENM_Ant"),
                 Group(2, "ENM_TurretBug"),
-                Group(2, "ENM_Dog", "ENM_Ant"),
-                Group(1, "ENM_Dog", "ENM_Dog", "ENM_Dog"),
+                Group(2, "ENM_Dog", "ENM_Dog", "ENM_Ant", "ENM_Ant"),
+                Group(1, "ENM_TurretBug", "ENM_Ant", "ENM_Ant", "ENM_Ant"),
             };
 
             Chest("pump_01", new Vector3(4, 0, 20), "gold:+300");

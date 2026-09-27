@@ -20,11 +20,21 @@ namespace Game.Tank
         SpecialEq,  // SE：导弹、火焰等
     }
 
+    /// <summary>攻击属性。敌人可对属性弱（伤害 ×1.5）、抗（×0.5）、免疫（×0）</summary>
+    public enum Element
+    {
+        Normal,     // 实弹
+        Fire,       // 火焰
+        Ice,        // 冷冻
+        Electric,   // 电击
+        Sonic,      // 音波
+    }
+
     /// <summary>攻击范围</summary>
     public enum AttackRange
     {
         Single,     // 单体
-        Group,      // 一组
+        Group,      // 一组（目标所在的同种敌人组）
         All,        // 全体
     }
 

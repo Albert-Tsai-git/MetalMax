@@ -239,15 +239,28 @@ namespace Game.Tank
             return cost;
         }
 
-        /// <summary>修理全部部件并补满 SP、弹药，返回费用（扣费由调用方负责）</summary>
+        /// <summary>补满全部武器弹药的费用</summary>
+        public int RefillCost()
+        {
+            int cost = 0;
+            foreach (var w in weapons)
+                if (w?.data is WeaponData wd && wd.maxAmmo >= 0)
+                    cost += (wd.maxAmmo - w.currentAmmo) * wd.ammoPrice;
+            return cost;
+        }
+
+        /// <summary>补满全部武器弹药（扣费由调用方负责）</summary>
+        public void RefillAll()
+        {
+            foreach (var w in weapons) w?.Refill();
+            OnChanged?.Invoke();
+        }
+
+        /// <summary>修理全部部件并补满 SP，返回费用（扣费由调用方负责）。弹药需另行补给。</summary>
         public int RepairAll()
         {
             int cost = RepairCost();
-            foreach (var p in AllParts())
-            {
-                p.Repair();
-                p.Refill();
-            }
+            foreach (var p in AllParts()) p.Repair();
             currentSp = MaxSp;
             Debug.Log($"[Tank] {tankName} 全面修理，费用 {cost}G");
             OnChanged?.Invoke();

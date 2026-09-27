@@ -13,11 +13,13 @@ namespace Game.Battle
         public const float RandomMax = 1.1f;
         public const int HumanBaseAccuracy = 90;
 
-        public static int Damage(int attack, int defense, Random rng)
+        /// <summary>伤害 = (攻击 - 防御 / 2) × 随机 × 属性倍率；倍率为 0（免疫）时伤害为 0，否则最低 1</summary>
+        public static int Damage(int attack, int defense, Random rng, float elementRate = 1f)
         {
+            if (elementRate <= 0f) return 0;
             float raw = attack - defense / 2f;
             float rand = RandomMin + (float)rng.NextDouble() * (RandomMax - RandomMin);
-            return Math.Max(1, (int)(raw * rand));
+            return Math.Max(1, (int)(raw * rand * elementRate));
         }
 
         /// <summary>命中率 = 基础命中 + C 装置加成 - 目标回避，限制在 5%~99%</summary>

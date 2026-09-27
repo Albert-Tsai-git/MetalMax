@@ -51,7 +51,37 @@ namespace Game.Battle
             this.players = players;
             this.enemies = enemies;
             _rng = seed == 0 ? new Random() : new Random(seed);
+            AssignGroups();
             Log($"战斗开始！遭遇 {string.Join("、", enemies)}");
+        }
+
+        /// <summary>同种敌人（数据 ID 相同）编为一组，按首次出现顺序编号；没有 ID 的单位各自成组</summary>
+        private void AssignGroups()
+        {
+            var order = new List<string>();
+            foreach (var e in enemies)
+            {
+                string key = string.IsNullOrEmpty(e.id) ? $"#{enemies.IndexOf(e)}" : e.id;
+                if (!order.Contains(key)) order.Add(key);
+                e.groupIndex = order.IndexOf(key);
+            }
+            foreach (var p in players) p.groupIndex = 0;
+        }
+
+        /// <summary>敌方现存的组数</summary>
+        public int AliveGroupCount => AliveEnemies.Select(e => e.groupIndex).Distinct().Count();
+
+        /// <summary>按攻击范围展开目标：单体为指定目标，一组为目标所在组的全部存活单位，全体为对方全部</summary>
+        private List<Combatant> ExpandTargets(BattleAction a, AttackRange range)
+        {
+            var foes = a.actor.side == Side.Player ? AliveEnemies.ToList() : AlivePlayers.ToList();
+            var main = RetargetIfDead(a);
+            return range switch
+            {
+                AttackRange.Single => new List<Combatant> { main },
+                AttackRange.Group => main == null ? new List<Combatant>() : foes.Where(f => f.groupIndex == main.groupIndex).ToList(),
+                _ => foes,
+            };
         }
 
         /// <summary>广播战斗开始；由创建方在订阅完成后调用</summary>
@@ -148,8 +178,7 @@ namespace Game.Battle
                 BattleEvents.RaiseMissed(actor, target);
                 return;
             }
-            int dmg = DamageCalculator.Damage(actor.attack, target.TotalDefense, _rng);
-            ApplyDamage(actor, target, dmg);
+            ApplyElementDamage(actor, target, actor.attack, target.TotalDefense, Element.Normal);
         }
 
         private void DoTankWeapon(BattleAction a)
@@ -166,14 +195,7 @@ namespace Game.Battle
             var wd = (WeaponData)weapon.data;
             if (wd.maxAmmo >= 0) weapon.currentAmmo--;
 
-            // 根据攻击范围展开目标
-            var foes = actor.side == Side.Player ? AliveEnemies.ToList() : AlivePlayers.ToList();
-            var targets = wd.range switch
-            {
-                AttackRange.Single => new List<Combatant> { RetargetIfDead(a) },
-                AttackRange.Group => foes.Take(3).ToList(),
-                _ => foes,
-            };
+            var targets = ExpandTargets(a, wd.range);
 
             Log($"{actor} 发射 {wd.DisplayName}！");
             int acc = DamageCalculator.WeaponAccuracy(actor, weapon);
@@ -185,7 +207,7 @@ namespace Game.Battle
                     BattleEvents.RaiseMissed(actor, t);
                     continue;
                 }
-                ApplyDamage(actor, t, DamageCalculator.Damage(weapon.Attack, t.TotalDefense, _rng));
+                ApplyElementDamage(actor, t, weapon.Attack, t.TotalDefense, wd.element);
             }
         }
 
@@ -207,13 +229,7 @@ namespace Game.Battle
                 return;
             }
 
-            var foes = actor.side == Side.Player ? AliveEnemies.ToList() : AlivePlayers.ToList();
-            var targets = skill.range switch
-            {
-                AttackRange.Single => new List<Combatant> { RetargetIfDead(a) },
-                AttackRange.Group => foes.Take(3).ToList(),
-                _ => foes,
-            };
+            var targets = ExpandTargets(a, skill.range);
             int atk = actor.attack * skill.power / 100;
             for (int h = 0; h < skill.hits; h++)
             {
@@ -227,7 +243,7 @@ namespace Game.Battle
                     }
                     // 穿透战车的技能按乘员自身防御计算
                     int def = skill.pierceTank ? t.defense : t.TotalDefense;
-                    ApplyDamage(actor, t, DamageCalculator.Damage(atk, def, _rng), skill.pierceTank, skill.partBreakChance);
+                    ApplyElementDamage(actor, t, atk, def, skill.element, skill.pierceTank, skill.partBreakChance);
                 }
             }
         }
@@ -244,6 +260,20 @@ namespace Game.Battle
             }
             Log($"{a.actor} 使用了 {GameDB.Item(a.itemId)?.DisplayName}");
             BattleEvents.RaiseItemUsed(a.actor, a.itemId, target);
+        }
+
+        /// <summary>计算属性倍率后结算伤害；弱点、抗性、免疫会广播 ElementHit</summary>
+        private void ApplyElementDamage(Combatant attacker, Combatant target, int attack, int defense, Element element,
+            bool pierceTank = false, int partBreakChance = 0)
+        {
+            float rate = target.ElementRate(element);
+            if (!Mathf.Approximately(rate, 1f))
+            {
+                Log(rate <= 0f ? $"  {target} 对{element}攻击免疫" : rate > 1f ? "  效果拔群！" : "  效果不佳……");
+                BattleEvents.RaiseElementHit(target, element, rate);
+            }
+            if (rate <= 0f) return;
+            ApplyDamage(attacker, target, DamageCalculator.Damage(attack, defense, _rng, rate), pierceTank, partBreakChance);
         }
 
         /// <summary>

@@ -277,6 +277,13 @@ namespace Game.EditorTools
 
         #region 各表字段映射
 
+        private static T ParseEnum<T>(string s, T fallback, Row r) where T : struct
+        {
+            if (Enum.TryParse(s, true, out T v)) return v;
+            Debug.LogError($"[Import] 第 {r.Line} 行：无法识别的值 {s}（{typeof(T).Name}）");
+            return fallback;
+        }
+
         private static T Reuse<T>(ScriptableObject existing) where T : ScriptableObject =>
             existing as T ?? ScriptableObject.CreateInstance<T>();
 
@@ -313,6 +320,8 @@ namespace Game.EditorTools
                     w.accuracy = r.Int("accuracy", 80);
                     w.maxAmmo = r.Int("ammo", -1);
                     w.attackPerUpgrade = r.Int("attack_up", 10);
+                    w.element = ParseEnum(r.Str("element", "Normal"), Element.Normal, r);
+                    w.ammoPrice = r.Int("ammo_price", 10);
                     p = w;
                     break;
                 default:
@@ -361,6 +370,7 @@ namespace Game.EditorTools
             k.accuracyBonus = r.Int("accuracy_bonus");
             k.partBreakChance = r.Int("part_break");
             k.pierceTank = r.Bool("pierce_tank");
+            k.element = ParseEnum(r.Str("element", "Normal"), Element.Normal, r);
             k.healPercent = r.Int("heal_percent");
             k.name = k.skillId;
             return k;
@@ -405,6 +415,9 @@ namespace Game.EditorTools
             e.isBounty = r.Bool("bounty_flag");
             e.bounty = r.Int("bounty");
             e.ai = (AiType)Enum.Parse(typeof(AiType), r.Str("ai", "Random"), true);
+            e.weak = r.List("weak").Select(x => ParseEnum(x, Element.Normal, r)).ToList();
+            e.resist = r.List("resist").Select(x => ParseEnum(x, Element.Normal, r)).ToList();
+            e.immune = r.List("immune").Select(x => ParseEnum(x, Element.Normal, r)).ToList();
             e.attackWeight = r.Int("attack_weight", 1);
             // skills 列：SKL_A:3|SKL_B:1（冒号后为权重，省略为 1）
             e.skills = r.List("skills").Select(x =>

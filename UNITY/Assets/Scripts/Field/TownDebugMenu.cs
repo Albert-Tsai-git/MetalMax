@@ -37,6 +37,9 @@ namespace Game.Field
                         if (r == OpResult.Ok) GarageService.FillArmor(p.tank);
                         _msg = Result(r);
                     }
+                    int ammo = p.tank.RefillCost();
+                    if (GUILayout.Button($"补充弹药 {p.tank.tankName}（{ammo}G）"))
+                        _msg = Result(GarageService.Refill(s, p.tank, out _));
                 }
             }
 
