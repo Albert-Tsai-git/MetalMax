@@ -59,8 +59,12 @@ namespace Game.EditorTools
                 int before = s.Gold;
                 Check(ShopService.Sell(s, oldChassis) == OpResult.Ok && s.Gold == before + ShopService.SellPrice(oldChassis), "卖出旧底盘");
 
-                // 改造：成功 / 满级 / 金钱不足
+                // 改造：超重拒绝（重型底盘 + 导弹已超出 V8 载重）/ 换 V12 后成功 / 满级 / 金钱不足
                 var cannon = tank.weapons[0];
+                Check(tank.TotalWeight > tank.LoadCapacity && !tank.CanMove, "重型底盘配 V8 超重无法行驶");
+                Check(GarageService.Upgrade(s, cannon, tank) == OpResult.Overweight && cannon.upgradeLevel == 0, "超重时拒绝改造");
+                Check(ShopService.Buy(s, shop, GameDB.Part("TNK_Engine_V12"), out var v12) == OpResult.Ok, "购买 V12");
+                Check(GarageService.Equip(s, tank, v12) == OpResult.Ok && tank.CanMove, "换 V12 后可行驶");
                 Check(GarageService.Upgrade(s, cannon, tank) == OpResult.Ok && cannon.upgradeLevel == 1, "主炮改造 Lv1");
                 cannon.upgradeLevel = cannon.data.maxUpgradeLevel;
                 Check(GarageService.Upgrade(s, cannon, tank) == OpResult.MaxUpgrade, "满级拒绝改造");
