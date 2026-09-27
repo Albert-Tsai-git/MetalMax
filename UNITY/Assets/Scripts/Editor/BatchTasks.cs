@@ -17,6 +17,7 @@ namespace Game.EditorTools
                 PrototypeSceneBuilder.Build();
                 BattleSmokeTest.Run();
                 EconomySmokeTest.Run();
+                SaveSmokeTest.Run();
                 Debug.Log("[Batch] RebuildAll 完成");
             }
             catch (System.Exception e)

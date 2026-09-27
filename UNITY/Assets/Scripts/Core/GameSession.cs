@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Battle;
+using Game.Core.Save;
 using Game.Tank;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -80,6 +81,26 @@ namespace Game.Core
             PendingEnemies = null;
             Debug.Log($"[Session] 战斗结束 {result}，金钱 {gold}G，经验 {exp}");
             SceneManager.LoadScene(string.IsNullOrEmpty(_returnScene) ? FieldSceneName : _returnScene);
+        }
+
+        /// <summary>存档：记录当前逻辑场景与玩家位置</summary>
+        public OpResult SaveGame(int slot, Vector3 playerPosition)
+        {
+            string scene = ArtSceneLoader.CurrentLogicScene ?? SceneManager.GetActiveScene().name;
+            return SaveSystem.Save(slot, State, scene, playerPosition);
+        }
+
+        /// <summary>读档：替换玩家状态并回到存档时的场景与位置</summary>
+        public OpResult LoadGame(int slot)
+        {
+            var r = SaveSystem.Load(slot, out var data, out var state);
+            if (r != OpResult.Ok) return r;
+            State = state;
+            PendingEnemies = null;
+            _returnPosition = data.position;
+            _hasReturnPosition = true;
+            SceneManager.LoadScene(string.IsNullOrEmpty(data.scene) ? FieldSceneName : data.scene);
+            return r;
         }
 
         /// <summary>野外场景加载后，取出应该回到的位置（只取一次）</summary>

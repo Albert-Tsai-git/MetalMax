@@ -18,5 +18,8 @@ namespace Game.Core
         SlotEmpty,          // 该位置没有部件
         UnknownPart,        // 未知部件类型
         NothingToDo,        // 无需操作（如没有需要修理的部件）
+        SlotNotFound,       // 存档槽位不存在
+        IoError,            // 文件读写失败
+        Corrupted,          // 存档损坏，无法读取
     }
 }

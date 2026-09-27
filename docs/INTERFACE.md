@@ -17,6 +17,7 @@
 | I-10 | 战斗单位 `Combatant.id` 为数据 ID（`ENM_` / `CHR_`），表现层据此取模型（I-03）与文本（I-02）；演示单位可能为空。 | ✅ | ✅ |
 | I-11 | 商店与车库（`Game.Economy`）：`ShopService.Buy/Sell/SellPrice`、`GarageService.Equip/Unequip/Upgrade/Repair/FillArmor`，均返回 `Game.Core.OpResult`；玩家状态 `GameSession.Instance.State`（`PlayerState`：`Gold`、`inventory`）；商店 `GameDB.Shop(ID).goods`。事件 `EconomyEvents`：`GoldChanged(旧, 新)`、`InventoryChanged()`、`Bought(商店ID, 部件)`、`Sold(部件, 金钱)`、`Upgraded(部件)`。 | ✅ | ⏳ |
 | I-12 | 操作结果提示文本键 `UI.Result.{OpResult 枚举名}`（如 `UI.Result.NotEnoughGold`）；商店 ID 前缀 `SHP_`，名称键 `{ID}.name`。 | ✅ | ⏳ |
+| I-13 | 存档（`Game.Core.Save`）：3 个槽位（0～2）；`GameSession.Instance.SaveGame(槽位, 玩家位置)`、`LoadGame(槽位)`；存档列表用 `SaveSystem.Peek(槽位)`（`savedAt`、`gold`、`scene`），`SaveSystem.Exists/Delete`；结果为 `OpResult`（新增 `SlotNotFound`、`IoError`、`Corrupted`，文本键同 I-12）。事件 `SaveSystem.Saved(槽位, 结果)`、`Loaded(槽位, 结果)`。 | ✅ | ⏳ |
 
 ## 待定条款
 

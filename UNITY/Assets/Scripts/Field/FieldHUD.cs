@@ -9,11 +9,25 @@ namespace Game.Field
     /// <summary>野外原型 HUD：显示金钱、经验、队伍状态；按 R 全面修理（模拟回城）</summary>
     public class FieldHUD : MonoBehaviour
     {
-        private string _msg = "WASD 移动，进入红色区域会随机遇敌，R 修理";
+        private string _msg = "WASD 移动，进入红色区域会随机遇敌，R 修理，F5 存档，F9 读档";
 
         private void Update()
         {
-            if (Keyboard.current?.rKey.wasPressedThisFrame != true) return;
+            var kb = Keyboard.current;
+            if (kb == null) return;
+            if (kb.f5Key.wasPressedThisFrame)
+            {
+                var r = GameSession.Instance.SaveGame(0, FindAnyObjectByType<FieldPlayerController>()?.transform.position ?? Vector3.zero);
+                _msg = r == OpResult.Ok ? "已存档（槽位 0）" : $"存档失败：{r}";
+                return;
+            }
+            if (kb.f9Key.wasPressedThisFrame)
+            {
+                var r = GameSession.Instance.LoadGame(0);
+                if (r != OpResult.Ok) _msg = $"读档失败：{r}";
+                return;
+            }
+            if (!kb.rKey.wasPressedThisFrame) return;
             var s = GameSession.Instance;
             int cost = 0;
             var result = OpResult.Ok;
