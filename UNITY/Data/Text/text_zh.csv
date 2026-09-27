@@ -1,0 +1,19 @@
+key,text
+TNK_Chassis_Light.name,轻型越野底盘
+TNK_Chassis_Light.desc,车身轻巧，适合穿行盐壳地和旧公路。可装主炮与副炮。
+TNK_Chassis_Heavy.name,重型承载底盘
+TNK_Chassis_Heavy.desc,装甲厚实，可容纳主炮、副炮和特殊武器；远行前记得核对载重。
+TNK_Engine_V8.name,V8 回收引擎
+TNK_Engine_V12.name,V12 重载引擎
+TNK_CUnit_Basic.name,基础 C 装置
+TNK_CUnit_Twin.name,双核 C 装置
+TNK_CUnit_Twin.desc,双核心协同处理指令，为每回合的追加行动提供支持。
+WPN_Cannon_75.name,75 毫米主炮
+WPN_MG_77.name,7.7 毫米机枪
+WPN_SE_Missile.name,双联装导弹
+ENM_Ant.name,盐壳变异蚁
+ENM_TurretBug.name,炮台虫
+ENM_Dog.name,荒原野狗
+ENM_Bounty_IronCrab.name,铁钳巨蟹
+CHR_Hunter.name,猎人
+CHR_Mechanic.name,机械师
