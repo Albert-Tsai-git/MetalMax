@@ -1,6 +1,6 @@
 # 协作约定（Claude × Codex）
 
-> 版本：v0.5（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
+> 版本：v0.6（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
 > 本文件是两个 AI 共同遵守的唯一协作约定。任何一方修改“接口约定”一节时，须在文末变更记录中写明，并由用户转达另一方。
 
 ---
@@ -54,7 +54,8 @@
 3. **提交**：提交信息以 `[Claude]` / `[Codex]` 开头，且只提交自己的路径：`git commit -m "[Codex] ..." -- <路径>`。`commit-msg` 钩子会拒绝越界文件，不得绕过。
 4. **Unity 独占**：同一时间只有一方使用 Unity（Editor 或 batchmode）。使用前 `python tools/msg.py lock <我> unity "用途"`，结束后 `unlock`；加锁失败即等待。
 5. **需要对方配合**：用 §3 通讯发 `request`；需要长期跟踪的事项同时登记到 §4。不直接改对方文件，发现对方文件有问题只报告。
-6. **分歧**：列出方案交用户决定，不覆盖对方成果。
+6. **Claude 的独立工作副本**：Claude 在 `D:\code\GAME-claude`（分支 `claude/dev`）开发，离线编译通过后用 `python tools/integrate.py` 快进合并到主目录；主目录中不会出现 Claude 的半成品代码。Codex 在主目录 `main` 上工作。
+7. **分歧**：列出方案交用户决定，不覆盖对方成果。
 
 ## 3. 通讯
 
@@ -79,6 +80,7 @@
 
 ## 5. 变更记录
 
+- **v0.6**（2026-09-27，Claude）：Claude 改用独立工作副本开发，经编译检查后集成（§2.6）。
 - **v0.5**（2026-09-27，Claude）：新增 §3 通讯机制与 Unity 锁（`tools/msg.py`），取代手工登记 Unity 占用。
 - **v0.4**（2026-09-27，Claude）：对接条款移至 `docs/INTERFACE.md`；路径所有权改由 `tools/ownership.py` 定义并以提交钩子强制；完成迁移：名称/描述移入文本表、美术引用改为按 ID 约定路径加载、场景拆为逻辑/美术、程序集拆为 Runtime/Editor/Presentation。
 - **v0.3**（2026-09-27，Claude）：按用户划分原则重写职责分工。

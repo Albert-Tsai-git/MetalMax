@@ -12,6 +12,18 @@ import sys
 import tempfile
 
 ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "UNITY")
+
+
+def main_unity_dir() -> str:
+    """csproj 与 Library 只存在于主工作目录；在独立工作副本中运行时，从主目录取引用"""
+    if os.path.isdir(os.path.join(ROOT, "Library")):
+        return ROOT
+    out = subprocess.run(["git", "worktree", "list", "--porcelain"], capture_output=True, text=True, cwd=ROOT).stdout
+    main = out.splitlines()[0].split(" ", 1)[1]
+    return os.path.join(main, "UNITY")
+
+
+PROJ = main_unity_dir()
 EDITOR = sys.argv[1] if len(sys.argv) > 1 else r"D:\software\unity\Editor\6000.6.3f1\Editor"
 DOTNET = os.path.join(EDITOR, "Data", "NetCoreRuntime", "dotnet.exe")
 CSC = glob.glob(os.path.join(EDITOR, "Data", "DotNetSdk", "sdk", "*", "Roslyn", "bincore", "csc.dll"))
@@ -38,7 +50,7 @@ def main() -> int:
     built: list[str] = []
     failed = False
     for name, src, exclude in ASSEMBLIES:
-        csproj = os.path.join(ROOT, f"{name}.csproj")
+        csproj = os.path.join(PROJ, f"{name}.csproj")
         if not os.path.exists(csproj):
             print(f"[compile] 缺少 {name}.csproj，需先让 Unity 生成一次工程文件")
             return 2
@@ -54,7 +66,7 @@ def main() -> int:
                 f.write(f"-r:\"{r}\"\n")
             for s in files:
                 f.write(f"\"{s}\"\n")
-        res = subprocess.run([DOTNET, CSC[0], f"@{rsp}"], capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=ROOT)
+        res = subprocess.run([DOTNET, CSC[0], f"@{rsp}"], capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=PROJ)
         errors = [l for l in res.stdout.splitlines() if "error CS" in l]
         warnings = [l for l in res.stdout.splitlines() if "warning CS" in l]
         print(f"[compile] {name}：{len(files)} 个文件，错误 {len(errors)}，警告 {len(warnings)}")
