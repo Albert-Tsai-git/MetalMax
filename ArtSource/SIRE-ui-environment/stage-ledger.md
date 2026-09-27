@@ -53,3 +53,6 @@ Workspace: D:\\code\\GAME
 - R7 — 执行中：T01 batchmode Unity 编译/Prefab构建通过；T02-T04 需要 Editor/Player UI。当前 desktop plugin未提供 node_repl Windows window API，mcp CUA仅支持浏览器，故不能注入真实游戏输入或观察画面；不以 batchmode冒充。
 - R8 — 执行完毕：FBX→Animator→Resources Prefab 导入路径交叉验证通过；Player_Greybox 可见性由实际角色Prefab存在状态协调。界面/环境内容范围没有被本角色交付覆盖。
 - R9 — 执行中：保留未被触碰的 Settings/灰盒材质用户/Claude改动，提交严格使用路径白名单；机器归档 path仍未配置。
+- R9 Closure audit — 执行完毕：提交 bd8b89f 只含 44 个 Codex 所有路径；共享 Settings/Greybox 用户/Claude 变更与临时 UnityPreviews logs 未提交。机器级 SIRE archive 未执行，原因是 `sire_paths.archive_database_path()` 返回 None；不推测目标路径。
+- R10 Native computer operator — 执行完毕 / 跳过：已在授权 Unity 锁内运行 Unity 6 batchmode 编译、FBX 导入和 Prefab 构建。Editor/Player 窗口级真实输入操作跳过，当前工具无 Windows `node_repl` 原生窗口 API；不可冒充 Play 验收。
+- R0 Coordinator — 执行完毕：用户 UI/环境状态问题已按资产清单回答；角色资产/Animator/Prefab 已提交；实际 Play 画面、移动及上下车测试仍待 Claude/用户的可控 Unity 窗口完成。下一步将 handoff 给 Claude 重跑 RebuildAll 与十项冒烟测试。
