@@ -1,0 +1,7 @@
+{
+    "name": "Game.Presentation.Editor",
+    "rootNamespace": "Game.Presentation",
+    "references": ["Game.Runtime", "Game.Presentation"],
+    "includePlatforms": ["Editor"],
+    "autoReferenced": false
+}
