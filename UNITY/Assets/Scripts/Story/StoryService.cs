@@ -85,9 +85,11 @@ namespace Game.Story
         public static DialogueRunner StartDialogue(PlayerState s, DialogueData data)
         {
             if (ActiveDialogue != null || data == null) return null;
-            ActiveDialogue = new DialogueRunner(data, s);
-            ActiveDialogue.Begin();
-            return ActiveDialogue;
+            // 对话可能在 Begin 中立即结束（所有节点条件都不满足），因此返回局部引用而非 ActiveDialogue
+            var runner = new DialogueRunner(data, s);
+            ActiveDialogue = runner;
+            runner.Begin();
+            return runner;
         }
 
         /// <summary>中止进行中的对话（切换场景、读档时）</summary>
