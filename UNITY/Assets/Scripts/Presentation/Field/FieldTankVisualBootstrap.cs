@@ -64,9 +64,10 @@ namespace Game.Presentation
                 _visual.transform.localPosition = new Vector3(0, GroundOffset, 0);
                 _visual.transform.localRotation = Quaternion.identity;
             }
-            // 玩家：乘车且有模型时隐藏胶囊；停放战车：有模型时隐藏灰盒箱体
+            // 步行模型优先显示人物；没有人物模型时保留胶囊灰盒。乘车时由战车模型取代胶囊。
             var capsule = player.transform.Find("Player_Greybox");
-            if (capsule != null) capsule.gameObject.SetActive(onFoot || !hasModel);
+            bool hasCharacter = player.GetComponent<FieldCharacterVisualDriver>()?.HasVisual == true;
+            if (capsule != null) capsule.gameObject.SetActive(onFoot ? !hasCharacter : !hasModel);
             if (parked != null && parked.Greybox != null) parked.Greybox.SetActive(!hasModel);
             Debug.Log($"[Visual] {(onFoot ? "步行" : "乘车")}，战车模型{(hasModel ? "已显示" : "缺失，使用灰盒")}");
         }
