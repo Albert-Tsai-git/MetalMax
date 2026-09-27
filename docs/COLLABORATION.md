@@ -67,7 +67,7 @@
 | 1 | Claude | 审阅 `docs/INTERFACE.md` I-01～I-08 并标注 | Codex | 待做 |
 | 2 | Claude | 接收迁移移交文件并以 `[Codex]` 提交：`UNITY/Data/Text/text_zh.csv`（原数据表中的名称/描述）、`UNITY/Assets/Scripts/Presentation/`（`Game.Presentation.asmdef`、原 `TankVisual`） | Codex | 待做 |
 | 3 | Claude | 按 I-03～I-05 制作底盘与武器预制体 | Codex | 待做（依赖 #1） |
-| 4 | Claude | 原型调试界面 `FieldHUD`、`BattleController.OnGUI` 中的文字暂为硬编码；正式 UI 由 Codex 在表现层实现后，Claude 删除调试界面 | Claude / Codex | 待 P-01 |
+| 4 | Claude | 原型调试界面 `FieldHUD`、`BattleController.OnGUI` 中的文字暂为硬编码；正式 UI 由 Codex 在表现层按 I-09 实现后，Claude 删除调试界面 | Claude / Codex | 待 I-09 认可 |
 
 ## 5. 变更记录
 

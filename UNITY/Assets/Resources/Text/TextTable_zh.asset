@@ -14,35 +14,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::Game.Core.TextTable
   entries:
   - key: TNK_Chassis_Light.name
-    text: "\u8F7B\u578B\u5E95\u76D8"
+    text: "\u8F7B\u578B\u8D8A\u91CE\u5E95\u76D8"
   - key: TNK_Chassis_Light.desc
-    text: "\u8F7B\u5FEB\u7684\u8D8A\u91CE\u5E95\u76D8"
+    text: "\u8F66\u8EAB\u8F7B\u5DE7\uFF0C\u9002\u5408\u7A7F\u884C\u76D0\u58F3\u5730\u548C\u65E7\u516C\u8DEF\u3002\u53EF\u88C5\u4E3B\u70AE\u4E0E\u526F\u70AE\u3002"
   - key: TNK_Chassis_Heavy.name
-    text: "\u91CD\u578B\u5E95\u76D8"
+    text: "\u91CD\u578B\u627F\u8F7D\u5E95\u76D8"
   - key: TNK_Chassis_Heavy.desc
-    text: "\u539A\u91CD\u4F46\u7F13\u6162"
+    text: "\u88C5\u7532\u539A\u5B9E\uFF0C\u53EF\u5BB9\u7EB3\u4E3B\u70AE\u3001\u526F\u70AE\u548C\u7279\u6B8A\u6B66\u5668\uFF1B\u8FDC\u884C\u524D\u8BB0\u5F97\u6838\u5BF9\u8F7D\u91CD\u3002"
   - key: TNK_Engine_V8.name
-    text: "V8 \u5F15\u64CE"
+    text: "V8 \u56DE\u6536\u5F15\u64CE"
   - key: TNK_Engine_V12.name
-    text: "V12 \u5F15\u64CE"
+    text: "V12 \u91CD\u8F7D\u5F15\u64CE"
   - key: TNK_CUnit_Basic.name
     text: "\u57FA\u7840 C \u88C5\u7F6E"
   - key: TNK_CUnit_Twin.name
     text: "\u53CC\u6838 C \u88C5\u7F6E"
   - key: TNK_CUnit_Twin.desc
-    text: "\u6BCF\u56DE\u5408\u884C\u52A8\u4E24\u6B21"
+    text: "\u53CC\u6838\u5FC3\u534F\u540C\u5904\u7406\u6307\u4EE4\uFF0C\u4E3A\u6BCF\u56DE\u5408\u7684\u8FFD\u52A0\u884C\u52A8\u63D0\u4F9B\u652F\u6301\u3002"
   - key: WPN_Cannon_75.name
-    text: "75mm \u70AE"
+    text: "75 \u6BEB\u7C73\u4E3B\u70AE"
   - key: WPN_MG_77.name
-    text: "7.7mm \u673A\u67AA"
+    text: "7.7 \u6BEB\u7C73\u673A\u67AA"
   - key: WPN_SE_Missile.name
-    text: "\u53CC\u8054\u5BFC\u5F39"
+    text: "\u53CC\u8054\u88C5\u5BFC\u5F39"
   - key: ENM_Ant.name
-    text: "\u53D8\u5F02\u8681"
+    text: "\u76D0\u58F3\u53D8\u5F02\u8681"
   - key: ENM_TurretBug.name
     text: "\u70AE\u53F0\u866B"
   - key: ENM_Dog.name
-    text: "\u91CE\u72D7"
+    text: "\u8352\u539F\u91CE\u72D7"
   - key: ENM_Bounty_IronCrab.name
     text: "\u94C1\u94B3\u5DE8\u87F9"
   - key: CHR_Hunter.name

@@ -17,6 +17,16 @@ namespace Game.EditorTools
         public static void Run()
         {
             int victory = 0, defeat = 0, escaped = 0, stuck = 0;
+            // 统计对外事件，确认表现层能收到
+            int started = 0, turns = 0, hits = 0, misses = 0, defeated = 0, ended = 0;
+            System.Action<BattleSystem> onStart = _ => started++;
+            System.Action<int> onTurn = _ => turns++;
+            System.Action<Combatant, Combatant, int, bool> onHit = (_, _, _, _) => hits++;
+            System.Action<Combatant, Combatant> onMiss = (_, _) => misses++;
+            System.Action<Combatant> onDefeat = _ => defeated++;
+            System.Action<BattleState, int, int> onEnd = (_, _, _) => ended++;
+            BattleEvents.Started += onStart; BattleEvents.TurnStarted += onTurn; BattleEvents.Hit += onHit;
+            BattleEvents.Missed += onMiss; BattleEvents.Defeated += onDefeat; BattleEvents.Ended += onEnd;
             for (int seed = 1; seed <= 20; seed++)
             {
                 var party = DemoFactory.CreateParty();
@@ -27,6 +37,7 @@ namespace Game.EditorTools
                 }.Where(e => e != null).Select((e, i) => e.CreateCombatant($" {i}")).ToList();
 
                 var battle = new BattleSystem(party, enemies, seed);
+                battle.Begin();
                 while (battle.State == BattleState.WaitingForCommands && battle.Turn <= 100)
                 {
                     var cmds = battle.AlivePlayers.Select(p =>
@@ -48,7 +59,12 @@ namespace Game.EditorTools
                     default: stuck++; break;
                 }
             }
+            BattleEvents.Started -= onStart; BattleEvents.TurnStarted -= onTurn; BattleEvents.Hit -= onHit;
+            BattleEvents.Missed -= onMiss; BattleEvents.Defeated -= onDefeat; BattleEvents.Ended -= onEnd;
             Debug.Log($"[SmokeTest] 20 场：胜 {victory} / 败 {defeat} / 逃 {escaped} / 超时 {stuck}");
+            Debug.Log($"[SmokeTest] 事件：开始 {started} / 回合 {turns} / 命中 {hits} / 未中 {misses} / 倒下 {defeated} / 结束 {ended}");
+            if (started != 20 || ended != 20 - stuck || hits == 0)
+                throw new System.Exception("[SmokeTest] 战斗事件计数异常");
         }
     }
 }

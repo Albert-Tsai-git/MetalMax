@@ -13,10 +13,11 @@
 | I-06 | 场景：逻辑场景 `Assets/Scenes/Logic/{名称}.unity`（当前 `Field`、`Battle`）；美术场景 `Assets/Scenes/Art/{名称}_Art.unity`，运行时叠加加载并设为活动场景，灰盒自动隐藏。美术场景只放可见物体、灯光、后处理，不放碰撞体与逻辑组件。 | ✅ | ⏳ |
 | I-07 | 表现层脚本放在 `Assets/Scripts/Presentation/`（程序集 `Game.Presentation`，引用 `Game.Runtime`）；只读取逻辑层数据、订阅事件，不修改游戏状态。逻辑层不引用表现层。 | ✅ | ⏳ |
 | I-08 | 逻辑层对外可读数据：`GameSession.Instance`（`party`、`gold`、`exp`）；`TankLoadout`（部件、`OnChanged` 事件）；`TextDB.Name/Desc/Get`；`VisualCatalog.Model/Icon`。新增接口先登记到本表。 | ✅ | ⏳ |
+| I-09 | 战斗事件 `Game.Battle.BattleEvents`（静态，OnEnable 订阅 / OnDisable 取消）：`Started(BattleSystem)`、`TurnStarted(int 回合)`、`ActionStarted(行动者, ActionType, 武器或 null)`、`Missed(攻击者, 目标)`、`Hit(攻击者, 目标, 伤害, 是否打在战车)`、`PartDamaged(所属者, PartInstance)`、`TankDisabled(所属者)`、`BoardChanged(行动者, 是否在车上)`、`Defeated(单位)`、`EscapeAttempted(行动者, 是否成功)`、`Ended(BattleState, 经验, 金钱)`。 | ✅ | ⏳ |
+| I-10 | 战斗单位 `Combatant.id` 为数据 ID（`ENM_` / `CHR_`），表现层据此取模型（I-03）与文本（I-02）；演示单位可能为空。 | ✅ | ⏳ |
 
 ## 待定条款
 
 | 编号 | 事项 | 提出方 |
 |---|---|---|
-| P-01 | 战斗事件（开始、行动、命中、部件损坏、击毁、结束）的事件名与参数，供 UI/动效/音频订阅 | Claude |
 | P-02 | Animator 参数名、音效与特效触发键 | Codex |

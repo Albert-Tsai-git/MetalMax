@@ -49,6 +49,9 @@ namespace Game.Battle
             Log($"战斗开始！遭遇 {string.Join("、", enemies)}");
         }
 
+        /// <summary>广播战斗开始；由创建方在订阅完成后调用</summary>
+        public void Begin() => BattleEvents.RaiseStarted(this);
+
         public IEnumerable<Combatant> AlivePlayers => players.Where(p => p.IsAlive);
         public IEnumerable<Combatant> AliveEnemies => enemies.Where(e => e.IsAlive);
 
@@ -58,6 +61,7 @@ namespace Game.Battle
             if (State != BattleState.WaitingForCommands) return;
             State = BattleState.Resolving;
             Log($"—— 第 {Turn} 回合 ——");
+            BattleEvents.RaiseTurnStarted(Turn);
 
             var actions = new List<BattleAction>(playerActions);
             actions.AddRange(EnemyAI());
@@ -86,6 +90,7 @@ namespace Game.Battle
 
         private void Execute(BattleAction a)
         {
+            BattleEvents.RaiseActionStarted(a.actor, a.type, a.type == ActionType.TankWeapon ? a.weapon : null);
             switch (a.type)
             {
                 case ActionType.HumanAttack:
@@ -99,17 +104,21 @@ namespace Game.Battle
                     {
                         a.actor.inTank = true;
                         Log($"{a.actor} 登上了 {a.actor.tank.tankName}");
+                        BattleEvents.RaiseBoardChanged(a.actor, true);
                     }
                     break;
                 case ActionType.LeaveTank:
                     a.actor.inTank = false;
                     Log($"{a.actor} 下了车");
+                    BattleEvents.RaiseBoardChanged(a.actor, false);
                     break;
                 case ActionType.Defend:
                     Log($"{a.actor} 进入防御姿态");
                     break;
                 case ActionType.Escape:
-                    if (_rng.NextDouble() < escapeChance)
+                    bool escaped = _rng.NextDouble() < escapeChance;
+                    BattleEvents.RaiseEscapeAttempted(a.actor, escaped);
+                    if (escaped)
                     {
                         Log("成功逃跑！");
                         End(BattleState.Escaped);
@@ -125,6 +134,7 @@ namespace Game.Battle
             if (!DamageCalculator.RollHit(DamageCalculator.HumanBaseAccuracy, target.TotalEvade, _rng))
             {
                 Log($"{actor} 攻击 {target}，没有命中");
+                BattleEvents.RaiseMissed(actor, target);
                 return;
             }
             int dmg = DamageCalculator.Damage(actor.attack, target.TotalDefense, _rng);
@@ -161,6 +171,7 @@ namespace Game.Battle
                 if (!DamageCalculator.RollHit(acc, t.TotalEvade, _rng))
                 {
                     Log($"  没有命中 {t}");
+                    BattleEvents.RaiseMissed(actor, t);
                     continue;
                 }
                 ApplyDamage(actor, t, DamageCalculator.Damage(weapon.Attack, t.TotalDefense, _rng));
@@ -176,20 +187,31 @@ namespace Game.Battle
             {
                 var broken = target.tank.TakeDamage(dmg, _rng);
                 Log($"  {target} 的战车受到 {dmg} 伤害，SP 剩余 {target.tank.currentSp}");
-                if (broken != null) Log($"  {broken.data.DisplayName} {(broken.condition == PartCondition.Broken ? "大破" : "损坏")}！");
+                OnDamage?.Invoke(attacker, target, dmg, true);
+                BattleEvents.RaiseHit(attacker, target, dmg, true);
+                if (broken != null)
+                {
+                    Log($"  {broken.data.DisplayName} {(broken.condition == PartCondition.Broken ? "大破" : "损坏")}！");
+                    BattleEvents.RaisePartDamaged(target, broken);
+                }
                 if (target.tank.IsDestroyed)
                 {
                     target.inTank = false;
                     Log($"  {target.tank.tankName} 失去战斗能力，{target} 被迫下车！");
+                    BattleEvents.RaiseTankDisabled(target);
                 }
-                OnDamage?.Invoke(attacker, target, dmg, true);
             }
             else
             {
                 target.hp = Math.Max(0, target.hp - dmg);
                 Log($"  {target} 受到 {dmg} 伤害，HP {target.hp}/{target.maxHp}");
-                if (!target.IsAlive) Log($"  {target} 倒下了！");
                 OnDamage?.Invoke(attacker, target, dmg, false);
+                BattleEvents.RaiseHit(attacker, target, dmg, false);
+                if (!target.IsAlive)
+                {
+                    Log($"  {target} 倒下了！");
+                    BattleEvents.RaiseDefeated(target);
+                }
             }
         }
 
@@ -239,6 +261,8 @@ namespace Game.Battle
                 Log("全灭……");
             }
             OnBattleEnd?.Invoke(result);
+            bool win = result == BattleState.Victory;
+            BattleEvents.RaiseEnded(result, win ? TotalExp : 0, win ? TotalGold : 0);
         }
 
         public int TotalExp => enemies.Sum(e => e.expReward);

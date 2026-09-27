@@ -61,7 +61,7 @@ namespace Game.Field
             for (int i = 0; i < count; i++)
                 list.Add(new Combatant
                 {
-                    name = $"{TextDB.Name("ENM_Ant")} {(char)('A' + i)}", side = Side.Enemy,
+                    id = "ENM_Ant", name = $"{TextDB.Name("ENM_Ant")} {(char)('A' + i)}", side = Side.Enemy,
                     maxHp = 40, hp = 40, attack = 22, defense = 6, speed = 10 + i,
                     expReward = 10, goldReward = 20,
                 });

@@ -11,6 +11,8 @@ namespace Game.Battle
     [Serializable]
     public class Combatant
     {
+        /// <summary>数据 ID（ENM_ / CHR_），表现层据此加载模型与文本；演示单位可为空</summary>
+        public string id;
         public string name;
         public Side side;
         public int maxHp;

@@ -36,14 +36,15 @@ namespace Game.Battle
             var session = GameSession.Instance;
             var enemies = session.PendingEnemies ?? new List<Combatant>
             {
-                new() { name = TextDB.Name("ENM_Ant") + " A", side = Side.Enemy, maxHp = 40, hp = 40, attack = 22, defense = 6, speed = 11, expReward = 10, goldReward = 20 },
-                new() { name = TextDB.Name("ENM_TurretBug"), side = Side.Enemy, maxHp = 90, hp = 90, attack = 35, defense = 15, speed = 5, expReward = 25, goldReward = 60 },
+                new() { id = "ENM_Ant", name = TextDB.Name("ENM_Ant") + " A", side = Side.Enemy, maxHp = 40, hp = 40, attack = 22, defense = 6, speed = 11, expReward = 10, goldReward = 20 },
+                new() { id = "ENM_TurretBug", name = TextDB.Name("ENM_TurretBug"), side = Side.Enemy, maxHp = 90, hp = 90, attack = 35, defense = 15, speed = 5, expReward = 25, goldReward = 60 },
             };
 
             _battle = new BattleSystem(session.party, enemies);
             _battle.OnLog += AddLog;
             AddLog($"战斗开始！遭遇 {string.Join("、", enemies)}");
             _battle.OnBattleEnd += _ => _endTimer = returnDelay;
+            _battle.Begin();
             BeginCommandPhase();
         }
 

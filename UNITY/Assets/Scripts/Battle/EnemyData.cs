@@ -31,6 +31,7 @@ namespace Game.Battle
         /// <summary>生成一个战斗单位</summary>
         public Combatant CreateCombatant(string suffix = "") => new()
         {
+            id = enemyId,
             name = DisplayName + suffix,
             side = Side.Enemy,
             maxHp = maxHp,

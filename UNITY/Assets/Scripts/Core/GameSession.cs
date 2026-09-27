@@ -95,13 +95,13 @@ namespace Game.Core
         {
             new Combatant
             {
-                name = TextDB.Name("CHR_Hunter"), side = Side.Player,
+                id = "CHR_Hunter", name = TextDB.Name("CHR_Hunter"), side = Side.Player,
                 maxHp = 80, hp = 80, attack = 18, defense = 8, speed = 12,
                 tank = CreateTank(), inTank = true,
             },
             new Combatant
             {
-                name = TextDB.Name("CHR_Mechanic"), side = Side.Player,
+                id = "CHR_Mechanic", name = TextDB.Name("CHR_Mechanic"), side = Side.Player,
                 maxHp = 60, hp = 60, attack = 12, defense = 6, speed = 9,
             },
         };
