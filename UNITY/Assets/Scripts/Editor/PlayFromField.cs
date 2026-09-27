@@ -1,3 +1,4 @@
+using System.Linq;
 using Game.Core;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -6,7 +7,8 @@ using UnityEngine;
 namespace Game.EditorTools
 {
     /// <summary>
-    /// 编辑器中点 Play 时总是从 Field 场景开始（不影响当前打开的场景，退出 Play 后回到原场景）。
+    /// 编辑器中点 Play 时，若当前打开的不是逻辑场景（Field / Battle / 迷宫等），先切换到 Field 再进入 Play。
+    /// 不依赖 playModeStartScene：工程开启了“进入 Play 不重载场景”，该设置会被忽略。
     /// 可通过菜单 Game/Play 从 Field 开始 关闭，设置按本机保存。
     /// </summary>
     [InitializeOnLoad]
@@ -15,7 +17,11 @@ namespace Game.EditorTools
         private const string MenuPath = "Game/Play 从 Field 开始";
         private const string PrefKey = "Game.PlayFromField";
 
-        static PlayFromField() => EditorApplication.delayCall += Apply;
+        static PlayFromField()
+        {
+            EditorSceneManager.playModeStartScene = null; // 清除旧版本设置
+            EditorApplication.playModeStateChanged += OnPlayModeChanged;
+        }
 
         private static bool Enabled
         {
@@ -24,11 +30,7 @@ namespace Game.EditorTools
         }
 
         [MenuItem(MenuPath)]
-        private static void Toggle()
-        {
-            Enabled = !Enabled;
-            Apply();
-        }
+        private static void Toggle() => Enabled = !Enabled;
 
         [MenuItem(MenuPath, true)]
         private static bool ToggleValidate()
@@ -37,17 +39,26 @@ namespace Game.EditorTools
             return true;
         }
 
-        private static void Apply()
+        private static void OnPlayModeChanged(PlayModeStateChange change)
         {
-            if (!Enabled)
+            if (change != PlayModeStateChange.ExitingEditMode || !Enabled) return;
+            string active = EditorSceneManager.GetActiveScene().name;
+            if (PrototypeSceneBuilder.LogicScenes.Contains(active)) return;
+
+            string path = PrototypeSceneBuilder.ScenePath(GameSession.FieldSceneName);
+            if (AssetDatabase.LoadAssetAtPath<SceneAsset>(path) == null)
             {
-                EditorSceneManager.playModeStartScene = null;
+                Debug.LogWarning($"[PlayFromField] 找不到 {path}，请先执行 Game/生成逻辑场景");
                 return;
             }
-            string path = PrototypeSceneBuilder.ScenePath(GameSession.FieldSceneName);
-            var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(path);
-            if (scene == null) Debug.LogWarning($"[PlayFromField] 找不到 {path}，请先执行 Game/生成逻辑场景");
-            EditorSceneManager.playModeStartScene = scene;
+            // 当前场景有未保存修改时询问；用户取消则不进入 Play
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            {
+                EditorApplication.isPlaying = false;
+                return;
+            }
+            EditorSceneManager.OpenScene(path);
+            Debug.Log($"[PlayFromField] 当前场景 {active} 不是逻辑场景，已切换到 Field");
         }
     }
 }
