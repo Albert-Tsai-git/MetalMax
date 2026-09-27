@@ -14,7 +14,7 @@ RULES = [
     # 目录自身的 .meta（如 Assets/Models.meta），须排在宽泛规则之前
     *[(f"UNITY/Assets/{d}.meta", "Codex") for d in
       ("Art", "Models", "Materials", "Prefabs", "Animations", "VFX", "Audio", "UI", "Fonts", "Settings")],
-    ("UNITY/Assets/Scripts/Presentation.meta", "Codex"),
+    ("UNITY/Assets/Scripts/Presentation.meta", "Claude"),  # Codex 写入范围限于 Presentation/ 内部
     ("UNITY/Assets/Scenes/Art.meta", "Codex"),
     ("UNITY/Assets/Resources/Visuals.meta", "Codex"),
     ("UNITY/Assets/Resources/Icons.meta", "Codex"),
