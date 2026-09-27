@@ -77,6 +77,7 @@
 | 2 | Claude | 接收迁移移交文件并以 `[Codex]` 提交：`UNITY/Data/Text/text_zh.csv`（原数据表中的名称/描述）、`UNITY/Assets/Scripts/Presentation/`（`Game.Presentation.asmdef`、原 `TankVisual`） | Codex | 待做 |
 | 3 | Claude | 按 I-03～I-05 制作底盘与武器预制体 | Codex | 待做（依赖 #1） |
 | 4 | Claude | 原型调试界面 `FieldHUD`、`BattleController.OnGUI` 中的文字暂为硬编码；正式 UI 由 Codex 在表现层按 I-09 实现后，Claude 删除调试界面 | Claude / Codex | 待 I-09 认可 |
+| 5 | 用户 | 【越界登记】用户授权 Claude 临时在表现层新增 `Scripts/Presentation/Field/FieldTankVisualBootstrap.cs`：野外/迷宫把战车模型挂到玩家、有模型时隐藏灰盒胶囊。Codex 可接手、改写或删除 | Codex | 待接手 |
 
 ## 5. 变更记录
 
