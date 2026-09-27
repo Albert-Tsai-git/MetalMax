@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e54211e4944e804da9bca91e67a593f, type: 3}
+  m_Name: SKL_Storm
+  m_EditorClassIdentifier: Game.Runtime::Game.Battle.SkillData
+  skillId: SKL_Storm
+  power: 80
+  hits: 1
+  range: 2
+  element: 3
+  accuracyBonus: 0
+  partBreakChance: 0
+  pierceTank: 0
+  healPercent: 0

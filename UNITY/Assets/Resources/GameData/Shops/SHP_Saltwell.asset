@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91fdc43cfa06ff045a7d117b197943e3, type: 3}
+  m_Name: SHP_Saltwell
+  m_EditorClassIdentifier: Game.Runtime::Game.Economy.ShopData
+  shopId: SHP_Saltwell
+  goods:
+  - {fileID: 11400000, guid: 753af87d0147d12498f59c16e775ed4d, type: 2}
+  - {fileID: 11400000, guid: 1208e621f764ba3428c63efaec0db1a8, type: 2}
+  - {fileID: 11400000, guid: 69961b14ff934a442ae3467a7a63cf8f, type: 2}
+  - {fileID: 11400000, guid: b06ee96d8317efb4a864f08d7c4f8b41, type: 2}
+  - {fileID: 11400000, guid: d4a2447b0e50a9a4b81b3d4e46a9d248, type: 2}
+  - {fileID: 11400000, guid: b6f9ab737eca1324e894c423731d3bd6, type: 2}
+  - {fileID: 11400000, guid: b47038dc4fcbeb94792a0b9abc6c42b2, type: 2}
+  - {fileID: 11400000, guid: 82b305df8f1068c4185d1c725d5e54b1, type: 2}
+  - {fileID: 11400000, guid: 1e492e3092a94f347bdc9de355143da3, type: 2}
+  items:
+  - {fileID: 11400000, guid: f0f7f288a8350e5499e5bbbf545c5e33, type: 2}
+  - {fileID: 11400000, guid: 2377b3c1eff66d445b4edac7a1fa1c68, type: 2}
+  - {fileID: 11400000, guid: e13c47762cbfcf947b11ec5ae428ddfa, type: 2}
+  - {fileID: 11400000, guid: 57f3f4f1ae92a574599d4658a7fc8909, type: 2}
+  gear: []
