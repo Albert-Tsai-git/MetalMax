@@ -17,18 +17,17 @@ namespace Game.EditorTools
     /// <summary>
     /// 批量战斗模拟：多种武器配置 × 多种战斗场景，输出胜率、回合、损耗、弹药与修理费用的收益表，
     /// 用于检查“是否存在全面压制的配置”“每类武器是否有自己的最优场景”。
-    /// 结果写入 docs/balance/sim_latest.md。
+    /// 第一幕结果写入 docs/balance/sim_latest.md，第二幕写入 docs/balance/sim_act2_latest.md。
     /// </summary>
     public static class BattleSimulator
     {
         private const int Runs = 200;
         private const int MaxTurns = 60;
-        private const string OutPath = "../docs/balance/sim_latest.md";
 
         /// <summary>武器配置：底盘、引擎与按武器孔顺序的武器</summary>
         private class Loadout
         {
-            public string name, chassis, engine;
+            public string name, chassis, engine, cunit = "TNK_CUnit_Basic";
             public string[] weapons;
         }
 
@@ -43,6 +42,15 @@ namespace Game.EditorTools
             public int level;
             public bool run;
             public int runEncounters;
+        }
+
+        /// <summary>一组模拟：配置 × 场景，以及“一趟迷宫”使用的遇敌表、宝箱和报告路径</summary>
+        private class Suite
+        {
+            public string title, outPath, chests;
+            public (int weight, string[] members)[] table;
+            public Loadout[] loadouts;
+            public Scenario[] scenarios;
         }
 
         /// <summary>泵站遇敌表（与 PrototypeSceneBuilder 一致：权重, 成员）</summary>
@@ -88,23 +96,76 @@ namespace Game.EditorTools
             new() { name = "泵站一趟（3 场+巨蟹）", enemies = new[] { "ENM_Bounty_IronCrab" }, level = 5, run = true, runEncounters = 3 },
         };
 
+        #region 第二幕
+
+        /// <summary>空城遗址遇敌表（与 PrototypeSceneBuilder.BuildGhostCity 一致）</summary>
+        private static readonly (int weight, string[] members)[] GhostCityTable =
+        {
+            (3, new[] { "ENM_PipeSentry", "ENM_ScrapDrone", "ENM_ScrapDrone" }),
+            (2, new[] { "ENM_SaltCrawler", "ENM_PipeSentry" }),
+            (2, new[] { "ENM_Raider", "ENM_Raider", "ENM_Raider", "ENM_Raider" }),
+            (1, new[] { "ENM_SaltCrawler", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm" }),
+        };
+
+        private const string GhostCityChests = "gold:+800; item:ITM_RepairPack:3; item:ITM_AmmoCrate:1; item:ITM_ReviveKit:2; item:ITM_Tonic:5";
+
+        /// <summary>第二幕配置：第一幕毕业配置 + 各新装备的代表配置（每件新装备至少出现一次）</summary>
+        private static readonly Loadout[] Act2Loadouts =
+        {
+            new() { name = "第一幕毕业（轻型+电击+火焰）", chassis = "TNK_Chassis_Light", engine = "TNK_Engine_V12", weapons = new[] { "WPN_ShockCannon", "WPN_Flamethrower" } },
+            new() { name = "重炮（重型+105炮+机枪+导弹）", chassis = "TNK_Chassis_Heavy", engine = "TNK_Engine_V12", weapons = new[] { "WPN_Cannon_105", "WPN_MG_77", "WPN_SE_Missile" } },
+            new() { name = "追踪导弹（重型+75炮+火焰+导弹+追踪C）", chassis = "TNK_Chassis_Heavy", engine = "TNK_Engine_V12", cunit = "TNK_CUnit_Tracker", weapons = new[] { "WPN_Cannon_75", "WPN_Flamethrower", "WPN_SE_Missile" } },
+            new() { name = "音波（重型+电击+火焰+音波）", chassis = "TNK_Chassis_Heavy", engine = "TNK_Engine_V12", weapons = new[] { "WPN_ShockCannon", "WPN_Flamethrower", "WPN_SonicBlaster" } },
+            new() { name = "冷冻（重型+电击+冷冻+导弹）", chassis = "TNK_Chassis_Heavy", engine = "TNK_Engine_V12", weapons = new[] { "WPN_ShockCannon", "WPN_CryoGun", "WPN_SE_Missile" } },
+        };
+
+        private static readonly Scenario[] Act2Scenarios =
+        {
+            new() { name = "蝎群×5", enemies = new[] { "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm" }, level = 7 },
+            new() { name = "无人机×2", enemies = new[] { "ENM_ScrapDrone", "ENM_ScrapDrone" }, level = 7 },
+            new() { name = "劫匪×3", enemies = new[] { "ENM_Raider", "ENM_Raider", "ENM_Raider" }, level = 7 },
+            new() { name = "盐壳爬行者", enemies = new[] { "ENM_SaltCrawler" }, level = 7 },
+            new() { name = "管线哨兵×2", enemies = new[] { "ENM_PipeSentry", "ENM_PipeSentry" }, level = 7 },
+            new() { name = "盐沙巨虫", enemies = new[] { "ENM_Bounty_SaltWyrm" }, level = 10 },
+            new() { name = "空城一趟（4 场+巨虫）", enemies = new[] { "ENM_Bounty_SaltWyrm" }, level = 10, run = true, runEncounters = 4 },
+        };
+
+        #endregion
+
+        private static readonly Suite Act1 = new()
+        {
+            title = "第一幕", outPath = "../docs/balance/sim_latest.md", chests = PumpChests,
+            table = PumpTable, loadouts = Loadouts, scenarios = Scenarios,
+        };
+
+        private static readonly Suite Act2 = new()
+        {
+            title = "第二幕", outPath = "../docs/balance/sim_act2_latest.md", chests = GhostCityChests,
+            table = GhostCityTable, loadouts = Act2Loadouts, scenarios = Act2Scenarios,
+        };
+
         [MenuItem("Game/批量战斗模拟（平衡）")]
-        public static void Run()
+        public static void Run() => RunSuite(Act1);
+
+        [MenuItem("Game/第二幕批量战斗模拟（平衡）")]
+        public static void RunAct2() => RunSuite(Act2);
+
+        private static void RunSuite(Suite su)
         {
             GameDB.Reload();
-            var table = new Result[Loadouts.Length, Scenarios.Length];
-            for (int l = 0; l < Loadouts.Length; l++)
-            for (int c = 0; c < Scenarios.Length; c++)
-                table[l, c] = Simulate(Loadouts[l], Scenarios[c]);
+            var table = new Result[su.loadouts.Length, su.scenarios.Length];
+            for (int l = 0; l < su.loadouts.Length; l++)
+            for (int c = 0; c < su.scenarios.Length; c++)
+                table[l, c] = Simulate(su, su.loadouts[l], su.scenarios[c]);
 
-            string report = Report(table);
-            string full = Path.GetFullPath(OutPath);
+            string report = Report(su, table);
+            string full = Path.GetFullPath(su.outPath);
             Directory.CreateDirectory(Path.GetDirectoryName(full)!);
             File.WriteAllText(full, report, new UTF8Encoding(false));
             Debug.Log($"[Sim] 模拟完成，报告：{full}\n{report}");
         }
 
-        private static Result Simulate(Loadout lo, Scenario sc)
+        private static Result Simulate(Suite su, Loadout lo, Scenario sc)
         {
             var r = new Result();
             for (int seed = 1; seed <= Runs; seed++)
@@ -117,14 +178,14 @@ namespace Game.EditorTools
 
                 var fights = new List<string[]>();
                 if (sc.run)
-                    for (int i = 0; i < sc.runEncounters; i++) fights.Add(Roll(rng));
+                    for (int i = 0; i < sc.runEncounters; i++) fights.Add(Roll(su.table, rng));
                 fights.Add(sc.enemies);
 
                 bool alive = true;
                 int turns = 0, itemsBefore = ItemValue(state);
                 for (int f = 0; f < fights.Count && alive; f++)
                 {
-                    if (sc.run && f == fights.Count / 2) Game.Story.Effects.Apply(PumpChests, state); // 中途开宝箱
+                    if (sc.run && f == fights.Count / 2) Game.Story.Effects.Apply(su.chests, state); // 中途开宝箱
                     var enemies = fights[f].Select((id, i) => GameDB.Enemy(id).CreateCombatant($" {i}")).ToList();
                     var battle = new BattleSystem(state.party, enemies, seed * 31 + f) { Inventory = state };
                     while (battle.State == BattleState.WaitingForCommands && battle.Turn <= MaxTurns)
@@ -147,16 +208,16 @@ namespace Game.EditorTools
             return r;
         }
 
-        /// <summary>按权重抽一组泵站遇敌</summary>
-        private static string[] Roll(Random rng)
+        /// <summary>按权重抽一组遇敌</summary>
+        private static string[] Roll((int weight, string[] members)[] table, Random rng)
         {
-            int roll = rng.Next(PumpTable.Sum(t => t.weight));
-            foreach (var (w, m) in PumpTable)
+            int roll = rng.Next(table.Sum(t => t.weight));
+            foreach (var (w, m) in table)
             {
                 roll -= w;
                 if (roll < 0) return m;
             }
-            return PumpTable[0].members;
+            return table[0].members;
         }
 
         /// <summary>持有道具的总价值（用于把消耗的道具计入成本）</summary>
@@ -175,7 +236,7 @@ namespace Game.EditorTools
             var tank = new TankLoadout { tankName = lo.name };
             tank.TryEquip(new PartInstance(GameDB.Part(lo.chassis)), 0, out _);
             tank.TryEquip(new PartInstance(GameDB.Part(lo.engine)), 0, out _);
-            tank.TryEquip(new PartInstance(GameDB.Part("TNK_CUnit_Basic")), 0, out _);
+            tank.TryEquip(new PartInstance(GameDB.Part(lo.cunit)), 0, out _);
             for (int i = 0; i < lo.weapons.Length; i++)
                 if (tank.TryEquip(new PartInstance(GameDB.Part(lo.weapons[i])), i, out _) != OpResult.Ok)
                     throw new Exception($"[Sim] 配置 {lo.name} 无法在第 {i} 孔装 {lo.weapons[i]}");
@@ -247,10 +308,10 @@ namespace Game.EditorTools
             return Math.Min(dmg, target.hp) * hit;
         }
 
-        private static string Report(Result[,] t)
+        private static string Report(Suite su, Result[,] t)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("# 批量战斗模拟结果");
+            sb.AppendLine($"# 批量战斗模拟结果（{su.title}）");
             sb.AppendLine();
             sb.AppendLine($"> 生成：{DateTime.Now:yyyy-MM-dd HH:mm}　|　每格 {Runs} 场　|　队伍：猎人（乘车）+ 机械师（步行），场景指定等级　|　玩家策略：贪心期望伤害；机械师优先复活/救人/修理；自带回复药 ×3");
             sb.AppendLine();
@@ -258,14 +319,14 @@ namespace Game.EditorTools
             {
                 sb.AppendLine($"## {title}");
                 sb.AppendLine();
-                sb.AppendLine("| 配置 | " + string.Join(" | ", Scenarios.Select(s => $"{s.name}(Lv{s.level})")) + " |");
-                sb.AppendLine("|---|" + string.Concat(Enumerable.Repeat("---|", Scenarios.Length)));
-                for (int l = 0; l < Loadouts.Length; l++)
+                sb.AppendLine("| 配置 | " + string.Join(" | ", su.scenarios.Select(s => $"{s.name}(Lv{s.level})")) + " |");
+                sb.AppendLine("|---|" + string.Concat(Enumerable.Repeat("---|", su.scenarios.Length)));
+                for (int l = 0; l < su.loadouts.Length; l++)
                 {
-                    sb.Append($"| {Loadouts[l].name} |");
-                    for (int c = 0; c < Scenarios.Length; c++)
+                    sb.Append($"| {su.loadouts[l].name} |");
+                    for (int c = 0; c < su.scenarios.Length; c++)
                     {
-                        var col = Enumerable.Range(0, Loadouts.Length).Select(i => score(t[i, c])).ToList();
+                        var col = Enumerable.Range(0, su.loadouts.Length).Select(i => score(t[i, c])).ToList();
                         float bestVal = higherBetter ? col.Max() : col.Min();
                         bool isBest = Math.Abs(score(t[l, c]) - bestVal) < 0.001f;
                         sb.Append(isBest ? $" **{cell(t[l, c])}** |" : $" {cell(t[l, c])} |");
@@ -286,25 +347,25 @@ namespace Game.EditorTools
             sb.AppendLine("## 压制检查");
             sb.AppendLine();
             bool any = false;
-            for (int a = 0; a < Loadouts.Length; a++)
-            for (int d = 0; d < Loadouts.Length; d++)
+            for (int a = 0; a < su.loadouts.Length; a++)
+            for (int d = 0; d < su.loadouts.Length; d++)
             {
                 if (a == d) continue;
-                bool dominates = Enumerable.Range(0, Scenarios.Length).All(c =>
+                bool dominates = Enumerable.Range(0, su.scenarios.Length).All(c =>
                     t[a, c].WinRate >= t[d, c].WinRate && t[a, c].Net >= t[d, c].Net && t[a, c].AvgTurns <= t[d, c].AvgTurns);
                 if (!dominates) continue;
                 any = true;
-                sb.AppendLine($"- ⚠ **{Loadouts[a].name}** 在所有场景的胜率、净收益、回合数都不劣于 **{Loadouts[d].name}**");
+                sb.AppendLine($"- ⚠ **{su.loadouts[a].name}** 在所有场景的胜率、净收益、回合数都不劣于 **{su.loadouts[d].name}**");
             }
             if (!any) sb.AppendLine("- 没有配置被全面压制");
             sb.AppendLine();
             sb.AppendLine("## 各场景最优配置（按净收益，胜率不足 90% 的不计）");
             sb.AppendLine();
-            for (int c = 0; c < Scenarios.Length; c++)
+            for (int c = 0; c < su.scenarios.Length; c++)
             {
-                var ok = Enumerable.Range(0, Loadouts.Length).Where(l => t[l, c].WinRate >= 0.9f).ToList();
-                string best = ok.Count == 0 ? "无（所有配置胜率都低于 90%）" : Loadouts[ok.OrderByDescending(l => t[l, c].Net).First()].name;
-                sb.AppendLine($"- {Scenarios[c].name}：{best}");
+                var ok = Enumerable.Range(0, su.loadouts.Length).Where(l => t[l, c].WinRate >= 0.9f).ToList();
+                string best = ok.Count == 0 ? "无（所有配置胜率都低于 90%）" : su.loadouts[ok.OrderByDescending(l => t[l, c].Net).First()].name;
+                sb.AppendLine($"- {su.scenarios[c].name}：{best}");
             }
             return sb.ToString();
         }

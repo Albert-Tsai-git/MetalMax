@@ -6,3 +6,9 @@ SKL_Howl,0,1,Single,0,0,0,20,Normal
 SKL_CrabPinch,130,1,Single,0,20,0,0,Normal
 SKL_BrineSpray,60,1,All,10,0,0,0,Ice
 SKL_ShellMend,0,1,Single,0,0,0,10,Normal
+# 第二幕,,,,,,,,
+SKL_DroneBurst,60,3,Single,0,0,0,0,Electric
+SKL_Ambush,120,1,Single,10,0,1,0,Normal
+SKL_Quake,70,1,All,0,10,0,0,Normal
+SKL_Swallow,150,1,Single,0,0,1,0,Normal
+SKL_Burrow,0,1,Single,0,0,0,8,Normal

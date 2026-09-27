@@ -23,6 +23,7 @@ namespace Game.EditorTools
                 StorySmokeTest.Run();
                 BattleExtSmokeTest.Run();
                 DungeonSmokeTest.Run();
+                Act2SmokeTest.Run();
                 BalanceMechanicsSmokeTest.Run();
                 FieldModeSmokeTest.Run();
                 Debug.Log("[Batch] RebuildAll 完成");

@@ -399,6 +399,7 @@ namespace Game.EditorTools
             t.shopId = r.Str("shop_id");
             t.hasGarage = r.Bool("garage");
             t.hasBountyOffice = r.Bool("bounty_office");
+            t.fieldScene = r.Str("scene", GameSession.FieldSceneName);
             t.name = t.townId;
             return t;
         }

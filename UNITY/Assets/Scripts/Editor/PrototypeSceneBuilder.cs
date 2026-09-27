@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Game.EditorTools
 {
     /// <summary>
-    /// 生成逻辑场景 Field / Battle / Dungeon_PumpStation（Assets/Scenes/Logic），并同步 Build Settings。
+    /// 生成逻辑场景 Field / Battle / Dungeon_PumpStation / Field_SaltBelt / Dungeon_GhostCity（Assets/Scenes/Logic），并同步 Build Settings。
     /// 逻辑场景只放碰撞体、触发区、控制器与相机；可见物体一律标 GreyboxMarker，
     /// 美术场景 {名称}_Art（Assets/Scenes/Art）存在时由 ArtSceneLoader 叠加并隐藏灰盒。
     /// 已存在的逻辑场景会被覆盖。
@@ -25,7 +25,10 @@ namespace Game.EditorTools
 
         /// <summary>逻辑场景列表，Build Settings 中按此顺序排列（Field 为启动场景）</summary>
         public static readonly string[] LogicScenes =
-            { GameSession.FieldSceneName, GameSession.BattleSceneName, GameSession.PumpStationSceneName };
+            {
+                GameSession.FieldSceneName, GameSession.BattleSceneName, GameSession.PumpStationSceneName,
+                GameSession.SaltBeltSceneName, GameSession.GhostCitySceneName,
+            };
 
         [MenuItem("Game/生成逻辑场景")]
         public static void Build()
@@ -37,6 +40,8 @@ namespace Game.EditorTools
             BuildField();
             BuildBattle();
             BuildPumpStation();
+            BuildSaltBelt();
+            BuildGhostCity();
             SyncBuildSettings();
 
             if (!Application.isBatchMode) EditorSceneManager.OpenScene(ScenePath(GameSession.FieldSceneName));
@@ -108,6 +113,16 @@ namespace Game.EditorTools
             talk.dialogueId = "DLG_Qupo";
             Visual(PrimitiveType.Capsule, "NPC_Qupo_Greybox", npc.transform, new Color(0.8f, 0.5f, 0.3f));
 
+            // 第二幕：东侧通往白盐带外缘（第一幕完成后开放）
+            var east = TriggerBox("Portal_SaltBelt", new Vector3(29, 0, 0), new Vector3(2, 3, 8),
+                new Color(0.2f, 0.8f, 0.8f), 0.3f);
+            var pe = east.AddComponent<ScenePortal>();
+            pe.targetScene = GameSession.SaltBeltSceneName;
+            pe.targetSpawnId = "from_field";
+            pe.condition = "flag:act1_done";
+            pe.lockedTextKey = "UI.Portal.SaltBeltLocked";
+            Spawn("from_saltbelt", new Vector3(24, 1, 0));
+
             new GameObject("TownDebugMenu").AddComponent<TownDebugMenu>();
             Save(scene, GameSession.FieldSceneName);
         }
@@ -175,6 +190,131 @@ namespace Game.EditorTools
             boss.AddComponent<BountyZone>().bounty = Enemy("ENM_Bounty_IronCrab");
 
             Save(scene, GameSession.PumpStationSceneName);
+        }
+
+        #endregion
+
+        #region 第二幕：白盐带外缘
+
+        /// <summary>
+        /// 白盐带外缘（80×80）：西侧回野外；南半开阔盐滩、北半旧管线走廊两个遇敌区；
+        /// 中部盐井聚落入口；东北角空城遗址入口（进镇后开放）。遇敌表与 BattleSimulator 第二幕表一致。
+        /// </summary>
+        private static void BuildSaltBelt()
+        {
+            var scene = NewLogicScene();
+            Ground(Vector3.zero, new Vector2(80, 80), new Color(0.88f, 0.86f, 0.8f));
+
+            var player = Player(new Vector3(-34, 1, 0));
+            Spawn("from_field", player.transform.position);
+
+            var back = TriggerBox("Portal_Field", new Vector3(-39, 0, 0), new Vector3(2, 3, 8),
+                new Color(0.2f, 0.8f, 0.8f), 0.3f);
+            var pb = back.AddComponent<ScenePortal>();
+            pb.targetScene = GameSession.FieldSceneName;
+            pb.targetSpawnId = "from_saltbelt";
+
+            // 开阔盐滩：成群与高回避目标 → 火焰 / 导弹 + 追踪 C 装置 / 音波
+            var flat = TriggerBox("EncounterZone_SaltFlat", new Vector3(5, 0.05f, -22), new Vector3(60, 2, 30),
+                new Color(0.8f, 0.2f, 0.2f), 0.1f);
+            var ef = flat.AddComponent<EncounterZone>();
+            ef.encounterRatePerMeter = 0.04f;
+            ef.groups = new List<EncounterZone.EnemyGroup>
+            {
+                Group(3, "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm"),
+                Group(2, "ENM_ScrapDrone", "ENM_ScrapDrone"),
+                Group(2, "ENM_Raider", "ENM_Raider", "ENM_Raider"),
+                Group(1, "ENM_Raider", "ENM_Raider", "ENM_ScrapDrone"),
+            };
+
+            // 旧管线走廊：重甲与机械守卫 → 105 炮 / 电击炮
+            var pipe = TriggerBox("EncounterZone_Pipeline", new Vector3(5, 0.05f, 22), new Vector3(60, 2, 30),
+                new Color(0.7f, 0.25f, 0.2f), 0.1f);
+            var ep = pipe.AddComponent<EncounterZone>();
+            ep.encounterRatePerMeter = 0.04f;
+            ep.groups = new List<EncounterZone.EnemyGroup>
+            {
+                Group(3, "ENM_SaltCrawler"),
+                Group(2, "ENM_PipeSentry", "ENM_PipeSentry"),
+                Group(2, "ENM_SaltCrawler", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm"),
+                Group(1, "ENM_PipeSentry", "ENM_Raider", "ENM_Raider"),
+            };
+
+            // 盐井聚落（系统判定“无人”的活聚落）
+            var town = TriggerBox("TownGate_TWN_Saltwell", new Vector3(0, 0, 0), new Vector3(8, 3, 8),
+                new Color(0.3f, 0.45f, 0.8f), 0.2f);
+            town.AddComponent<TownGate>().townId = "TWN_Saltwell";
+
+            // 进入白盐带即开始第二幕任务；首次进镇推进到下一步。对话缺失时效果照常执行。
+            Story("act2_intro", player.transform.position, "flag:act1_done & !flag:act2_started", "DLG_Act2_Intro",
+                "quest:start:QST_Act2_Ledger; set:act2_started");
+            Story("act2_saltwell", town.transform.position, "quest:QST_Act2_Ledger>=1", "DLG_Act2_Saltwell",
+                "set:act2_met_saltwell");
+
+            // 空城遗址入口（到过盐井聚落后开放）
+            var ghost = TriggerBox("Portal_GhostCity", new Vector3(34, 0, 34), new Vector3(4, 3, 4),
+                new Color(0.2f, 0.8f, 0.8f), 0.3f);
+            var pg = ghost.AddComponent<ScenePortal>();
+            pg.targetScene = GameSession.GhostCitySceneName;
+            pg.targetSpawnId = "entrance";
+            pg.condition = "quest:QST_Act2_Ledger>=2";
+            pg.lockedTextKey = "UI.Portal.GhostCityLocked";
+            Spawn("from_ghostcity", new Vector3(29, 1, 29));
+
+            Chest("saltbelt_01", new Vector3(-20, 0, 34), "item:ITM_AmmoCrate:1");
+
+            new GameObject("TownDebugMenu").AddComponent<TownDebugMenu>();
+            Save(scene, GameSession.SaltBeltSceneName);
+        }
+
+        /// <summary>
+        /// 空城遗址：沿 +Z 的长走廊。入口 → 遇敌段（z 10~70，三个宝箱）→ 校准点（z≈80）→ 盐沙巨虫（z≈92）。
+        /// 校准点在击败巨虫后才能读取（任务第 3 步）。
+        /// </summary>
+        private static void BuildGhostCity()
+        {
+            var scene = NewLogicScene();
+            Ground(new Vector3(0, 0, 50), new Vector2(14, 104), new Color(0.7f, 0.68f, 0.64f));
+            Wall("Wall_West", new Vector3(-7, 1.5f, 50), new Vector3(0.5f, 3, 104));
+            Wall("Wall_East", new Vector3(7, 1.5f, 50), new Vector3(0.5f, 3, 104));
+            Wall("Wall_South", new Vector3(0, 1.5f, -2), new Vector3(14, 3, 0.5f));
+            Wall("Wall_North", new Vector3(0, 1.5f, 102), new Vector3(14, 3, 0.5f));
+
+            Player(new Vector3(0, 1, 6));
+            Spawn("entrance", new Vector3(0, 1, 6));
+
+            var exit = TriggerBox("Portal_Exit", new Vector3(0, 0, 1), new Vector3(8, 3, 2),
+                new Color(0.2f, 0.8f, 0.8f), 0.3f);
+            var p = exit.AddComponent<ScenePortal>();
+            p.targetScene = GameSession.SaltBeltSceneName;
+            p.targetSpawnId = "from_ghostcity";
+
+            // 空城混编：一场里同时出现不同弱点，考验多槽位搭配
+            var zone = TriggerBox("EncounterZone_GhostCity", new Vector3(0, 0.05f, 40), new Vector3(14, 2, 60),
+                new Color(0.6f, 0.2f, 0.2f), 0.05f);
+            var ez = zone.AddComponent<EncounterZone>();
+            ez.encounterRatePerMeter = 0.05f;
+            ez.groups = new List<EncounterZone.EnemyGroup>
+            {
+                Group(3, "ENM_PipeSentry", "ENM_ScrapDrone", "ENM_ScrapDrone"),
+                Group(2, "ENM_SaltCrawler", "ENM_PipeSentry"),
+                Group(2, "ENM_Raider", "ENM_Raider", "ENM_Raider", "ENM_Raider"),
+                Group(1, "ENM_SaltCrawler", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm", "ENM_ScorpionSwarm"),
+            };
+
+            Chest("ghost_01", new Vector3(5, 0, 24), "gold:+800");
+            Chest("ghost_02", new Vector3(-5, 0, 48), "item:ITM_RepairPack:3; item:ITM_AmmoCrate:1");
+            Chest("ghost_03", new Vector3(5, 0, 68), "item:ITM_ReviveKit:2; item:ITM_Tonic:5");
+
+            // 校准点：读取旧协议的分配锁（击败巨虫后）
+            Story("act2_calibration", new Vector3(0, 0, 80), "quest:QST_Act2_Ledger>=3", "DLG_Act2_Calibration",
+                "set:act2_found_lock");
+
+            var boss = TriggerBox("BountyZone_ENM_Bounty_SaltWyrm", new Vector3(0, 0, 92), new Vector3(12, 3, 6),
+                new Color(0.9f, 0.6f, 0.1f), 0.1f);
+            boss.AddComponent<BountyZone>().bounty = Enemy("ENM_Bounty_SaltWyrm");
+
+            Save(scene, GameSession.GhostCitySceneName);
         }
 
         #endregion

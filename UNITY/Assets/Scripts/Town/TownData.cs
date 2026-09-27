@@ -15,6 +15,8 @@ namespace Game.Town
         public bool hasGarage = true;
         [Tooltip("是否有赏金办事处（领取赏金）")]
         public bool hasBountyOffice;
+        [Tooltip("城镇入口所在的逻辑场景；全灭后回到该场景的城镇入口")]
+        public string fieldScene = GameSession.FieldSceneName;
 
         public string DisplayName => TextDB.Name(townId);
     }
