@@ -19,6 +19,15 @@ MonoBehaviour:
   speed: 8
   evade: 5
   accuracy: 85
+  ai: 2
+  attackWeight: 2
+  skills:
+  - skillId: SKL_CrabPinch
+    weight: 2
+  - skillId: SKL_BrineSpray
+    weight: 1
+  - skillId: SKL_ShellMend
+    weight: 1
   expReward: 300
   goldReward: 1000
   isBounty: 1

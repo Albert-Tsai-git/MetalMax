@@ -19,6 +19,11 @@ MonoBehaviour:
   speed: 5
   evade: 0
   accuracy: 80
+  ai: 2
+  attackWeight: 2
+  skills:
+  - skillId: SKL_TwinShot
+    weight: 1
   expReward: 25
   goldReward: 60
   isBounty: 0

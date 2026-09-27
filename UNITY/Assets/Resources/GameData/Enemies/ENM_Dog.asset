@@ -19,6 +19,11 @@ MonoBehaviour:
   speed: 16
   evade: 15
   accuracy: 90
+  ai: 1
+  attackWeight: 3
+  skills:
+  - skillId: SKL_Howl
+    weight: 1
   expReward: 8
   goldReward: 15
   isBounty: 0
