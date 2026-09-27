@@ -181,3 +181,25 @@ MonoBehaviour:
     text: "\u6211\u4F1A\u628A\u8BB0\u5F55\u6284\u7ED9\u8DEF\u706F\u8F66\u961F\u3002\u6C34\u7684\u8D26\uFF0C\u5F97\u8BA9\u6BCF\u4E2A\u805A\u843D\u90FD\u770B\u89C1\u3002\u7EF4\u4FEE\u6B20\u8D26\u5148\u8BB0\u5728\u5899\u4E0A\u3002"
   - key: DLG_Qupo.Banter
     text: "\u8F66\u8F6E\u5E26\u56DE\u7684\u76D0\u5148\u522E\u6389\uFF0C\u522B\u8BA9\u5B83\u54AC\u8FDB\u8F74\u627F\u91CC\u3002\u9700\u8981\u4FEE\u7406\u5C31\u8DDF\u6211\u8BF4\u3002"
+  - key: UI.Screen.Menu
+    text: "\u884C\u65C5\u6863\u6848"
+  - key: UI.Screen.WorldMap
+    text: "\u8352\u91CE\u5730\u56FE"
+  - key: UI.Menu.Party
+    text: "\u540C\u4F34"
+  - key: UI.Menu.Items
+    text: "\u8865\u7ED9"
+  - key: UI.Menu.Tank
+    text: "\u6218\u8F66"
+  - key: UI.Menu.Quests
+    text: "\u4EFB\u52A1"
+  - key: UI.Menu.System
+    text: "\u7CFB\u7EDF"
+  - key: MAP_Wasteland.name
+    text: "\u5317\u5883\u5E9F\u571F"
+  - key: MAP_PumpStation.name
+    text: "\u6CF5\u7AD9\u6DF1\u5904"
+  - key: LOC_PumpStation.name
+    text: "\u5E9F\u5F03\u6CF5\u7AD9"
+  - key: LOC_PumpCrabNest.name
+    text: "\u94C1\u94B3\u87F9\u5DE2"

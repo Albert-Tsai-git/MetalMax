@@ -29,3 +29,7 @@ MonoBehaviour:
   maxLevel: 99
   expBase: 20
   expGrowth: 1.5
+  startGear:
+  - EQP_Knife
+  - EQP_Bandana
+  - EQP_Jacket
