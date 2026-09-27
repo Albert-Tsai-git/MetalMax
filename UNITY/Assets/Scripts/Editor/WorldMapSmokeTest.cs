@@ -23,7 +23,7 @@ namespace Game.EditorTools
 
             // 边界
             var outside = WorldMapService.Clamp(field, new Vector3(100, 1, -100));
-            Check(field.Bounds.Contains(new Vector2(outside.x, outside.z)) && Mathf.Approximately(outside.y, 1), "越界位置被限制在边界内");
+            Check(Mathf.Approximately(outside.x, field.Bounds.xMax) && Mathf.Approximately(outside.z, field.Bounds.yMin) && Mathf.Approximately(outside.y, 1), "越界位置被限制在边界内");
             var inside = new Vector3(3, 0, 4);
             Check(WorldMapService.Clamp(field, inside) == inside, "边界内位置不变");
             var n = WorldMapService.Normalize(field, new Vector3(field.Bounds.xMin, 0, field.Bounds.yMax));
