@@ -1,0 +1,17 @@
+#!/bin/sh
+# 在主目录用 Unity 导入数据并运行批量战斗模拟，打印关键表格。需先持有 unity 锁。
+# 用法：sh tools/sim.sh [Unity.exe 路径]
+UNITY_EXE="${1:-/d/software/unity/Editor/6000.6.3f1/Editor/Unity.exe}"
+MAIN=$(git worktree list --porcelain | head -1 | cut -d' ' -f2)
+"$UNITY_EXE" -batchmode -projectPath "$MAIN/UNITY" -executeMethod Game.EditorTools.CsvDataImporter.ImportAll -quit -logFile "$MAIN/UNITY/Logs/sim_import.log" >/dev/null
+"$UNITY_EXE" -batchmode -projectPath "$MAIN/UNITY" -executeMethod Game.EditorTools.BattleSimulator.Run -quit -logFile "$MAIN/UNITY/Logs/sim_run.log" >/dev/null
+grep -hE "error CS|Exception" "$MAIN/UNITY/Logs/sim_import.log" "$MAIN/UNITY/Logs/sim_run.log" | head -5
+PYTHONIOENCODING=utf-8 python - "$MAIN/docs/balance/sim_latest.md" <<'EOF'
+import sys
+s = open(sys.argv[1], encoding="utf-8").read()
+for sec in ["## 胜率", "## 平均回合数", "## 平均净收益", "## 压制检查", "## 各场景最优"]:
+    i = s.index(sec)
+    j = s.find("\n## ", i + 3)
+    print(s[i:j if j > 0 else None].strip())
+    print()
+EOF
