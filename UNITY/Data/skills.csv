@@ -3,6 +3,6 @@ id,power,hits,range,accuracy_bonus,part_break,pierce_tank,heal_percent,element
 SKL_AcidSpit,70,1,Single,0,0,1,0,Normal
 SKL_TwinShot,60,2,Single,-10,0,0,0,Normal
 SKL_Howl,0,1,Single,0,0,0,20,Normal
-SKL_CrabPinch,130,1,Single,0,25,0,0,Normal
+SKL_CrabPinch,130,1,Single,0,20,0,0,Normal
 SKL_BrineSpray,60,1,All,10,0,0,0,Ice
-SKL_ShellMend,0,1,Single,0,0,0,15,Normal
+SKL_ShellMend,0,1,Single,0,0,0,10,Normal
