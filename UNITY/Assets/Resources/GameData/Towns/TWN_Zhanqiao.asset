@@ -17,3 +17,4 @@ MonoBehaviour:
   shopId: SHP_Zhanqiao
   hasGarage: 1
   hasBountyOffice: 1
+  fieldScene: Field

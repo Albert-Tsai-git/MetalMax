@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa021b1d4fc87c41aa9456f683d2758, type: 3}
+  m_Name: ENM_PipeSentry
+  m_EditorClassIdentifier: Game.Runtime::Game.Battle.EnemyData
+  enemyId: ENM_PipeSentry
+  maxHp: 110
+  attack: 40
+  defense: 25
+  speed: 9
+  evade: 5
+  accuracy: 85
+  ai: 2
+  attackWeight: 2
+  skills:
+  - skillId: SKL_TwinShot
+    weight: 1
+  weak: 03000000i
+  resist: 010000000000000004000000i
+  immune: 
+  expReward: 35
+  goldReward: 120
+  isBounty: 0
+  bounty: 0

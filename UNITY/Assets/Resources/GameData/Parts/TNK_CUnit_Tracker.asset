@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11fa596e6889d5c4c97bd34e2b792850, type: 3}
+  m_Name: TNK_CUnit_Tracker
+  m_EditorClassIdentifier: Game.Runtime::Game.Tank.CUnitData
+  partId: TNK_CUnit_Tracker
+  weight: 0.6
+  price: 3500
+  defense: 0
+  maxUpgradeLevel: 3
+  weightPerUpgrade: 0
+  upgradeCostBase: 400
+  hitBonus: 30
+  evadeBonus: 5
+  actionsPerTurn: 1

@@ -1,3 +1,7 @@
-id,inn_price,shop_id,garage,bounty_office
-# 起始据点,,,,
-TWN_Zhanqiao,10,SHP_Zhanqiao,1,1
+id,inn_price,shop_id,garage,bounty_office,scene
+# 起始据点,,,,,
+TWN_Zhanqiao,10,SHP_Zhanqiao,1,1,Field
+# 第二幕：白盐带外缘的活聚落,,,,,
+TWN_Saltwell,30,SHP_Saltwell,1,1,Field_SaltBelt
+# 第三幕：盐盆中心的路灯车队营地,,,,,
+TWN_Lampcamp,60,SHP_Lampcamp,1,1,Field_SaltBasin

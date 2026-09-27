@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 562857c854a7bff488186900d5ae161d, type: 3}
+  m_Name: WPN_SonicBlaster
+  m_EditorClassIdentifier: Game.Runtime::Game.Tank.WeaponData
+  partId: WPN_SonicBlaster
+  weight: 1.8
+  price: 4500
+  defense: 0
+  maxUpgradeLevel: 5
+  weightPerUpgrade: 0.2
+  upgradeCostBase: 450
+  weaponType: 2
+  range: 2
+  attack: 40
+  element: 4
+  accuracy: 88
+  maxAmmo: 6
+  ammoPrice: 60
+  attackPerUpgrade: 6

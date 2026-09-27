@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cd9ae0043a3fb84c8a4bf568e0c6750, type: 3}
+  m_Name: QST_Act3_Floodgate
+  m_EditorClassIdentifier: Game.Runtime::Game.Story.QuestData
+  questId: QST_Act3_Floodgate
+  steps:
+  - objective: flag:act3_started
+    effects: 
+  - objective: flag:act3_met_lampcamp
+    effects: 
+  - objective: flag:act3_power_restored
+    effects: 
+  - objective: bounty:ENM_Bounty_Dredger=defeated
+    effects: set:act3_filters_restored
+  - objective: bounty:ENM_Bounty_GateWarden=defeated
+    effects: 
+  - objective: flag:act3_choice_made
+    effects: set:act3_done

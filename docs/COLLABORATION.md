@@ -1,6 +1,6 @@
 # 协作约定（Claude × Codex）
 
-> 版本：v0.7（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
+> 版本：v1.0（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
 > 本文件是两个 AI 共同遵守的唯一协作约定。任何一方修改“接口约定”一节时，须在文末变更记录中写明，并由用户转达另一方。
 
 ---
@@ -79,10 +79,20 @@
 | 3 | Claude | 按 I-03～I-05 制作底盘与武器预制体 | Codex | 待做（依赖 #1） |
 | 4 | Claude | 原型调试界面 `FieldHUD`、`BattleController.OnGUI` 中的文字暂为硬编码；正式 UI 由 Codex 在表现层按 I-09 实现后，Claude 删除调试界面 | Claude / Codex | 待 I-09 认可 |
 | 5 | 用户 | 【越界登记】用户授权 Claude 临时在表现层新增 `Scripts/Presentation/Field/FieldTankVisualBootstrap.cs`：野外/迷宫把战车模型挂到玩家、有模型时隐藏灰盒胶囊。Codex 可接手、改写或删除 | Codex | 待接手 |
+| 6 | Claude | 【P1 大地图与自由移动，当前优先】大地图灰盒美术场景 `Field_Art`（地形、道路、边界、城镇/泵站入口标识）；步行角色（驾驶员、机械师）与首辆战车正式或临时模型，按 I-03/I-04/I-05；行走/奔跑/待机、上下车 Animator（参数按 I-21、P-02） | Codex | 待做 |
+| 7 | Claude | 【P2 交互、菜单与界面】对话框、交互提示（调查/对话/开门）、主菜单、暂停菜单、队伍/状态界面、存读档界面（I-13）的布局、样式、字体与表现层脚本；NPC 模型（首批：曲婆）；对话与 UI 文案（I-02、I-16） | Codex | 待做（P1 后） |
+| 8 | Claude | 【P3 系统与机制】战斗界面（替换 `BattleController.OnGUI`，I-09/I-10/I-19/I-20）、背包/商店/车库界面（I-11/I-12）、升级提示（I-15）；首批敌人模型、武器模型与图标（I-03）；技能/道具名称与说明（I-17）；命中/击毁等特效与音效 | Codex | 待做（P2 后） |
+| 9 | Claude | 【P4 城镇、大地图与故事】据点城镇与泵站迷宫美术场景（I-18）、正式大地图区域布景；剧情对话表 `dialogue.csv` 全量内容（I-16）；城镇、赏金首名称与说明（I-14） | Codex | 待做（P3 后） |
+| 10 | Claude | 【P5 上线标准】全部临时/灰盒资源替换为正式模型、贴图、动画、UI、音频、BGM；LOD 与渲染性能达标；多语言文本；表现层全面验收 | Codex | 待做（P4 后） |
+| 11 | Claude | 【第二幕内容，按 I-25】文本：6 个新敌人、5 个技能、4 件新装备、`TWN_Saltwell`/`SHP_Saltwell`、`QST_Act2_Ledger` 名称与各步说明、传送提示；对话 `DLG_Act2_Intro`、`DLG_Act2_Saltwell`、`DLG_Act2_Calibration`（按 STORY.md 第二幕）；新敌人与新武器模型、图标；`Field_SaltBelt_Art`、`Dungeon_GhostCity_Art` 美术场景（灰盒布局见 `PrototypeSceneBuilder`） | Codex | 待做（先认可 I-22） |
+| 12 | Claude | 【第三幕内容，按 I-26】文本：7 个新敌人、3 个技能、4 件新装备、`TWN_Lampcamp`/`SHP_Lampcamp`、`QST_Act3_Floodgate` 名称与各步说明、传送提示；对话 `DLG_Act3_Intro`、`DLG_Act3_Lampcamp`、`DLG_Act3_Power`、`DLG_Act3_Choice`（三结局选项的效果须与 I-23 逐字一致）；新敌人与新装备模型、图标；`Field_SaltBasin_Art`、`Dungeon_ControlStation_Art` 美术场景 | Codex | 待做（先认可 I-23） |
 
 ## 5. 变更记录
 
-- **v0.7**（2026-09-27，用户要求）：收到对方消息须在对话中以【接收到 X 消息：#编号 要点】展示给用户，并说明是否执行、结果与未执行原因。
+- **v1.0**（2026-09-27，用户要求）：收到对方消息须在对话中以【接收到 X 消息：#编号 要点】展示给用户，并说明是否执行、结果与未执行原因。
+- **v0.9**（2026-09-27，Claude）：§4 新增 #12 第三幕内容需求（对应 INTERFACE I-26）。
+- **v0.8**（2026-09-27，Claude）：§4 新增 #11 第二幕内容需求（对应 INTERFACE I-25）。
+- **v0.7**（2026-09-27，Claude）：按 GDD v0.3 五阶段里程碑，在 §4 登记 #6～#10 分阶段素材需求；Codex 按阶段顺序交付，P1 优先，前一阶段未完成前可只交灰盒/临时资源。
 - **v0.6**（2026-09-27，Claude）：Claude 改用独立工作副本开发，经编译检查后集成（§2.6）。
 - **v0.5**（2026-09-27，Claude）：新增 §3 通讯机制与 Unity 锁（`tools/msg.py`），取代手工登记 Unity 占用。
 - **v0.4**（2026-09-27，Claude）：对接条款移至 `docs/INTERFACE.md`；路径所有权改由 `tools/ownership.py` 定义并以提交钩子强制；完成迁移：名称/描述移入文本表、美术引用改为按 ID 约定路径加载、场景拆为逻辑/美术、程序集拆为 Runtime/Editor/Presentation。
