@@ -272,7 +272,11 @@ namespace Game.Presentation
         {
             var image = Image(parent, name, null, new Vector2(normalized.x, normalized.y), new Vector2(normalized.x, normalized.y), Vector2.zero, new Vector2(size, size), color);
             image.raycastTarget = false;
-            var text = image.gameObject.AddComponent<Text>();
+            var text = Text(image.transform, "Glyph", "", Mathf.RoundToInt(size), color, TextAnchor.MiddleCenter,
+                Vector2.zero, Vector2.zero, FontStyle.Bold, Vector2.zero, Vector2.one);
+            var textRect = (RectTransform)text.transform;
+            textRect.pivot = new Vector2(.5f, .5f);
+            textRect.anchoredPosition = Vector2.zero;
             text.font = font;
             text.text = name.EndsWith("Player", StringComparison.Ordinal) ? "▲" : "◆";
             text.fontSize = Mathf.RoundToInt(size);

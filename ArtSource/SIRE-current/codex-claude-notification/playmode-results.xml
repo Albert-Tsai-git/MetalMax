@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 12:15:38Z" end-time="2026-09-27 12:16:00Z" duration="22.3717979">
+  <test-suite type="TestSuite" id="1011" name="WastelandTank" fullname="WastelandTank" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-27 12:15:38Z" end-time="2026-09-27 12:16:00Z" duration="22.371798" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1005" name="Game.PlayTests.dll" fullname="D:/code/GAME/UNITY/Library/ScriptAssemblies/Game.PlayTests.dll" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-27 12:15:38Z" end-time="2026-09-27 12:16:00Z" duration="22.362697" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20040" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1006" name="Game" fullname="Game" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-27 12:15:38Z" end-time="2026-09-27 12:16:00Z" duration="22.361938" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1007" name="PlayTests" fullname="Game.PlayTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-27 12:15:38Z" end-time="2026-09-27 12:16:00Z" duration="22.361557" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1001" name="FieldPlayTest" fullname="Game.PlayTests.FieldPlayTest" classname="Game.PlayTests.FieldPlayTest" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-27 12:15:38Z" end-time="2026-09-27 12:16:00Z" duration="22.360393" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1002" name="乘车移动_下车奔跑_上车" fullname="Game.PlayTests.FieldPlayTest.乘车移动_下车奔跑_上车" methodname="乘车移动_下车奔跑_上车" classname="Game.PlayTests.FieldPlayTest" runstate="Runnable" seed="43028387" result="Passed" start-time="2026-09-27 12:15:38Z" end-time="2026-09-27 12:15:46Z" duration="8.186532" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[GameDB] 已加载 GameData/Characters：2 条
+[Text] 已加载 zh 文本 84 条
+[GameDB] 已加载 GameData/Parts：11 条
+[Tank] 一号车 装配 TNK_Chassis_Light，总重 4.0/0.0t
+[Tank] 一号车 装配 TNK_Engine_V8，总重 5.0/12.0t
+[Tank] 一号车 装配 TNK_CUnit_Basic，总重 5.5/12.0t
+[Tank] 一号车 装配 WPN_Cannon_75，总重 7.5/12.0t
+[Tank] 一号车 装配 WPN_MG_77，总重 8.0/12.0t
+[Tank] 一号车 装甲补满：4.0t / SP 400
+[Session] 新建会话，初始化演示队伍
+[GameDB] 已加载 GameData/WorldMap：5 条
+[Characters] Field visual loaded: CHR_Hunter
+[Visual] 乘车，战车模型已显示
+[Scene] Field 无美术场景，使用灰盒
+[Visual] 乘车，战车模型已显示
+[PlayTest] 乘车 1 秒移动 3.43 米
+[Field] 下车，战车停在 (0.00, 1.08, -6.57)
+[Visual] 步行，战车模型已显示
+[PlayTest] 奔跑最高速度 6.50 米/秒
+[Field] 离战车太远，无法上车
+[Field] 上车
+[Visual] 乘车，战车模型已显示
+]]></output>
+            </test-case>
+            <test-case id="1003" name="地图与菜单界面_阻断操作" fullname="Game.PlayTests.FieldPlayTest.地图与菜单界面_阻断操作" methodname="地图与菜单界面_阻断操作" classname="Game.PlayTests.FieldPlayTest" runstate="Runnable" seed="1690320555" result="Passed" start-time="2026-09-27 12:15:46Z" end-time="2026-09-27 12:15:48Z" duration="1.543780" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Characters] Field visual loaded: CHR_Hunter
+[Visual] 乘车，战车模型已显示
+[Scene] Field 无美术场景，使用灰盒
+[Visual] 乘车，战车模型已显示
+[UI] 打开 WorldMap
+[UI] 关闭 WorldMap
+[UI] 打开 Menu
+[UI] 关闭 Menu
+[PlayTest] 关闭界面后 1 秒移动 3.02 米
+]]></output>
+            </test-case>
+            <test-case id="1004" name="地图边界与地点发现" fullname="Game.PlayTests.FieldPlayTest.地图边界与地点发现" methodname="地图边界与地点发现" classname="Game.PlayTests.FieldPlayTest" runstate="Runnable" seed="1515815380" result="Passed" start-time="2026-09-27 12:15:48Z" end-time="2026-09-27 12:16:00Z" duration="12.617092" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Characters] Field visual loaded: CHR_Hunter
+[Visual] 乘车，战车模型已显示
+[Scene] Field 无美术场景，使用灰盒
+[Visual] 乘车，战车模型已显示
+[PlayTest] 东边界停在 x=29.00（边界 29）
+[WorldMap] 发现地点 TWN_Zhanqiao
+[PlayTest] 在 (-1.02, 1.08, -13.33) 发现栈桥镇
+Saving results to: C:/Users/Administrator/AppData/LocalLow/DefaultCompany/WastelandTank\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

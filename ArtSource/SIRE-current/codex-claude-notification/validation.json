@@ -1,0 +1,18 @@
+{
+  "run_id": "codex-claude-notification",
+  "incoming_message": 62,
+  "received_and_relayed_to_user": true,
+  "fixes": {
+    "terrain_data": "Unity Editor rebuilt from RAW with TerrainData/SetHeights/AssetDatabase.CreateAsset/SaveAssets; reload check passed",
+    "map_marker": "Glyph Text is a child of marker Image; reflection smoke passed"
+  },
+  "tests": {
+    "FieldArtBuilder.BuildForBatch": "PASS",
+    "FieldArtSmoke_after_native_recreate": "PASS",
+    "PlayMode": {"total": 3, "passed": 3, "failed": 0, "tests": ["乘车移动_下车奔跑_上车", "地图与菜单界面_阻断操作", "地图边界与地点发现"]},
+    "FieldArt_build_settings_gate": "BLOCKED as expected: EditorBuildSettings does not yet enable Field_Art"
+  },
+  "review": "Independent R6 found no remaining code defect; Build Settings scene inclusion remains Claude-owned P1.",
+  "unity": "D:/software/unity/Editor/6000.6.3f1/Editor/Unity.exe",
+  "archive": "No SIRE_ARCHIVE_ROOT/DB configured; shared database and knowledge are outside current user's write allowlist."
+}

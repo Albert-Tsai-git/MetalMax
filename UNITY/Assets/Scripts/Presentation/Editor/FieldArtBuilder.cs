@@ -77,6 +77,13 @@ namespace Game.Presentation.Editor
 
         private static TerrainData BuildTerrainData()
         {
+            var dataPath = $"{WorldDir}/TD_Field_Wasteland.asset";
+            // Always rebuild from the authoritative RAW using Unity's serializer. This
+            // also replaces any stale/corrupt TerrainData byte stream from an old import.
+            if (File.Exists(dataPath) && !AssetDatabase.DeleteAsset(dataPath) && File.Exists(dataPath))
+                throw new IOException($"Could not remove stale TerrainData asset: {dataPath}");
+            var terrainData = new TerrainData();
+
             var raw = File.ReadAllBytes(RawPath);
             const int resolution = 513;
             if (raw.Length != resolution * resolution * 2)
@@ -102,16 +109,16 @@ namespace Game.Presentation.Editor
             var layerPath = $"{WorldDir}/TL_Wasteland.terrainlayer";
             if (AssetDatabase.LoadAssetAtPath<TerrainLayer>(layerPath) == null) AssetDatabase.CreateAsset(layer, layerPath);
 
-            var terrainData = AssetDatabase.LoadAssetAtPath<TerrainData>($"{WorldDir}/TD_Field_Wasteland.asset");
-            if (terrainData == null) terrainData = new TerrainData();
             terrainData.heightmapResolution = resolution;
             terrainData.size = new Vector3(88, 12, 88);
             terrainData.SetHeights(0, 0, heights);
             terrainData.terrainLayers = new[] { layer };
             terrainData.alphamapResolution = 512;
-            var dataPath = $"{WorldDir}/TD_Field_Wasteland.asset";
-            if (AssetDatabase.LoadAssetAtPath<TerrainData>(dataPath) == null) AssetDatabase.CreateAsset(terrainData, dataPath);
+            AssetDatabase.CreateAsset(terrainData, dataPath);
             EditorUtility.SetDirty(terrainData);
+            AssetDatabase.SaveAssets();
+            if (AssetDatabase.LoadAssetAtPath<TerrainData>(dataPath) == null)
+                throw new InvalidOperationException($"Unity failed to serialize/reload native TerrainData: {dataPath}");
             ValidatePads(terrainData);
             return terrainData;
         }

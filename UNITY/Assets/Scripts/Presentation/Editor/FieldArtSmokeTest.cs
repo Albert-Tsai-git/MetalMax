@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Game.Presentation;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -13,6 +14,9 @@ namespace Game.Presentation.Editor
     {
         public static void RunForBatch()
         {
+            if (!EditorBuildSettings.scenes.Any(s => s.enabled && s.path == "Assets/Scenes/Art/Field_Art.unity"))
+                throw new InvalidOperationException("Field_Art is not enabled in Build Settings; runtime ArtSceneLoader will skip the terrain and UI");
+
             var icons = Resources.LoadAll<Sprite>("Icons");
             if (icons.Length != 15) throw new InvalidOperationException($"Expected 15 Resources/Icons sprites; got {icons.Length}");
             if (Resources.Load<Sprite>("Icons/UI_Icon_Map") == null) throw new InvalidOperationException("Map icon Resources.Load failed");
@@ -30,6 +34,8 @@ namespace Game.Presentation.Editor
             if (terrain == null || terrain.terrainData == null) throw new InvalidOperationException("Field_Art has no Terrain/TerrainData");
             if (terrain.GetComponent<TerrainCollider>() == null) throw new InvalidOperationException("Field_Art TerrainCollider missing");
             var data = terrain.terrainData;
+            if (AssetDatabase.LoadAssetAtPath<TerrainData>("Assets/Art/World/TD_Field_Wasteland.asset") == null)
+                throw new InvalidOperationException("Unity cannot reload the persisted native TerrainData asset");
             if (data.terrainLayers.Length != 1 || data.terrainLayers[0].diffuseTexture == null ||
                 AssetDatabase.GetAssetPath(data.terrainLayers[0].diffuseTexture) != "Assets/Art/World/TEX_Wasteland_SaltGround.png")
                 throw new InvalidOperationException("Terrain must use the dedicated salt-ground diffuse texture, not the map artwork");
@@ -76,7 +82,22 @@ namespace Game.Presentation.Editor
             if (serializedUi.FindProperty("font").objectReferenceValue == null || serializedUi.FindProperty("mapBase").objectReferenceValue == null)
                 throw new InvalidOperationException("Field_Art UI font/map references are not assigned");
 
-            Debug.Log($"[FieldArtSmoke] PASS icons={icons.Length}, font={font.name}, heightmap={data.heightmapResolution}, encounterMaxSlope={encounterMaxSlope:F1}deg, padRadius=6m, minEdge={edgeMin:F1}m, TerrainCollider+UI bound");
+            var markerMethod = typeof(FieldUiPresentation).GetMethod("Marker", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (markerMethod == null) throw new InvalidOperationException("Field UI marker builder was not found");
+            var markerRoot = new GameObject("Field UI marker smoke root", typeof(RectTransform));
+            try
+            {
+                var marker = markerMethod.Invoke(ui, new object[] { markerRoot.transform, "MapMark_Player", new Vector2(.5f, .5f), Color.red, 22f }) as UnityEngine.UI.Image;
+                if (marker == null || marker.GetComponent<UnityEngine.UI.Text>() != null ||
+                    marker.transform.Find("Glyph")?.GetComponent<UnityEngine.UI.Text>() == null)
+                    throw new InvalidOperationException("Map marker must keep its glyph Text on a separate child object");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(markerRoot);
+            }
+
+            Debug.Log($"[FieldArtSmoke] PASS icons={icons.Length}, font={font.name}, nativeTerrainData reload, marker glyph child, heightmap={data.heightmapResolution}, encounterMaxSlope={encounterMaxSlope:F1}deg, padRadius=6m, minEdge={edgeMin:F1}m, TerrainCollider+UI bound");
         }
     }
 }
