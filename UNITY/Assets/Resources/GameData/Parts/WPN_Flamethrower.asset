@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::Game.Tank.WeaponData
   partId: WPN_Flamethrower
   weight: 0.8
-  price: 900
+  price: 700
   defense: 0
   maxUpgradeLevel: 5
   weightPerUpgrade: 0.1

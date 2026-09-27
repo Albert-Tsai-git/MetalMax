@@ -28,6 +28,6 @@ MonoBehaviour:
   resist: 
   immune: 
   expReward: 8
-  goldReward: 15
+  goldReward: 25
   isBounty: 0
   bounty: 0

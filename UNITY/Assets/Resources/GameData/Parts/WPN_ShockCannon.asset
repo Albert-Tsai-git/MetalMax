@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::Game.Tank.WeaponData
   partId: WPN_ShockCannon
   weight: 2.2
-  price: 2200
+  price: 1500
   defense: 0
   maxUpgradeLevel: 5
   weightPerUpgrade: 0.2
