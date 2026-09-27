@@ -13,7 +13,7 @@ Run: `R20260927-192149` · Project: `GAME` · Objective: prepare Codex-owned sou
 | R6 Independent review | 执行完毕 | `character_review` reviewed files read-only; final verdict PASS. Font source/version attribution was added after the first conditional review; reviewer confirmed condition cleared. | Scene import remains out of review scope. |
 | R7 Functional test | BLOCKED-无法真实验证 | Offline `validate_assets.py` passes; rendered icon sheet and map preview visually inspected. Prelisted real tests are in `validation.md`. | Claude's `D:\code\GAME-claude\UNITY` still had Unity `-batchmode -runTests` active when checked. No concurrent Unity launched. |
 | R8 Integration | 执行完毕 (source handoff only) | I-22 and I-23 reviewed and acknowledged by message #50; asset paths/details handed off to Claude in #51/#52. | Assets have not yet been copied under `UNITY/Assets/`; I-22/I-23 Codex checkbox remains pending Claude's interface update. |
-| R9 Closure audit | 执行中 | Source files are in allowed ArtSource path; no foreign scene/settings changes included. License and retrieval limits documented. | Machine archive target is unset (`archive_database_path() == None`); user path allowlist also excludes shared SIRE DB writes. |
+| R9 Closure audit | 执行完毕（归档受阻） | Source files are in allowed ArtSource path; package-only commit `d887cbe`; no foreign scene/settings changes included. License and retrieval limits documented. | Machine archive target is unset (`archive_database_path() == None`); user path allowlist also excludes shared SIRE DB writes. |
 | R10 Native operator | 跳过 | No native UI operation performed. | Unity is exclusively used by Claude's batchmode; real import/Play QA must wait. |
 
 ## R4 unit split
