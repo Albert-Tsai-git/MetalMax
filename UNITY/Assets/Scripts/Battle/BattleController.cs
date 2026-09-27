@@ -187,6 +187,20 @@ namespace Game.Battle
 
             GUILayout.Label($"<b>{_current.name}</b> 的行动：", _label);
 
+            // 第二步（修理）：选要修理的战车
+            if (_chosenType == ActionType.Repair)
+            {
+                GUILayout.Label("修理哪辆车：", _label);
+                foreach (var p in _battle.players.Where(x => x.tank != null && !x.tank.IsDestroyed))
+                {
+                    if (!GUILayout.Button($"{p.tank.tankName} (SP {p.tank.currentSp}/{p.tank.MaxSp})", _btn)) continue;
+                    Commit(BattleAction.Repair(_current, p));
+                    return;
+                }
+                if (GUILayout.Button("返回", _btn)) _chosenType = null;
+                return;
+            }
+
             // 第二步（道具）：选我方目标
             if (_chosenType == ActionType.UseItem)
             {
@@ -254,6 +268,13 @@ namespace Game.Battle
                 {
                     Commit(BattleAction.Simple(_current, ActionType.BoardTank)); return;
                 }
+            }
+            if ((Game.Core.GameDB.Character(_current.id)?.RepairAmount(_current.level) ?? 0) > 0
+                && _battle.players.Any(x => x.tank != null && !x.tank.IsDestroyed)
+                && GUILayout.Button("修理", _btn))
+            {
+                _chosenType = ActionType.Repair;
+                return;
             }
             foreach (var stack in GameSession.Instance.State.items)
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Game.Core;
 using Game.Items;
+using Game.Progression;
 using Game.Tank;
 using UnityEngine;
 using Random = System.Random;
@@ -156,6 +157,9 @@ namespace Game.Battle
                 case ActionType.UseItem:
                     DoUseItem(a);
                     break;
+                case ActionType.Repair:
+                    DoRepair(a.actor, a.targets.FirstOrDefault());
+                    break;
                 case ActionType.Escape:
                     bool escaped = _rng.NextDouble() < escapeChance;
                     BattleEvents.RaiseEscapeAttempted(a.actor, escaped);
@@ -248,7 +252,36 @@ namespace Game.Battle
             }
         }
 
-        private void DoUseItem(BattleAction a)
+        /// <summary>
+        /// 战斗中修理：回复目标战车 SP（按修理者职业与等级）；SP 已满且修理者等级足够时，把一个损坏部件修回正常。
+        /// 大破部件与失去战斗能力的战车不能在战斗中修理。
+        /// </summary>
+        private void DoRepair(Combatant actor, Combatant owner)
+        {
+            var data = GameDB.Character(actor.id);
+            int amount = data?.RepairAmount(actor.level) ?? 0;
+            var tank = owner?.tank;
+            if (amount <= 0 || tank == null || tank.IsDestroyed)
+            {
+                Log($"{actor} 无法修理");
+                return;
+            }
+            PartInstance fixedPart = null;
+            int before = tank.currentSp;
+            if (tank.currentSp < tank.MaxSp)
+                tank.currentSp = Math.Min(tank.MaxSp, tank.currentSp + amount);
+            else if (actor.level >= data.partRepairLevel)
+            {
+                fixedPart = tank.AllParts().FirstOrDefault(x => x.condition == PartCondition.Damaged);
+                fixedPart?.Repair();
+            }
+            tank.NotifyChanged();
+            int sp = tank.currentSp - before;
+            Log(fixedPart != null ? $"{actor} 修好了 {fixedPart.data.DisplayName}" : $"{actor} 修理 {tank.tankName}，SP +{sp}");
+            BattleEvents.RaiseRepaired(actor, owner, sp, fixedPart);
+        }
+
+                private void DoUseItem(BattleAction a)
         {
             if (Inventory == null) { Log("无法使用道具"); return; }
             var target = a.targets.FirstOrDefault();

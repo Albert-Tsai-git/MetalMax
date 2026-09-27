@@ -35,6 +35,8 @@ namespace Game.Battle
         public static event Action<Combatant, string, Combatant> ItemUsed;
         /// <summary>属性生效：目标、属性、倍率（&gt;1 弱点，&lt;1 抗性，0 免疫）</summary>
         public static event Action<Combatant, Element, float> ElementHit;
+        /// <summary>战斗中修理：修理者、战车所属者、回复 SP、修好的部件（没有为 null）</summary>
+        public static event Action<Combatant, Combatant, int, PartInstance> Repaired;
         /// <summary>HP 回复：单位、回复量</summary>
         public static event Action<Combatant, int> Healed;
         /// <summary>战斗结束：结果、获得经验、获得金钱（非胜利时为 0）</summary>
@@ -53,6 +55,7 @@ namespace Game.Battle
         internal static void RaiseSkillUsed(Combatant a, string id) => SkillUsed?.Invoke(a, id);
         internal static void RaiseItemUsed(Combatant a, string id, Combatant t) => ItemUsed?.Invoke(a, id, t);
         internal static void RaiseElementHit(Combatant t, Element e, float rate) => ElementHit?.Invoke(t, e, rate);
+        internal static void RaiseRepaired(Combatant a, Combatant t, int sp, PartInstance p) => Repaired?.Invoke(a, t, sp, p);
         internal static void RaiseHealed(Combatant c, int amount) => Healed?.Invoke(c, amount);
         internal static void RaiseEnded(BattleState r, int exp, int gold) => Ended?.Invoke(r, exp, gold);
     }

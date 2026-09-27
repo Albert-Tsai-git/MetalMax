@@ -13,6 +13,7 @@ namespace Game.Battle
         Escape,         // 逃跑
         Skill,          // 敌人技能
         UseItem,        // 使用道具
+        Repair,         // 战斗中修理我方战车
     }
 
     /// <summary>一次行动指令</summary>
@@ -40,6 +41,9 @@ namespace Game.Battle
 
         public static BattleAction Item(Combatant actor, string itemId, Combatant target) =>
             new() { actor = actor, type = ActionType.UseItem, itemId = itemId, targets = { target } };
+
+        public static BattleAction Repair(Combatant actor, Combatant tankOwner) =>
+            new() { actor = actor, type = ActionType.Repair, targets = { tankOwner } };
 
         public static BattleAction Simple(Combatant actor, ActionType type) =>
             new() { actor = actor, type = type };

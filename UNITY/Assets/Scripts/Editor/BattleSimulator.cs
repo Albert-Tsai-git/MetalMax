@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Game.Battle;
 using Game.Core;
+using Game.Items;
 using Game.Progression;
 using Game.Tank;
 using UnityEditor;
@@ -31,13 +32,33 @@ namespace Game.EditorTools
             public string[] weapons;
         }
 
-        /// <summary>战斗场景：敌人列表与队伍等级</summary>
+        /// <summary>
+        /// 战斗场景：单场（enemies）或一整趟迷宫（run = true：按泵站遇敌表随机 runEncounters 场，途中开宝箱，
+        /// 最后打 enemies；全程不回城补给，HP/SP/弹药/道具延续）。
+        /// </summary>
         private class Scenario
         {
             public string name;
             public string[] enemies;
             public int level;
+            public bool run;
+            public int runEncounters;
         }
+
+        /// <summary>泵站遇敌表（与 PrototypeSceneBuilder 一致：权重, 成员）</summary>
+        private static readonly (int weight, string[] members)[] PumpTable =
+        {
+            (3, new[] { "ENM_Ant", "ENM_Ant", "ENM_Ant", "ENM_Ant" }),
+            (2, new[] { "ENM_TurretBug" }),
+            (2, new[] { "ENM_Dog", "ENM_Dog", "ENM_Ant", "ENM_Ant" }),
+            (1, new[] { "ENM_TurretBug", "ENM_Ant", "ENM_Ant", "ENM_Ant" }),
+        };
+
+        /// <summary>泵站宝箱内容（与场景一致），在一趟中途依次获得</summary>
+        private const string PumpChests = "gold:+300; item:ITM_RepairPack:2; item:ITM_ReviveKit:1; item:ITM_Tonic:3";
+
+        /// <summary>出发前自带的道具</summary>
+        private const string StartItems = "item:ITM_Tonic:3";
 
         private class Result
         {
@@ -64,6 +85,7 @@ namespace Game.EditorTools
             new() { name = "野狗×2+蚁×2", enemies = new[] { "ENM_Dog", "ENM_Dog", "ENM_Ant", "ENM_Ant" }, level = 3 },
             new() { name = "炮台虫+蚁×3", enemies = new[] { "ENM_TurretBug", "ENM_Ant", "ENM_Ant", "ENM_Ant" }, level = 3 },
             new() { name = "铁钳巨蟹", enemies = new[] { "ENM_Bounty_IronCrab" }, level = 5 },
+            new() { name = "泵站一趟（6 场+巨蟹）", enemies = new[] { "ENM_Bounty_IronCrab" }, level = 5, run = true, runEncounters = 6 },
         };
 
         [MenuItem("Game/批量战斗模拟（平衡）")]
@@ -87,24 +109,58 @@ namespace Game.EditorTools
             var r = new Result();
             for (int seed = 1; seed <= Runs; seed++)
             {
-                var party = BuildParty(lo, sc.level);
-                var tank = party[0].tank;
-                int hp0 = party.Sum(p => p.hp), sp0 = tank.currentSp;
-                var enemies = sc.enemies.Select((id, i) => GameDB.Enemy(id).CreateCombatant($" {i}")).ToList();
+                var state = new PlayerState(0) { party = BuildParty(lo, sc.level) };
+                Game.Story.Effects.Apply(StartItems, state);
+                var tank = state.party[0].tank;
+                int hp0 = state.party.Sum(p => p.hp), sp0 = tank.currentSp;
                 var rng = new Random(seed * 7919);
-                var battle = new BattleSystem(party, enemies, seed);
-                while (battle.State == BattleState.WaitingForCommands && battle.Turn <= MaxTurns)
-                    battle.SubmitCommands(battle.AlivePlayers.Select(p => Decide(p, battle, rng)).ToList());
 
-                if (battle.State == BattleState.Victory) { r.wins++; r.reward += battle.TotalGold; }
-                r.turns += battle.Turn;
-                r.hpLost += hp0 - party.Sum(p => Math.Max(0, p.hp));
+                var fights = new List<string[]>();
+                if (sc.run)
+                    for (int i = 0; i < sc.runEncounters; i++) fights.Add(Roll(rng));
+                fights.Add(sc.enemies);
+
+                bool alive = true;
+                int turns = 0, itemsBefore = ItemValue(state);
+                for (int f = 0; f < fights.Count && alive; f++)
+                {
+                    if (sc.run && f == fights.Count / 2) Game.Story.Effects.Apply(PumpChests, state); // 中途开宝箱
+                    var enemies = fights[f].Select((id, i) => GameDB.Enemy(id).CreateCombatant($" {i}")).ToList();
+                    var battle = new BattleSystem(state.party, enemies, seed * 31 + f) { Inventory = state };
+                    while (battle.State == BattleState.WaitingForCommands && battle.Turn <= MaxTurns)
+                        battle.SubmitCommands(battle.AlivePlayers.Select(p => Decide(p, battle, state, rng)).ToList());
+                    turns += battle.Turn;
+                    if (battle.State == BattleState.Victory) state.Gold += battle.TotalGold;
+                    else alive = false;
+                    // 战后倒下的队员保留 1 HP（与游戏一致）
+                    foreach (var p in state.party) if (p.hp <= 0) p.hp = 1;
+                }
+
+                if (alive) r.wins++;
+                r.turns += turns;
+                r.hpLost += hp0 - state.party.Sum(p => Math.Max(0, p.hp));
                 r.spLost += sp0 - tank.currentSp;
                 r.ammoCost += tank.RefillCost();
-                r.repairCost += tank.RepairCost();
+                r.repairCost += tank.RepairCost() + Math.Max(0, itemsBefore - ItemValue(state)) + (alive ? 0 : 0);
+                r.reward += state.Gold;
             }
             return r;
         }
+
+        /// <summary>按权重抽一组泵站遇敌</summary>
+        private static string[] Roll(Random rng)
+        {
+            int roll = rng.Next(PumpTable.Sum(t => t.weight));
+            foreach (var (w, m) in PumpTable)
+            {
+                roll -= w;
+                if (roll < 0) return m;
+            }
+            return PumpTable[0].members;
+        }
+
+        /// <summary>持有道具的总价值（用于把消耗的道具计入成本）</summary>
+        private static int ItemValue(PlayerState s) => s.items.Sum(i => (GameDB.Item(i.id)?.price ?? 0) * i.count);
 
         /// <summary>按配置组装战车，队伍升到指定等级</summary>
         private static List<Combatant> BuildParty(Loadout lo, int level)
@@ -133,9 +189,24 @@ namespace Game.EditorTools
         /// 玩家策略（贪心）：乘车时在各武器与各目标中选“期望伤害 × 属性倍率 × 命中率 − 弹药价值”最高者；
         /// 步行时攻击预计能造成最多伤害的敌人。弹药价值按每发单价折算，让玩家在副炮足够时节省炮弹。
         /// </summary>
-        private static BattleAction Decide(Combatant p, BattleSystem b, Random rng)
+        private static BattleAction Decide(Combatant p, BattleSystem b, PlayerState s, Random rng)
         {
             var foes = b.AliveEnemies.ToList();
+            // 支援优先：复活倒下的队友 → 救濒危队友 → 修理 SP 过半受损的战车 → 修理包
+            var down = b.players.FirstOrDefault(x => !x.IsAlive);
+            if (down != null && ItemService.CanUse(s, "ITM_ReviveKit", down) == OpResult.Ok)
+                return BattleAction.Item(p, "ITM_ReviveKit", down);
+            var hurt = b.AlivePlayers.FirstOrDefault(x => x.hp < x.maxHp * 0.35f);
+            if (hurt != null && ItemService.CanUse(s, "ITM_Tonic", hurt) == OpResult.Ok)
+                return BattleAction.Item(p, "ITM_Tonic", hurt);
+            var damagedTank = b.players.FirstOrDefault(x => x.tank != null && !x.tank.IsDestroyed && x.tank.currentSp < x.tank.MaxSp * 0.5f);
+            int repair = GameDB.Character(p.id)?.RepairAmount(p.level) ?? 0;
+            if (damagedTank != null && repair >= 40)
+                return BattleAction.Repair(p, damagedTank);
+            if (damagedTank != null && damagedTank.tank.currentSp < damagedTank.tank.MaxSp * 0.25f
+                && ItemService.CanUse(s, "ITM_RepairPack", damagedTank) == OpResult.Ok)
+                return BattleAction.Item(p, "ITM_RepairPack", damagedTank);
+
             if (!p.IsTankActive)
             {
                 var t = foes.OrderByDescending(f => Expected(p.attack, f, Element.Normal, DamageCalculator.HumanBaseAccuracy)).First();
@@ -178,7 +249,7 @@ namespace Game.EditorTools
             var sb = new StringBuilder();
             sb.AppendLine("# 批量战斗模拟结果");
             sb.AppendLine();
-            sb.AppendLine($"> 生成：{DateTime.Now:yyyy-MM-dd HH:mm}　|　每格 {Runs} 场　|　队伍：猎人（乘车）+ 机械师（步行），场景指定等级　|　玩家策略：贪心期望伤害");
+            sb.AppendLine($"> 生成：{DateTime.Now:yyyy-MM-dd HH:mm}　|　每格 {Runs} 场　|　队伍：猎人（乘车）+ 机械师（步行），场景指定等级　|　玩家策略：贪心期望伤害；机械师优先复活/救人/修理；自带回复药 ×3");
             sb.AppendLine();
             void Table(string title, Func<Result, string> cell, Func<Result, float> score, bool higherBetter)
             {
@@ -205,8 +276,8 @@ namespace Game.EditorTools
             Table("平均 HP 损失（越少越好）", r => $"{(float)r.hpLost / Runs:F0}", r => (float)r.hpLost / Runs, false);
             Table("平均 SP 损失（越少越好）", r => $"{(float)r.spLost / Runs:F0}", r => (float)r.spLost / Runs, false);
             Table("平均弹药费（G）", r => $"{(float)r.ammoCost / Runs:F0}", r => (float)r.ammoCost / Runs, false);
-            Table("平均修理费（G）", r => $"{(float)r.repairCost / Runs:F0}", r => (float)r.repairCost / Runs, false);
-            Table("平均净收益 = 战利品 − 弹药 − 修理（G，越高越好）", r => $"{r.Net:F0}", r => r.Net, true);
+            Table("平均修理与道具消耗（G）", r => $"{(float)r.repairCost / Runs:F0}", r => (float)r.repairCost / Runs, false);
+            Table("平均净收益 = 收入 − 弹药 − 修理 − 道具（G，越高越好）", r => $"{r.Net:F0}", r => r.Net, true);
 
             // 压制检查：以“净收益”和“回合数”两项衡量，某配置在所有场景都不劣于另一配置则后者被压制
             sb.AppendLine("## 压制检查");

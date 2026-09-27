@@ -23,6 +23,16 @@ namespace Game.Progression
         [Min(0)] public int speedPerLevel = 1;
         [Min(0)] public int evadePerLevel = 0;
 
+        [Header("战斗中修理（机械师专长，猎人也会一点）")]
+        [Tooltip("1 级时一次修理回复的 SP，0 表示不会修理")]
+        [Min(0)] public int repair;
+        [Tooltip("每级增加的修理量")]
+        [Min(0)] public int repairPerLevel;
+        [Tooltip("达到该等级后，SP 已满时可把一个“损坏”部件修回正常（大破不能在战斗中修）")]
+        [Min(0)] public int partRepairLevel = 99;
+
+        public int RepairAmount(int level) => repair <= 0 ? 0 : repair + repairPerLevel * (level - 1);
+
         [Header("经验曲线：升到下一级所需 = expBase × 当前等级 ^ expGrowth")]
         [Min(1)] public int maxLevel = 99;
         [Min(1)] public int expBase = 20;

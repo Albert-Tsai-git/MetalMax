@@ -353,6 +353,9 @@ namespace Game.EditorTools
             c.defensePerLevel = r.Int("defense_up");
             c.speedPerLevel = r.Int("speed_up");
             c.evadePerLevel = r.Int("evade_up");
+            c.repair = r.Int("repair");
+            c.repairPerLevel = r.Int("repair_up");
+            c.partRepairLevel = r.Int("part_repair_level", 99);
             c.maxLevel = r.Int("max_level", 99);
             c.expBase = r.Int("exp_base", 20);
             c.expGrowth = r.Float("exp_growth", 1.5f);
