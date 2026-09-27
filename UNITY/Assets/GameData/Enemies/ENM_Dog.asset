@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: ENM_Dog
   m_EditorClassIdentifier: Assembly-CSharp::Game.Battle.EnemyData
   enemyId: ENM_Dog
-  displayName: "\u91CE\u72D7"
-  modelPrefab: {fileID: 0}
   maxHp: 30
   attack: 18
   defense: 4

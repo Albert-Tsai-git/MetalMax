@@ -13,10 +13,6 @@ MonoBehaviour:
   m_Name: TNK_Engine_V12
   m_EditorClassIdentifier: Assembly-CSharp::Game.Tank.EngineData
   partId: TNK_Engine_V12
-  displayName: "V12 \u5F15\u64CE"
-  description: 
-  icon: {fileID: 0}
-  modelPrefab: {fileID: 0}
   weight: 1.5
   price: 3000
   defense: 0

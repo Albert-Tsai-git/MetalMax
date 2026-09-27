@@ -111,7 +111,7 @@ namespace Game.Tank
             }
 
             ClampArmor();
-            Debug.Log($"[Tank] {tankName} 装配 {part.data.displayName}，总重 {TotalWeight:F1}/{LoadCapacity:F1}t");
+            Debug.Log($"[Tank] {tankName} 装配 {part.data.DisplayName}，总重 {TotalWeight:F1}/{LoadCapacity:F1}t");
             OnChanged?.Invoke();
             return true;
         }
@@ -151,7 +151,7 @@ namespace Game.Tank
                     hit.condition = hit.condition == PartCondition.Normal
                         ? PartCondition.Damaged
                         : PartCondition.Broken;
-                    Debug.Log($"[Tank] {tankName} 的 {hit.data.displayName} → {hit.condition}");
+                    Debug.Log($"[Tank] {tankName} 的 {hit.data.DisplayName} → {hit.condition}");
                 }
             }
 
@@ -208,7 +208,7 @@ namespace Game.Tank
             money -= cost;
             part.upgradeLevel++;
             ClampArmor();
-            Debug.Log($"[Tank] {part.data.displayName} 改造至 Lv{part.upgradeLevel}，花费 {cost}G");
+            Debug.Log($"[Tank] {part.data.DisplayName} 改造至 Lv{part.upgradeLevel}，花费 {cost}G");
             OnChanged?.Invoke();
             return true;
         }

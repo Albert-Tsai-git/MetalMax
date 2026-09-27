@@ -1,3 +1,4 @@
+using Game.Core;
 using UnityEngine;
 
 namespace Game.Battle
@@ -7,8 +8,8 @@ namespace Game.Battle
     public class EnemyData : ScriptableObject
     {
         public string enemyId;
-        public string displayName;
-        public GameObject modelPrefab;
+
+        public string DisplayName => TextDB.Name(enemyId);
 
         [Header("属性")]
         [Min(1)] public int maxHp = 50;
@@ -30,7 +31,7 @@ namespace Game.Battle
         /// <summary>生成一个战斗单位</summary>
         public Combatant CreateCombatant(string suffix = "") => new()
         {
-            name = displayName + suffix,
+            name = DisplayName + suffix,
             side = Side.Enemy,
             maxHp = maxHp,
             hp = maxHp,

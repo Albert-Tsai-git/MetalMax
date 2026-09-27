@@ -13,10 +13,6 @@ MonoBehaviour:
   m_Name: TNK_CUnit_Basic
   m_EditorClassIdentifier: Assembly-CSharp::Game.Tank.CUnitData
   partId: TNK_CUnit_Basic
-  displayName: "\u57FA\u7840 C \u88C5\u7F6E"
-  description: 
-  icon: {fileID: 0}
-  modelPrefab: {fileID: 0}
   weight: 0.5
   price: 500
   defense: 0

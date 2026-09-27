@@ -13,10 +13,6 @@ MonoBehaviour:
   m_Name: WPN_MG_77
   m_EditorClassIdentifier: Assembly-CSharp::Game.Tank.WeaponData
   partId: WPN_MG_77
-  displayName: "7.7mm \u673A\u67AA"
-  description: 
-  icon: {fileID: 0}
-  modelPrefab: {fileID: 0}
   weight: 0.5
   price: 400
   defense: 0

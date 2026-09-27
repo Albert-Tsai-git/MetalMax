@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: ENM_Bounty_IronCrab
   m_EditorClassIdentifier: Assembly-CSharp::Game.Battle.EnemyData
   enemyId: ENM_Bounty_IronCrab
-  displayName: "\u94C1\u94B3\u5DE8\u87F9"
-  modelPrefab: {fileID: 0}
   maxHp: 600
   attack: 70
   defense: 40

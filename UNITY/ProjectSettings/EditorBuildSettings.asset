@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Prototype/Field.unity
-    guid: 7625efb77934c654eae84d7e479d753a
+    path: Assets/Scenes/Logic/Field.unity
+    guid: cff9d4478aec7dc488e78c599cf6a474
   - enabled: 1
-    path: Assets/Scenes/Prototype/Battle.unity
-    guid: 7058f8f89dd57ce4baacb865f29aa01e
+    path: Assets/Scenes/Logic/Battle.unity
+    guid: 9418f387c952db14497fe630065d61db
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

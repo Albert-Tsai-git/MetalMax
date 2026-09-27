@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Game.Battle;
+using Game.Core;
 using Game.Tank;
 using UnityEditor;
 using UnityEngine;
@@ -15,11 +16,14 @@ namespace Game.EditorTools
     /// 数值表导入：读取工程根目录 Data/ 下的 CSV（Excel 另存为“CSV UTF-8”），
     /// 生成或更新 Assets/GameData/ 下的 ScriptableObject。
     /// 以 id 列作为资产文件名：已有资产只更新字段，GUID 不变，场景里的引用不会断。
+    /// 文本表 Data/Text/text_{lang}.csv（key,text）生成 Assets/Resources/Text/TextTable_{lang}.asset。
     /// </summary>
     public static class CsvDataImporter
     {
         private const string DataDir = "Data";
         private const string OutDir = "Assets/GameData";
+        private const string TextDir = "Data/Text";
+        private const string TextOutDir = "Assets/Resources/Text";
 
         [MenuItem("Game/导入数值表 (CSV)")]
         public static void ImportAll()
@@ -27,8 +31,10 @@ namespace Game.EditorTools
             int n = 0;
             n += Import("parts.csv", $"{OutDir}/Parts", CreatePart);
             n += Import("enemies.csv", $"{OutDir}/Enemies", CreateEnemy);
+            n += ImportTexts();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+            TextDB.SetLanguage(TextDB.Language); // 清除运行时文本缓存
             Debug.Log($"[Import] 完成，共导入 {n} 条");
         }
 
@@ -76,6 +82,51 @@ namespace Game.EditorTools
             return count;
         }
 
+        /// <summary>导入所有语言的文本表，并检查每个数据 ID 都有 .name 键</summary>
+        private static int ImportTexts()
+        {
+            if (!Directory.Exists(TextDir))
+            {
+                Debug.LogWarning($"[Import] 未找到 {TextDir}，跳过文本表");
+                return 0;
+            }
+            Directory.CreateDirectory(TextOutDir);
+            var ids = new HashSet<string>();
+            foreach (var file in new[] { "parts.csv", "enemies.csv" })
+            {
+                string path = Path.Combine(DataDir, file);
+                if (File.Exists(path)) foreach (var r in ReadCsv(path)) if (r.Str("id") != "") ids.Add(r.Str("id"));
+            }
+
+            int total = 0;
+            foreach (var path in Directory.GetFiles(TextDir, "text_*.csv"))
+            {
+                string lang = Path.GetFileNameWithoutExtension(path).Substring("text_".Length);
+                string assetPath = $"{TextOutDir}/TextTable_{lang}.asset";
+                var table = AssetDatabase.LoadAssetAtPath<TextTable>(assetPath);
+                bool isNew = table == null;
+                if (isNew) table = ScriptableObject.CreateInstance<TextTable>();
+
+                table.entries.Clear();
+                var seen = new HashSet<string>();
+                foreach (var r in ReadCsv(path))
+                {
+                    string key = r.Str("key");
+                    if (key == "") continue;
+                    if (!seen.Add(key)) { Debug.LogError($"[Import] {path} 第 {r.Line} 行键重复：{key}"); continue; }
+                    table.entries.Add(new TextTable.Entry { key = key, text = r.Str("text") });
+                }
+                foreach (var id in ids)
+                    if (!seen.Contains(id + ".name")) Debug.LogWarning($"[Import] {path} 缺少 {id}.name");
+
+                if (isNew) AssetDatabase.CreateAsset(table, assetPath);
+                EditorUtility.SetDirty(table);
+                Debug.Log($"[Import] {path} → {assetPath}：{table.entries.Count} 条");
+                total += table.entries.Count;
+            }
+            return total;
+        }
+
         #region 各表字段映射
 
         private static T Reuse<T>(ScriptableObject existing) where T : ScriptableObject =>
@@ -121,8 +172,6 @@ namespace Game.EditorTools
             }
 
             p.partId = r.Str("id");
-            p.displayName = r.Str("name");
-            p.description = r.Str("desc");
             p.weight = r.Float("weight");
             p.price = r.Int("price");
             p.defense = r.Int("defense");
@@ -137,7 +186,6 @@ namespace Game.EditorTools
         {
             var e = Reuse<EnemyData>(existing);
             e.enemyId = r.Str("id");
-            e.displayName = r.Str("name");
             e.maxHp = r.Int("hp");
             e.attack = r.Int("attack");
             e.defense = r.Int("defense");

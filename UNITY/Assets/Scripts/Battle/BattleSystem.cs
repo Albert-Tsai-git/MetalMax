@@ -154,7 +154,7 @@ namespace Game.Battle
                 _ => foes,
             };
 
-            Log($"{actor} 发射 {wd.displayName}！");
+            Log($"{actor} 发射 {wd.DisplayName}！");
             int acc = DamageCalculator.WeaponAccuracy(actor, weapon);
             foreach (var t in targets.Where(t => t != null && t.IsAlive))
             {
@@ -176,7 +176,7 @@ namespace Game.Battle
             {
                 var broken = target.tank.TakeDamage(dmg, _rng);
                 Log($"  {target} 的战车受到 {dmg} 伤害，SP 剩余 {target.tank.currentSp}");
-                if (broken != null) Log($"  {broken.data.displayName} {(broken.condition == PartCondition.Broken ? "大破" : "损坏")}！");
+                if (broken != null) Log($"  {broken.data.DisplayName} {(broken.condition == PartCondition.Broken ? "大破" : "损坏")}！");
                 if (target.tank.IsDestroyed)
                 {
                     target.inTank = false;

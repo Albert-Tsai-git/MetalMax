@@ -1,0 +1,7 @@
+{
+    "name": "Game.Editor",
+    "rootNamespace": "Game.EditorTools",
+    "references": ["Game.Runtime"],
+    "includePlatforms": ["Editor"],
+    "autoReferenced": false
+}

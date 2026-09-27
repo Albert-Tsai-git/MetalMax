@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: ENM_TurretBug
   m_EditorClassIdentifier: Assembly-CSharp::Game.Battle.EnemyData
   enemyId: ENM_TurretBug
-  displayName: "\u70AE\u53F0\u866B"
-  modelPrefab: {fileID: 0}
   maxHp: 90
   attack: 35
   defense: 15

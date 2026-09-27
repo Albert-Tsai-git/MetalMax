@@ -36,8 +36,8 @@ namespace Game.Battle
             var session = GameSession.Instance;
             var enemies = session.PendingEnemies ?? new List<Combatant>
             {
-                new() { name = "变异蚁 A", side = Side.Enemy, maxHp = 40, hp = 40, attack = 22, defense = 6, speed = 11, expReward = 10, goldReward = 20 },
-                new() { name = "炮台虫", side = Side.Enemy, maxHp = 90, hp = 90, attack = 35, defense = 15, speed = 5, expReward = 25, goldReward = 60 },
+                new() { name = TextDB.Name("ENM_Ant") + " A", side = Side.Enemy, maxHp = 40, hp = 40, attack = 22, defense = 6, speed = 11, expReward = 10, goldReward = 20 },
+                new() { name = TextDB.Name("ENM_TurretBug"), side = Side.Enemy, maxHp = 90, hp = 90, attack = 35, defense = 15, speed = 5, expReward = 25, goldReward = 60 },
             };
 
             _battle = new BattleSystem(session.party, enemies);
@@ -161,7 +161,7 @@ namespace Game.Battle
                 string where = p.IsTankActive ? "乘车" : "步行";
                 line += $"  [{where}] {t.tankName} SP {t.currentSp}/{t.MaxSp}";
                 var broken = t.AllParts().Where(x => x.condition != PartCondition.Normal)
-                    .Select(x => $"{x.data.displayName}{(x.condition == PartCondition.Broken ? "大破" : "损坏")}");
+                    .Select(x => $"{x.data.DisplayName}{(x.condition == PartCondition.Broken ? "大破" : "损坏")}");
                 var s = string.Join(" ", broken);
                 if (s.Length > 0) line += $"\n      <color=orange>{s}</color>";
             }
@@ -211,7 +211,7 @@ namespace Game.Battle
                     var wd = (WeaponData)wp.data;
                     string ammo = wd.maxAmmo < 0 ? "∞" : $"{wp.currentAmmo}/{wd.maxAmmo}";
                     GUI.enabled = wp.IsFunctional && wp.HasAmmo;
-                    if (GUILayout.Button($"{wd.displayName}  [{ammo}]", _btn))
+                    if (GUILayout.Button($"{wd.DisplayName}  [{ammo}]", _btn))
                     {
                         _chosenWeapon = wp;
                         // 非单体武器不需要选目标

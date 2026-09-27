@@ -1,6 +1,6 @@
-id,name,hp,attack,defense,speed,evade,accuracy,exp,gold,bounty_flag,bounty
-ENM_Ant,变异蚁,40,22,6,11,5,85,10,20,,
-ENM_TurretBug,炮台虫,90,35,15,5,0,80,25,60,,
-ENM_Dog,野狗,30,18,4,16,15,90,8,15,,
-# 赏金首,,,,,,,,,,,
-ENM_Bounty_IronCrab,铁钳巨蟹,600,70,40,8,5,85,300,1000,1,3000
+id,hp,attack,defense,speed,evade,accuracy,exp,gold,bounty_flag,bounty
+ENM_Ant,40,22,6,11,5,85,10,20,,
+ENM_TurretBug,90,35,15,5,0,80,25,60,,
+ENM_Dog,30,18,4,16,15,90,8,15,,
+# 赏金首,,,,,,,,,,
+ENM_Bounty_IronCrab,600,70,40,8,5,85,300,1000,1,3000

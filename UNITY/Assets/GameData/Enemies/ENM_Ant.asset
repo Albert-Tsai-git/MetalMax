@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: ENM_Ant
   m_EditorClassIdentifier: Assembly-CSharp::Game.Battle.EnemyData
   enemyId: ENM_Ant
-  displayName: "\u53D8\u5F02\u8681"
-  modelPrefab: {fileID: 0}
   maxHp: 40
   attack: 22
   defense: 6

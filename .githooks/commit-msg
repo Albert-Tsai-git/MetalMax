@@ -1,0 +1,10 @@
+#!/bin/sh
+# 提交信息须以 [Claude] 或 [Codex] 开头，并且只能包含该方所有或共享的路径
+msg=$(head -n 1 "$1")
+case "$msg" in
+  "[Claude]"*) agent=Claude ;;
+  "[Codex]"*) agent=Codex ;;
+  "[User]"*) exit 0 ;;
+  *) echo "[ownership] 提交信息须以 [Claude] / [Codex] / [User] 开头"; exit 1 ;;
+esac
+exec python "$(git rev-parse --show-toplevel)/tools/ownership.py" check "$agent"

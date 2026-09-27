@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Battle;
+using Game.Core;
 using UnityEngine;
 
 namespace Game.Field
@@ -60,7 +61,7 @@ namespace Game.Field
             for (int i = 0; i < count; i++)
                 list.Add(new Combatant
                 {
-                    name = $"变异蚁 {(char)('A' + i)}", side = Side.Enemy,
+                    name = $"{TextDB.Name("ENM_Ant")} {(char)('A' + i)}", side = Side.Enemy,
                     maxHp = 40, hp = 40, attack = 22, defense = 6, speed = 10 + i,
                     expReward = 10, goldReward = 20,
                 });

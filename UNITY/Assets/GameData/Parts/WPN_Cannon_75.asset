@@ -13,10 +13,6 @@ MonoBehaviour:
   m_Name: WPN_Cannon_75
   m_EditorClassIdentifier: Assembly-CSharp::Game.Tank.WeaponData
   partId: WPN_Cannon_75
-  displayName: "75mm \u70AE"
-  description: 
-  icon: {fileID: 0}
-  modelPrefab: {fileID: 0}
   weight: 2
   price: 1200
   defense: 0

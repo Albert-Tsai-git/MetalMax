@@ -1,3 +1,4 @@
+using Game.Core;
 using UnityEngine;
 
 namespace Game.Tank
@@ -34,13 +35,10 @@ namespace Game.Tank
     {
         [Header("基础信息")]
         public string partId;
-        public string displayName;
-        [TextArea] public string description;
-        public Sprite icon;
 
-        [Header("外观")]
-        [Tooltip("挂到底盘挂点上的模型预制体")]
-        public GameObject modelPrefab;
+        /// <summary>名称与说明从文本表读取，模型与图标按 ID 从 VisualCatalog 读取</summary>
+        public string DisplayName => TextDB.Name(partId);
+        public string Description => TextDB.Desc(partId);
 
         [Header("数值")]
         [Tooltip("重量（吨）")]

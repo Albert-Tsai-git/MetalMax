@@ -13,10 +13,6 @@ MonoBehaviour:
   m_Name: TNK_Chassis_Heavy
   m_EditorClassIdentifier: Assembly-CSharp::Game.Tank.ChassisData
   partId: TNK_Chassis_Heavy
-  displayName: "\u91CD\u578B\u5E95\u76D8"
-  description: "\u539A\u91CD\u4F46\u7F13\u6162"
-  icon: {fileID: 0}
-  modelPrefab: {fileID: 0}
   weight: 8
   price: 6000
   defense: 25

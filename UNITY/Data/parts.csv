@@ -1,14 +1,14 @@
-id,type,name,desc,weight,price,defense,max_up,weight_up,up_cost,holes,mounts,seats,load,load_up,hit,evade,actions,weapon_type,range,attack,accuracy,ammo,attack_up
-# 底盘：holes 和 mounts 用 | 分隔并一一对应,,,,,,,,,,,,,,,,,,,,,,,
-TNK_Chassis_Light,chassis,轻型底盘,轻快的越野底盘,4,1500,10,5,0.3,300,MainCannon|SubGun,Mount_Main|Mount_Sub,1,,,,,,,,,,,
-TNK_Chassis_Heavy,chassis,重型底盘,厚重但缓慢,8,6000,25,5,0.5,600,MainCannon|SubGun|SpecialEq,Mount_Main|Mount_Sub|Mount_SE,1,,,,,,,,,,,
-# 引擎,,,,,,,,,,,,,,,,,,,,,,,
-TNK_Engine_V8,engine,V8 引擎,,1,800,0,5,0.1,250,,,,12,1,,,,,,,,,
-TNK_Engine_V12,engine,V12 引擎,,1.5,3000,0,5,0.1,500,,,,20,1.5,,,,,,,,,
-# C 装置,,,,,,,,,,,,,,,,,,,,,,,
-TNK_CUnit_Basic,cunit,基础 C 装置,,0.5,500,0,3,0,200,,,,,,10,5,1,,,,,,
-TNK_CUnit_Twin,cunit,双核 C 装置,每回合行动两次,0.8,8000,0,3,0,800,,,,,,15,10,2,,,,,,
-# 武器：ammo 为 -1 表示无限,,,,,,,,,,,,,,,,,,,,,,,
-WPN_Cannon_75,weapon,75mm 炮,,2,1200,0,5,0.2,300,,,,,,,,,MainCannon,Single,60,80,6,10
-WPN_MG_77,weapon,7.7mm 机枪,,0.5,400,0,5,0.1,150,,,,,,,,,SubGun,Group,25,85,-1,5
-WPN_SE_Missile,weapon,双联导弹,,1.5,4000,0,5,0.2,500,,,,,,,,,SpecialEq,All,45,90,4,8
+id,type,weight,price,defense,max_up,weight_up,up_cost,holes,mounts,seats,load,load_up,hit,evade,actions,weapon_type,range,attack,accuracy,ammo,attack_up
+# 底盘：holes 和 mounts 用 | 分隔并一一对应,,,,,,,,,,,,,,,,,,,,,
+TNK_Chassis_Light,chassis,4,1500,10,5,0.3,300,MainCannon|SubGun,Mount_Main|Mount_Sub,1,,,,,,,,,,,
+TNK_Chassis_Heavy,chassis,8,6000,25,5,0.5,600,MainCannon|SubGun|SpecialEq,Mount_Main|Mount_Sub|Mount_SE,1,,,,,,,,,,,
+# 引擎,,,,,,,,,,,,,,,,,,,,,
+TNK_Engine_V8,engine,1,800,0,5,0.1,250,,,,12,1,,,,,,,,,
+TNK_Engine_V12,engine,1.5,3000,0,5,0.1,500,,,,20,1.5,,,,,,,,,
+# C 装置,,,,,,,,,,,,,,,,,,,,,
+TNK_CUnit_Basic,cunit,0.5,500,0,3,0,200,,,,,,10,5,1,,,,,,
+TNK_CUnit_Twin,cunit,0.8,8000,0,3,0,800,,,,,,15,10,2,,,,,,
+# 武器：ammo 为 -1 表示无限,,,,,,,,,,,,,,,,,,,,,
+WPN_Cannon_75,weapon,2,1200,0,5,0.2,300,,,,,,,,,MainCannon,Single,60,80,6,10
+WPN_MG_77,weapon,0.5,400,0,5,0.1,150,,,,,,,,,SubGun,Group,25,85,-1,5
+WPN_SE_Missile,weapon,1.5,4000,0,5,0.2,500,,,,,,,,,SpecialEq,All,45,90,4,8

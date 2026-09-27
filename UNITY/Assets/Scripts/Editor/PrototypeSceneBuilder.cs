@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Game.Battle;
+using Game.Core;
 using Game.Field;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -9,60 +11,93 @@ using UnityEngine;
 namespace Game.EditorTools
 {
     /// <summary>
-    /// 一键生成原型场景 Field / Battle，并加入 Build Settings。
-    /// 已存在的场景会被覆盖，请勿在生成的场景里做正式内容。
+    /// 生成逻辑场景 Field / Battle（Assets/Scenes/Logic），并同步 Build Settings。
+    /// 逻辑场景只放碰撞体、触发区、控制器与相机；可见物体一律标 GreyboxMarker，
+    /// 美术场景 {名称}_Art（Assets/Scenes/Art）存在时由 ArtSceneLoader 叠加并隐藏灰盒。
+    /// 已存在的逻辑场景会被覆盖。
     /// </summary>
     public static class PrototypeSceneBuilder
     {
-        private const string SceneDir = "Assets/Scenes/Prototype";
+        private const string LogicDir = "Assets/Scenes/Logic";
+        private const string ArtDir = "Assets/Scenes/Art";
+        private const string GreyboxMatDir = LogicDir + "/Greybox";
 
-        [MenuItem("Game/生成原型场景 (Field + Battle)")]
+        [MenuItem("Game/生成逻辑场景 (Field + Battle)")]
         public static void Build()
         {
-            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
-            System.IO.Directory.CreateDirectory(SceneDir);
+            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            Directory.CreateDirectory(LogicDir);
 
-            string field = BuildField();
-            string battle = BuildBattle();
+            BuildField();
+            BuildBattle();
+            SyncBuildSettings();
 
-            // 加入 Build Settings，Field 放在第一个
-            var list = EditorBuildSettings.scenes.Where(s => s.path != field && s.path != battle).ToList();
-            list.InsertRange(0, new[] { new EditorBuildSettingsScene(field, true), new EditorBuildSettingsScene(battle, true) });
-            EditorBuildSettings.scenes = list.ToArray();
-
-            EditorSceneManager.OpenScene(field);
-            Debug.Log("[SceneBuilder] 原型场景已生成，打开 Field 后点 Play 即可");
+            if (!Application.isBatchMode) EditorSceneManager.OpenScene($"{LogicDir}/{GameSession.FieldSceneName}.unity");
+            Debug.Log("[SceneBuilder] 逻辑场景已生成，打开 Field 后点 Play 即可");
         }
 
-        private static string BuildField()
+        /// <summary>Build Settings = 逻辑场景（Field 在首位）+ Art 目录下所有 *_Art 场景</summary>
+        [MenuItem("Game/同步 Build Settings")]
+        public static void SyncBuildSettings()
+        {
+            var paths = new List<string>
+            {
+                $"{LogicDir}/{GameSession.FieldSceneName}.unity",
+                $"{LogicDir}/{GameSession.BattleSceneName}.unity",
+            };
+            if (Directory.Exists(ArtDir))
+                paths.AddRange(Directory.GetFiles(ArtDir, "*" + ArtSceneLoader.ArtSuffix + ".unity")
+                    .Select(p => p.Replace(Path.DirectorySeparatorChar, '/')).OrderBy(p => p));
+
+            EditorBuildSettings.scenes = paths.Where(File.Exists)
+                .Select(p => new EditorBuildSettingsScene(p, true)).ToArray();
+            Debug.Log($"[SceneBuilder] Build Settings：{string.Join(", ", paths.Where(File.Exists))}");
+        }
+
+        private static void BuildField()
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+            new GameObject("[ArtSceneLoader]").AddComponent<ArtSceneLoader>();
+            Greybox(Object.FindAnyObjectByType<Light>().gameObject);
 
-            var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            ground.name = "Ground";
-            ground.transform.localScale = new Vector3(6, 1, 6);
-            SetColor(ground, new Color(0.55f, 0.48f, 0.35f));
+            // 地面：逻辑碰撞体 + 灰盒外观分开
+            var ground = new GameObject("Ground");
+            var box = ground.AddComponent<BoxCollider>();
+            box.size = new Vector3(60, 0.2f, 60);
+            box.center = new Vector3(0, -0.1f, 0);
+            var groundView = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            groundView.name = "Ground_Greybox";
+            Object.DestroyImmediate(groundView.GetComponent<Collider>());
+            groundView.transform.localScale = new Vector3(6, 1, 6);
+            Greybox(groundView, new Color(0.55f, 0.48f, 0.35f));
 
-            // 遇敌区域：半透明红色方块，只作为触发器
-            var zone = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            zone.name = "EncounterZone_Wasteland";
+            // 遇敌区域：触发器本身不可见，另放半透明灰盒
+            var zone = new GameObject("EncounterZone_Wasteland");
             zone.transform.position = new Vector3(0, 0.05f, 12);
-            zone.transform.localScale = new Vector3(30, 0.1f, 20);
-            zone.GetComponent<Collider>().isTrigger = true;
+            var trigger = zone.AddComponent<BoxCollider>();
+            trigger.isTrigger = true;
+            trigger.size = new Vector3(30, 2f, 20);
             zone.AddComponent<EncounterZone>();
-            SetColor(zone, new Color(0.8f, 0.2f, 0.2f));
+            var zoneView = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            zoneView.name = "EncounterZone_Greybox";
+            Object.DestroyImmediate(zoneView.GetComponent<Collider>());
+            zoneView.transform.SetParent(zone.transform, false);
+            zoneView.transform.localScale = new Vector3(30, 0.1f, 20);
+            Greybox(zoneView, new Color(0.8f, 0.2f, 0.2f));
 
-            // 玩家：胶囊体代替战车；Trigger 检测需要一侧有 Rigidbody
-            var player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            player.name = "Player";
+            // 玩家：Trigger 检测需要一侧有 Rigidbody；外观为灰盒胶囊，正式外观由 Codex 的表现层挂载
+            var player = new GameObject("Player");
             player.transform.position = new Vector3(0, 1, -10);
-            Object.DestroyImmediate(player.GetComponent<CapsuleCollider>());
             player.AddComponent<CharacterController>();
             var rb = player.AddComponent<Rigidbody>();
             rb.isKinematic = true;
             player.AddComponent<FieldPlayerController>();
             player.AddComponent<RandomEncounter>();
-            SetColor(player, new Color(0.2f, 0.5f, 0.3f));
+            var body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            body.name = "Player_Greybox";
+            Object.DestroyImmediate(body.GetComponent<Collider>());
+            body.transform.SetParent(player.transform, false);
+            Greybox(body, new Color(0.2f, 0.5f, 0.3f));
 
             // 固定俯视相机，跟随玩家
             var cam = Camera.main!.gameObject;
@@ -72,32 +107,30 @@ namespace Game.EditorTools
             cam.AddComponent<KeepWorldRotation>();
 
             new GameObject("FieldHUD").AddComponent<FieldHUD>();
-
-            string path = $"{SceneDir}/Field.unity";
-            EditorSceneManager.SaveScene(scene, path);
-            return path;
+            EditorSceneManager.SaveScene(scene, $"{LogicDir}/{GameSession.FieldSceneName}.unity");
         }
 
-        private static string BuildBattle()
+        private static void BuildBattle()
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+            new GameObject("[ArtSceneLoader]").AddComponent<ArtSceneLoader>();
+            Greybox(Object.FindAnyObjectByType<Light>().gameObject);
             Camera.main!.clearFlags = CameraClearFlags.SolidColor;
             Camera.main.backgroundColor = new Color(0.12f, 0.1f, 0.08f);
             new GameObject("BattleController").AddComponent<BattleController>();
-
-            string path = $"{SceneDir}/Battle.unity";
-            EditorSceneManager.SaveScene(scene, path);
-            return path;
+            EditorSceneManager.SaveScene(scene, $"{LogicDir}/{GameSession.BattleSceneName}.unity");
         }
 
-        private static void SetColor(GameObject go, Color c)
+        /// <summary>标记为灰盒；给定颜色时同时生成灰盒材质</summary>
+        private static void Greybox(GameObject go, Color? color = null)
         {
+            go.AddComponent<GreyboxMarker>();
+            if (color == null) return;
             var r = go.GetComponent<Renderer>();
             // 使用当前渲染管线的默认材质，URP 和内置管线都适用
-            var mat = new Material(r.sharedMaterial) { color = c };
-            string dir = $"{SceneDir}/Materials";
-            System.IO.Directory.CreateDirectory(dir);
-            AssetDatabase.CreateAsset(mat, $"{dir}/M_{go.name}.mat");
+            var mat = new Material(r.sharedMaterial) { color = color.Value };
+            Directory.CreateDirectory(GreyboxMatDir);
+            AssetDatabase.CreateAsset(mat, $"{GreyboxMatDir}/M_{go.name}.mat");
             r.sharedMaterial = mat;
         }
     }

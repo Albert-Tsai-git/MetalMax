@@ -13,6 +13,7 @@ namespace Game.Core
     public class GameSession : MonoBehaviour
     {
         public const string BattleSceneName = "Battle";
+        public const string FieldSceneName = "Field";
 
         private static GameSession _instance;
         public static GameSession Instance
@@ -46,7 +47,7 @@ namespace Game.Core
         public void StartBattle(List<Combatant> enemies, Vector3 playerPosition)
         {
             PendingEnemies = enemies;
-            _returnScene = SceneManager.GetActiveScene().name;
+            _returnScene = ArtSceneLoader.CurrentLogicScene ?? SceneManager.GetActiveScene().name;
             _returnPosition = playerPosition;
             _hasReturnPosition = true;
             Debug.Log($"[Session] 遇敌，从 {_returnScene} 进入战斗");
@@ -74,7 +75,7 @@ namespace Game.Core
 
             PendingEnemies = null;
             Debug.Log($"[Session] 战斗结束 {result}，金钱 {gold}G，经验 {exp}");
-            SceneManager.LoadScene(string.IsNullOrEmpty(_returnScene) ? "Field" : _returnScene);
+            SceneManager.LoadScene(string.IsNullOrEmpty(_returnScene) ? FieldSceneName : _returnScene);
         }
 
         /// <summary>野外场景加载后，取出应该回到的位置（只取一次）</summary>
@@ -94,13 +95,13 @@ namespace Game.Core
         {
             new Combatant
             {
-                name = "猎人", side = Side.Player,
+                name = TextDB.Name("CHR_Hunter"), side = Side.Player,
                 maxHp = 80, hp = 80, attack = 18, defense = 8, speed = 12,
                 tank = CreateTank(), inTank = true,
             },
             new Combatant
             {
-                name = "机械师", side = Side.Player,
+                name = TextDB.Name("CHR_Mechanic"), side = Side.Player,
                 maxHp = 60, hp = 60, attack = 12, defense = 6, speed = 9,
             },
         };
@@ -108,20 +109,20 @@ namespace Game.Core
         public static TankLoadout CreateTank()
         {
             var chassis = ScriptableObject.CreateInstance<ChassisData>();
-            chassis.displayName = "轻型底盘"; chassis.weight = 4f; chassis.defense = 10;
+            chassis.partId = "TNK_Chassis_Light"; chassis.weight = 4f; chassis.defense = 10;
 
             var engine = ScriptableObject.CreateInstance<EngineData>();
-            engine.displayName = "V8 引擎"; engine.weight = 1f; engine.loadCapacity = 12f;
+            engine.partId = "TNK_Engine_V8"; engine.weight = 1f; engine.loadCapacity = 12f;
 
             var cunit = ScriptableObject.CreateInstance<CUnitData>();
-            cunit.displayName = "基础 C 装置"; cunit.weight = 0.5f; cunit.hitBonus = 10; cunit.evadeBonus = 5;
+            cunit.partId = "TNK_CUnit_Basic"; cunit.weight = 0.5f; cunit.hitBonus = 10; cunit.evadeBonus = 5;
 
             var cannon = ScriptableObject.CreateInstance<WeaponData>();
-            cannon.displayName = "75mm 炮"; cannon.weight = 2f; cannon.attack = 60;
+            cannon.partId = "WPN_Cannon_75"; cannon.weight = 2f; cannon.attack = 60;
             cannon.weaponType = WeaponType.MainCannon; cannon.maxAmmo = 6;
 
             var mg = ScriptableObject.CreateInstance<WeaponData>();
-            mg.displayName = "7.7mm 机枪"; mg.weight = 0.5f; mg.attack = 25;
+            mg.partId = "WPN_MG_77"; mg.weight = 0.5f; mg.attack = 25;
             mg.weaponType = WeaponType.SubGun; mg.range = AttackRange.Group; mg.maxAmmo = -1;
 
             var tank = new TankLoadout { tankName = "一号车" };
