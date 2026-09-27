@@ -9,6 +9,16 @@ using Game.Town;
 
 namespace Game.Core
 {
+    /// <summary>下车后战车的停放位置（可存档）</summary>
+    [Serializable]
+    public class VehicleState
+    {
+        public bool parked;
+        public string scene;
+        public UnityEngine.Vector3 position;
+        public float yaw;
+    }
+
     /// <summary>
     /// 玩家的全部可存档状态：队伍、金钱、经验、背包。纯数据，不依赖场景，便于测试与存档。
     /// </summary>
@@ -21,6 +31,8 @@ namespace Game.Core
         public List<PartInstance> inventory = new();
         /// <summary>道具（ID 与数量）</summary>
         public List<ItemStack> items = new();
+        /// <summary>战车停放状态：parked 为真表示玩家下车步行，战车停在 scene 的 position</summary>
+        public VehicleState vehicle = new();
         /// <summary>最后到访的城镇，全灭后在此复活</summary>
         public string lastTown = DefaultTown;
         /// <summary>赏金首进度（未出现在列表中的视为通缉中）</summary>

@@ -136,7 +136,7 @@ namespace Game.Battle
                     DoTankWeapon(a);
                     break;
                 case ActionType.BoardTank:
-                    if (a.actor.tank != null && !a.actor.tank.IsDestroyed)
+                    if (a.actor.CanBoard)
                     {
                         a.actor.inTank = true;
                         Log($"{a.actor} 登上了 {a.actor.tank.tankName}");

@@ -37,6 +37,8 @@ namespace Game.Battle
         [NonSerialized] public EnemyData enemyData;
         /// <summary>战斗中的分组序号：同一场战斗中同种敌人为一组（从 0 开始）；玩家方全部为 0</summary>
         [NonSerialized] public int groupIndex;
+        /// <summary>战车不在身边（野外下车步行时遇敌），本场战斗不能乘车</summary>
+        [NonSerialized] public bool tankAway;
 
         /// <summary>受到该属性攻击的伤害倍率（没有敌人配置时为 1）</summary>
         public float ElementRate(Element e) => enemyData?.ElementRate(e) ?? 1f;
@@ -44,7 +46,10 @@ namespace Game.Battle
         public bool IsAlive => hp > 0;
 
         /// <summary>乘车且战车还能战斗</summary>
-        public bool IsTankActive => inTank && tank != null && !tank.IsDestroyed;
+        public bool IsTankActive => inTank && tank != null && !tankAway && !tank.IsDestroyed;
+
+        /// <summary>本场战斗能否登上自己的战车</summary>
+        public bool CanBoard => tank != null && !tankAway && !tank.IsDestroyed;
 
         /// <summary>单位还能行动（人活着即可；车全毁时人会被迫下车）</summary>
         public bool CanAct => IsAlive;

@@ -101,6 +101,15 @@ namespace Game.EditorTools
             p.lockedTextKey = "UI.Portal.PumpLocked";
             Spawn("from_pump", new Vector3(17, 1, 19));
 
+            // 栈桥镇车库老板曲婆（STORY 关键 NPC），按 E 对话；对话内容由 Codex 编写
+            var npc = new GameObject("NPC_Qupo");
+            npc.transform.position = new Vector3(-9, 1, -14);
+            npc.AddComponent<CapsuleCollider>();
+            var talk = npc.AddComponent<NpcTalk>();
+            talk.npcId = "NPC_Qupo";
+            talk.dialogueId = "DLG_Qupo";
+            Visual(PrimitiveType.Capsule, "NPC_Qupo_Greybox", npc.transform, new Color(0.8f, 0.5f, 0.3f));
+
             new GameObject("TownDebugMenu").AddComponent<TownDebugMenu>();
             Save(scene, GameSession.FieldSceneName);
         }
@@ -226,6 +235,7 @@ namespace Game.EditorTools
             player.AddComponent<Rigidbody>().isKinematic = true;
             player.AddComponent<FieldPlayerController>();
             player.AddComponent<RandomEncounter>();
+            player.AddComponent<FieldInteractor>();
             Visual(PrimitiveType.Capsule, "Player_Greybox", player.transform, new Color(0.2f, 0.5f, 0.3f));
 
             // 固定俯视相机，跟随玩家

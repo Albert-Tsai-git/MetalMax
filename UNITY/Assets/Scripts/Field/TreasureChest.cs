@@ -6,11 +6,10 @@ using UnityEngine;
 namespace Game.Field
 {
     /// <summary>
-    /// 宝箱：玩家进入触发区时打开，执行内容效果（Effects 语法，如 gold:+300、item:ITM_Tonic:2、give:部件ID）。
+    /// 宝箱：靠近后按 E 打开，执行内容效果（Effects 语法，如 gold:+300、item:ITM_Tonic:2、give:部件ID）。
     /// 打开后设置标记 chest:{chestId}，随存档保存，不会再次打开；已打开的宝箱隐藏灰盒外观。
     /// </summary>
-    [RequireComponent(typeof(Collider))]
-    public class TreasureChest : MonoBehaviour
+    public class TreasureChest : Interactable
     {
         public string chestId;
         public string contents;
@@ -34,15 +33,16 @@ namespace Game.Field
             return OpResult.Ok;
         }
 
-        private void Start() => RefreshVisual();
+        public override string PromptKey => "UI.Interact.Open";
 
-        private void Reset() => GetComponent<Collider>().isTrigger = true;
+        public override bool CanInteract(PlayerState s) => !s.flags.Contains(FlagOf(chestId));
 
-        private void OnTriggerEnter(Collider other)
+        public override void Interact(PlayerState s)
         {
-            if (!other.TryGetComponent(out FieldPlayerController _)) return;
-            if (Open(GameSession.Instance.State, chestId, contents) == OpResult.Ok) RefreshVisual();
+            if (Open(s, chestId, contents) == OpResult.Ok) RefreshVisual();
         }
+
+        private void Start() => RefreshVisual();
 
         private void RefreshVisual()
         {

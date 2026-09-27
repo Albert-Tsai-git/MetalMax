@@ -56,6 +56,13 @@ namespace Game.Core
         public void StartBattle(List<Combatant> enemies, Vector3 playerPosition)
         {
             PendingEnemies = enemies;
+            // 步行时遇敌：战车停在别处，全员步行作战
+            bool onFoot = State.vehicle.parked;
+            foreach (var p in party)
+            {
+                p.tankAway = onFoot;
+                if (onFoot) p.inTank = false;
+            }
             _returnScene = ArtSceneLoader.CurrentLogicScene ?? SceneManager.GetActiveScene().name;
             _returnPosition = playerPosition;
             _hasReturnPosition = true;
@@ -82,11 +89,16 @@ namespace Game.Core
                 foreach (var p in party) p.hp = p.maxHp;
                 gold /= 2;
                 _respawnTown = State.lastTown;
+                // 回城复活时战车一并拖回（原作中由拖车服务找回战车）
+                State.vehicle = new VehicleState();
+                var owner = party.Find(p => p.tank != null);
+                if (owner != null) owner.inTank = true;
                 _hasReturnPosition = false;
                 Debug.Log($"[Session] 全灭：金钱减半，回到 {_respawnTown}");
             }
 
             PendingEnemies = null;
+            foreach (var p in party) p.tankAway = false;
             StoryService.Refresh(State);
             Debug.Log($"[Session] 战斗结束 {result}，金钱 {gold}G，经验 {exp}");
             // 全灭时城镇入口在野外，无论在哪个场景战败都回到野外

@@ -23,6 +23,7 @@ namespace Game.Core.Save
                 flags = new List<string>(s.flags),
                 quests = new List<Game.Story.QuestRecord>(s.quests),
                 items = s.items.ConvertAll(i => new Game.Items.ItemStack { id = i.id, count = i.count }),
+                vehicle = new VehicleState { parked = s.vehicle.parked, scene = s.vehicle.scene, position = s.vehicle.position, yaw = s.vehicle.yaw },
             };
             foreach (var c in s.party) d.party.Add(ToSave(c));
             foreach (var p in s.inventory) d.inventory.Add(ToSave(p));
@@ -36,6 +37,7 @@ namespace Game.Core.Save
             var s = new PlayerState(d.gold) { exp = d.exp, lastTown = d.lastTown };
             if (d.bounties != null) s.bounties.AddRange(d.bounties);
             if (d.flags != null) s.flags.AddRange(d.flags);
+            s.vehicle = d.vehicle ?? new VehicleState();
             if (d.quests != null) s.quests.AddRange(d.quests);
             if (d.items != null)
                 foreach (var i in d.items)
@@ -73,6 +75,7 @@ namespace Game.Core.Save
                 d.quests ??= new List<Game.Story.QuestRecord>();
             }
             if (d.version < 5) d.items ??= new List<Game.Items.ItemStack>(); // v4 → v5：新增道具
+            if (d.version < 6) d.vehicle = new VehicleState(); // v5 → v6：新增战车停放，旧存档视为在车上
             if (string.IsNullOrEmpty(d.lastTown)) d.lastTown = PlayerState.DefaultTown;
             d.version = SaveData.CurrentVersion;
         }

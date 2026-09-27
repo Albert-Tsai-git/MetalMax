@@ -9,7 +9,7 @@ namespace Game.Field
     /// <summary>野外原型 HUD：显示金钱、经验、队伍状态；按 R 全面修理（模拟回城）</summary>
     public class FieldHUD : MonoBehaviour
     {
-        private string _msg = "WASD 移动，进入红色区域会随机遇敌，R 修理，F5 存档，F9 读档";
+        private string _msg = "WASD 移动，Shift 奔跑（步行），F 下车/上车，E 交互，R 修理，F5 存档，F9 读档";
 
         private void Update()
         {
@@ -49,8 +49,13 @@ namespace Game.Field
             var lines = s.party.Select(p =>
                 $"{p.name} Lv{p.level} HP {p.hp}/{p.maxHp}" + (p.tank != null ? $"  {p.tank.tankName} SP {p.tank.currentSp}/{p.tank.MaxSp}" : ""));
             var style = new GUIStyle(GUI.skin.box) { fontSize = 16, alignment = TextAnchor.UpperLeft };
-            GUI.Box(new Rect(10, 10, 420, 130),
-                $"金钱 {s.gold}G    经验 {s.exp}\n{string.Join("\n", lines)}\n\n{_msg}", style);
+            var player = FindAnyObjectByType<FieldPlayerController>();
+            var target = player != null ? player.GetComponent<FieldInteractor>()?.Current : null;
+            if (target != null)
+                GUI.Box(new Rect(Screen.width / 2f - 120, Screen.height - 90, 240, 30), $"E：{TextDB.Get(target.PromptKey)}");
+            string mode = player != null && player.OnFoot ? "步行" : "乘车";
+            GUI.Box(new Rect(10, 10, 520, 150),
+                $"金钱 {s.gold}G    经验 {s.exp}    [{mode}]\n{string.Join("\n", lines)}\n\n{_msg}", style);
         }
     }
 }

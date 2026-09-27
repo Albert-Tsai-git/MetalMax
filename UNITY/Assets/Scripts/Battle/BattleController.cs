@@ -264,7 +264,7 @@ namespace Game.Battle
                 {
                     if (GUILayout.Button("下车", _btn)) { Commit(BattleAction.Simple(_current, ActionType.LeaveTank)); return; }
                 }
-                else if (!_current.tank.IsDestroyed && GUILayout.Button("上车", _btn))
+                else if (_current.CanBoard && GUILayout.Button("上车", _btn))
                 {
                     Commit(BattleAction.Simple(_current, ActionType.BoardTank)); return;
                 }
