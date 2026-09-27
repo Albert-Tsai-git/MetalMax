@@ -1,19 +1,51 @@
 # 协作约定（Claude × Codex）
 
-> 版本：v0.2（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
+> 版本：v0.3（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
 > 本文件是两个 AI 共同遵守的唯一协作约定。任何一方修改“接口约定”一节时，须在文末变更记录中写明，并由用户转达另一方。
 
 ---
 
 ## 1. 职责分工
 
-| 领域 | 负责方 | 范围 |
-|---|---|---|
-| 逻辑与机制 | **Claude** | 战斗、战车/部件、遭遇、任务、经济、存档、队伍成长等玩法规则与运行时脚本；数据结构与 CSV 导入；逻辑测试 |
-| 模型、美术、环境 | **Codex** | Blender 建模与导出、材质/贴图/Shader、概念图、Unity 工程与包配置、URP/渲染设置、场景搭建与布景、光照、资产导入设置 |
-| 设计文档 | 共同维护 | `docs/GDD.md`：机制章节以 Claude 为主，美术/环境章节以 Codex 为主；设计决策以用户确认为准 |
+**划分原则（用户 2026-09-27 确定）**：Codex 负责“玩家看到、听到、读到的内容与表现”——故事背景、文案、美术、界面、模型、动效；Claude 负责“游戏如何运转”——游戏逻辑与机制。交界处按“内容/表现归 Codex，规则/驱动归 Claude”判定。
 
-不在上表中的新工作，由用户指定负责方后再开始。
+### 1.1 Codex 负责
+
+| 领域 | 范围 |
+|---|---|
+| 故事背景 | 世界观、势力、历史、角色与 NPC 人设、剧情大纲与分支内容 |
+| 文案 | 对话台词、任务描述、物品/部件/敌人名称与说明、UI 文字、教程文本；多语言文本内容与翻译 |
+| 美术 | 概念图、原画、材质/贴图/Shader、色彩与风格规范（`ART_BIBLE.md`） |
+| 模型 | Blender 建模、导出、挂点节点、LOD、资产导入设置 |
+| 界面 | UI 布局、样式、图标、字体，以及 UI 表现层 C# 脚本（订阅 Claude 提供的数据与事件） |
+| 动效 | 角色/战车动画、Animator、粒子与特效、UI 动效、战斗运镜与镜头构图 |
+| 音频 | 音效、BGM、Audio Mixer 与混音 |
+| 环境与布景 | 世界地图、城镇、迷宫的美术布景（以预制体或美术场景交付）、光照、后处理 |
+| 渲染工程配置 | URP、Quality、Graphics 设置；渲染性能（Draw Call、贴图压缩、LOD） |
+| 表现层验收 | 视觉与听觉效果在 Unity 中的实际验收 |
+
+### 1.2 Claude 负责
+
+| 领域 | 范围 |
+|---|---|
+| 游戏机制 | 战斗、战车/部件改装、遭遇、成长、经济、商店货架与价格、掉落、悬赏 |
+| 游戏逻辑 | 运行时系统、状态机、场景流程与切换、存档/读档与版本迁移 |
+| 剧情与任务系统 | 对话系统、剧情触发条件、任务状态与分支判定、区域解锁（内容由 Codex 填写） |
+| 关卡逻辑 | 可达性、遭遇表、触发区、逻辑场景中的逻辑物体摆放与参数 |
+| 数据 | 数值 CSV、数据结构与导入器、文本表与本地化的格式和加载机制 |
+| 数值平衡 | 伤害、价格、经验曲线等（机制落地后再做） |
+| 输入与相机控制 | Input Actions、键位与手柄；相机跟随等控制代码 |
+| 表现驱动接口 | 向 UI、动效、音频发出数据与事件（如“命中”“击毁”“金钱变化”），不负责其表现 |
+| 逻辑工程配置 | Tags、Layers、物理与碰撞矩阵、Build Settings 场景列表 |
+| 构建与仓库 | 打包发布、版本号、Git 分支策略、LFS、合并冲突处理 |
+| 逻辑验收 | 逻辑测试与可复现的验证方式 |
+
+### 1.3 共同 / 用户
+
+- `docs/GDD.md`：世界观、剧情、文案、美术、界面章节归 Codex；机制、系统章节归 Claude。
+- 新增 Unity 包：提出方说明理由，双方同意后由提出方安装。
+- 整体试玩与设计决策：用户。
+- 不在上表中的新工作，按划分原则判定；判定不了的交用户指定。
 
 ## 2. 目录所有权
 
@@ -41,18 +73,22 @@ GAME/                    仓库根目录（非 Unity 工程）
 
 ### 2.2 各路径所有者
 
-| 路径 | 所有者 | 另一方可做的事 |
+| 路径 | 所有者 | 说明 |
 |---|---|---|
-| `Assets/Scripts/`（除下述 View 类） | Claude | 只读；发现问题提给用户 |
-| `Assets/Scripts/Tank/View/`、UI 表现层脚本 | Claude 写逻辑接入，Codex 可提需求 | 需要改动时先说明需求 |
-| `Assets/Scripts/Editor/CsvDataImporter.cs` | Claude | 只读 |
-| `Assets/Scripts/Editor/PrototypeSceneBuilder.cs` | Claude（灰盒原型用） | 正式场景由 Codex 手工/工具搭建，不依赖此脚本 |
-| `Data/*.csv` | Claude | Codex 只可提出新增 ID 需求 |
-| `Assets/GameData/`（CSV 生成的 ScriptableObject） | Claude（数值字段）/ Codex（`modelPrefab` 等美术引用字段） | 见 §3.3 |
-| `Assets/Art/`、`Assets/Models/`、`Assets/Materials/`、`Assets/Prefabs/`（美术预制体） | Codex | 只读 |
-| `Assets/Scenes/`、`Assets/Settings/`、`Assets/InputSystem_Actions.inputactions` | Codex | 需要新增输入动作或场景组件时提需求 |
-| `ProjectSettings/`、`Packages/` | Codex | 需要新增包时提需求，不自行安装 |
-| `docs/` | 共同 | 编辑自己负责的章节 |
+| `Assets/Scripts/`（除 `UI/`、`Presentation/`） | Claude | 逻辑、机制、数据、编辑器工具 |
+| `Assets/Scripts/UI/`、`Assets/Scripts/Presentation/` | Codex | UI 与动效/音频表现层脚本，只订阅 Claude 的数据与事件，不写规则 |
+| `Data/*.csv`（数值表） | Claude | Codex 可提出新增 ID 需求 |
+| `Data/Text/*.csv`（文本表：名称、描述、台词、UI 文字） | Codex | 按数据 ID / 文本键对应；格式与加载器归 Claude |
+| `Assets/GameData/` | Claude | 只含数值；美术引用迁出到映射表（见 §3.3） |
+| `Assets/Art/`、`Assets/Models/`、`Assets/Materials/`、`Assets/Prefabs/`、`Assets/Animations/`、`Assets/VFX/`、`Assets/Audio/`、`Assets/UI/`、`Assets/Fonts/` | Codex | 美术、界面、动效、音频资源 |
+| `Assets/Scenes/Logic/`（逻辑场景） | Claude | 触发区、控制器等逻辑物体 |
+| `Assets/Scenes/Art/`（美术场景 / 布景） | Codex | 以叠加加载方式与逻辑场景组合 |
+| `Assets/Scenes/Prototype/` | Claude | 灰盒原型，拆分完成后退役 |
+| `Assets/InputSystem_Actions.inputactions` | Claude | — |
+| `Assets/Settings/`（URP 等渲染资产） | Codex | — |
+| `ProjectSettings/` | 分项 | Tags/Layers/物理/Build Settings 归 Claude；Quality/Graphics 归 Codex |
+| `Packages/` | 共同 | 双方同意后由提出方修改 |
+| `docs/` | 共同 | 按 §1.3 各写各的章节 |
 
 **规则**：不修改对方所有的文件。确需跨界时，在“待对接事项”（§5）登记，由所有者处理。
 
@@ -100,6 +136,13 @@ GAME/                    仓库根目录（非 Unity 工程）
 - 代码注释使用中文；重要数据流日志使用 `[模块]` 前缀（如 `[Session]`、`[Import]`）。
 - 输入统一走 Unity Input System；新增输入动作由 Claude 提需求，Codex 在 `.inputactions` 中添加。
 
+### 3.6 表现层接口（v0.3 新增）
+
+- Claude 以 C# 事件 / 只读数据暴露状态（如战斗事件、玩家金钱、装备数值），Codex 的 UI 与表现脚本订阅，不直接修改游戏状态。
+- Animator 参数名、音效/特效触发键由 Codex 登记在接入说明中，Claude 发出的事件名与之对应。
+- 文本一律通过文本键读取，代码中不硬编码玩家可见文字（调试日志除外）。
+- 待实施的迁移：`modelPrefab` 改为 `ID → 资源` 映射表；数据表中的名称/描述迁入 `Data/Text/`；原型场景拆分为逻辑场景与美术场景。
+
 ## 4. 交付与交接
 
 每次交付需附一段交接说明（写在对话中，或需要长期保留时写入 `docs/`）：
@@ -130,5 +173,6 @@ GAME/                    仓库根目录（非 Unity 工程）
 
 ## 7. 变更记录
 
+- **v0.3**（2026-09-27，Claude）：按用户划分原则重写 §1 职责分工与 §2.2 路径所有权，新增 §3.6 表现层接口。与 §3.3/§3.4 旧条款冲突处以 v0.3 为准，待迁移完成后清理。
 - **v0.2**（2026-09-27，Claude）：新增 §2.1 仓库目录结构；Unity 工程迁移至 `UNITY/`，`Data/` 随工程迁移。
 - **v0.1**（2026-09-27，Claude 起草）：初版分工、目录所有权、接口约定与交接流程，待 Codex 与用户确认。
