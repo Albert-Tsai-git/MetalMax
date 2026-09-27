@@ -27,3 +27,4 @@ Thumbs.db
 
 # Claude/Codex 本机通讯数据
 comms/
+__pycache__/

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Game.Battle;
 using Game.Core;
+using Game.Economy;
 using Game.Tank;
 using UnityEditor;
 using UnityEngine;
@@ -14,14 +15,14 @@ namespace Game.EditorTools
 {
     /// <summary>
     /// 数值表导入：读取工程根目录 Data/ 下的 CSV（Excel 另存为“CSV UTF-8”），
-    /// 生成或更新 Assets/GameData/ 下的 ScriptableObject。
+    /// 生成或更新 Assets/Resources/GameData/ 下的 ScriptableObject。
     /// 以 id 列作为资产文件名：已有资产只更新字段，GUID 不变，场景里的引用不会断。
     /// 文本表 Data/Text/text_{lang}.csv（key,text）生成 Assets/Resources/Text/TextTable_{lang}.asset。
     /// </summary>
     public static class CsvDataImporter
     {
         private const string DataDir = "Data";
-        private const string OutDir = "Assets/GameData";
+        private const string OutDir = "Assets/Resources/GameData";
         private const string TextDir = "Data/Text";
         private const string TextOutDir = "Assets/Resources/Text";
 
@@ -31,10 +32,12 @@ namespace Game.EditorTools
             int n = 0;
             n += Import("parts.csv", $"{OutDir}/Parts", CreatePart);
             n += Import("enemies.csv", $"{OutDir}/Enemies", CreateEnemy);
+            n += ImportShops();
             n += ImportTexts();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             TextDB.SetLanguage(TextDB.Language); // 清除运行时文本缓存
+            GameDB.Reload();
             Debug.Log($"[Import] 完成，共导入 {n} 条");
         }
 
@@ -82,6 +85,40 @@ namespace Game.EditorTools
             return count;
         }
 
+        /// <summary>商店表 shops.csv：shop_id,part_id，一行一件商品；同一商店的行合并为一个资产</summary>
+        private static int ImportShops()
+        {
+            string path = Path.Combine(DataDir, "shops.csv");
+            if (!File.Exists(path)) { Debug.LogWarning($"[Import] 未找到 {path}，跳过"); return 0; }
+            string dir = $"{OutDir}/Shops";
+            Directory.CreateDirectory(dir);
+
+            var groups = new Dictionary<string, List<TankPartData>>();
+            foreach (var r in ReadCsv(path))
+            {
+                string shopId = r.Str("shop_id"), partId = r.Str("part_id");
+                if (shopId == "") continue;
+                var part = AssetDatabase.LoadAssetAtPath<TankPartData>($"{OutDir}/Parts/{partId}.asset");
+                if (part == null) { Debug.LogError($"[Import] shops.csv 第 {r.Line} 行：部件 {partId} 不存在"); continue; }
+                if (!groups.TryGetValue(shopId, out var list)) groups[shopId] = list = new List<TankPartData>();
+                list.Add(part);
+            }
+            foreach (var (shopId, goods) in groups)
+            {
+                string assetPath = $"{dir}/{shopId}.asset";
+                var shop = AssetDatabase.LoadAssetAtPath<ShopData>(assetPath);
+                bool isNew = shop == null;
+                if (isNew) shop = ScriptableObject.CreateInstance<ShopData>();
+                shop.shopId = shopId;
+                shop.goods = goods;
+                shop.name = shopId;
+                if (isNew) AssetDatabase.CreateAsset(shop, assetPath);
+                EditorUtility.SetDirty(shop);
+            }
+            Debug.Log($"[Import] shops.csv → {dir}：{groups.Count} 个商店");
+            return groups.Count;
+        }
+
         /// <summary>导入所有语言的文本表，并检查每个数据 ID 都有 .name 键</summary>
         private static int ImportTexts()
         {
@@ -97,6 +134,8 @@ namespace Game.EditorTools
                 string path = Path.Combine(DataDir, file);
                 if (File.Exists(path)) foreach (var r in ReadCsv(path)) if (r.Str("id") != "") ids.Add(r.Str("id"));
             }
+            string shopsPath = Path.Combine(DataDir, "shops.csv");
+            if (File.Exists(shopsPath)) foreach (var r in ReadCsv(shopsPath)) if (r.Str("shop_id") != "") ids.Add(r.Str("shop_id"));
 
             int total = 0;
             foreach (var path in Directory.GetFiles(TextDir, "text_*.csv"))

@@ -33,7 +33,7 @@ RULES = [
     # 数据
     ("UNITY/Data/Text/*", "Codex"),
     ("UNITY/Data/*", "Claude"),
-    ("UNITY/Assets/GameData/*", "Claude"),
+    ("UNITY/Assets/Resources/GameData/*", "Claude"),
     ("UNITY/Assets/Resources/Text/*", "Claude"),      # 由导入器生成
     ("UNITY/Assets/Resources/Visuals/*", "Codex"),
     ("UNITY/Assets/Resources/Icons/*", "Codex"),

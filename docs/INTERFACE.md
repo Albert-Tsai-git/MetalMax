@@ -15,6 +15,8 @@
 | I-08 | 逻辑层对外可读数据：`GameSession.Instance`（`party`、`gold`、`exp`）；`TankLoadout`（部件、`OnChanged` 事件）；`TextDB.Name/Desc/Get`；`VisualCatalog.Model/Icon`。新增接口先登记到本表。 | ✅ | ✅ |
 | I-09 | 战斗事件 `Game.Battle.BattleEvents`（静态，OnEnable 订阅 / OnDisable 取消）：`Started(BattleSystem)`、`TurnStarted(int 回合)`、`ActionStarted(行动者, ActionType, 武器或 null)`、`Missed(攻击者, 目标)`、`Hit(攻击者, 目标, 伤害, 是否打在战车)`、`PartDamaged(所属者, PartInstance)`、`TankDisabled(所属者)`、`BoardChanged(行动者, 是否在车上)`、`Defeated(单位)`、`EscapeAttempted(行动者, 是否成功)`、`Ended(BattleState, 经验, 金钱)`。 | ✅ | ✅ |
 | I-10 | 战斗单位 `Combatant.id` 为数据 ID（`ENM_` / `CHR_`），表现层据此取模型（I-03）与文本（I-02）；演示单位可能为空。 | ✅ | ✅ |
+| I-11 | 商店与车库（`Game.Economy`）：`ShopService.Buy/Sell/SellPrice`、`GarageService.Equip/Unequip/Upgrade/Repair/FillArmor`，均返回 `Game.Core.OpResult`；玩家状态 `GameSession.Instance.State`（`PlayerState`：`Gold`、`inventory`）；商店 `GameDB.Shop(ID).goods`。事件 `EconomyEvents`：`GoldChanged(旧, 新)`、`InventoryChanged()`、`Bought(商店ID, 部件)`、`Sold(部件, 金钱)`、`Upgraded(部件)`。 | ✅ | ⏳ |
+| I-12 | 操作结果提示文本键 `UI.Result.{OpResult 枚举名}`（如 `UI.Result.NotEnoughGold`）；商店 ID 前缀 `SHP_`，名称键 `{ID}.name`。 | ✅ | ⏳ |
 
 ## 待定条款
 

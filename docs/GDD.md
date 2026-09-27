@@ -247,7 +247,7 @@
 ### 数据管线
 
 - `Data/parts.csv` 定义底盘、引擎、C 装置和武器；`Data/enemies.csv` 定义普通敌人与悬赏字段。
-- Unity 菜单 `Game/导入数值表 (CSV)` 生成或更新 `Assets/GameData/` 下的 ScriptableObject。
+- Unity 菜单 `Game/导入数值表 (CSV)` 生成或更新 `Assets/Resources/GameData/` 下的 ScriptableObject。
 - ID 是数据资产文件名基础；改名要同步引用和存档兼容策略。
 - 生产数据表需添加版本、必填字段校验和导入错误报告；当前导入器已有基础字段解析与错误日志。
 
@@ -263,7 +263,7 @@
 | 渲染 | URP 17.6.0；`Assets/Settings/` 含 PC / Mobile 两套 RP Asset 与 Renderer |
 | 输入 | Input System 1.20.0；`activeInputHandler: 1`（仅新输入系统）；已有 `InputSystem_Actions.inputactions` |
 | 场景 | `Assets/Scenes/Logic/Field.unity`、`Battle.unity` 由“Game/生成逻辑场景”生成并加入 Build Settings |
-| 数据资产 | `Assets/GameData/` 已由 CSV 导入生成 9 个部件、4 个敌人 ScriptableObject |
+| 数据资产 | `Assets/Resources/GameData/` 已由 CSV 导入生成 9 个部件、4 个敌人 ScriptableObject |
 | 美术 | 仅有概念图 `Assets/Art/Concepts/TNK_Light_Rover_Concept_v01.svg`；部件与敌人模型尚未制作（按 ID 放入 `Resources/Visuals/`，见 `docs/INTERFACE.md` I-03） |
 | 版本管理 | 仍未检测到 Git 元数据 |
 

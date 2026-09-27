@@ -32,8 +32,8 @@ namespace Game.EditorTools
                 var party = DemoFactory.CreateParty();
                 var enemies = new[]
                 {
-                    AssetDatabase.LoadAssetAtPath<EnemyData>("Assets/GameData/Enemies/ENM_Ant.asset"),
-                    AssetDatabase.LoadAssetAtPath<EnemyData>("Assets/GameData/Enemies/ENM_TurretBug.asset"),
+                    AssetDatabase.LoadAssetAtPath<EnemyData>("Assets/Resources/GameData/Enemies/ENM_Ant.asset"),
+                    AssetDatabase.LoadAssetAtPath<EnemyData>("Assets/Resources/GameData/Enemies/ENM_TurretBug.asset"),
                 }.Where(e => e != null).Select((e, i) => e.CreateCombatant($" {i}")).ToList();
 
                 var battle = new BattleSystem(party, enemies, seed);

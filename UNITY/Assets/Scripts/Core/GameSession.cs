@@ -25,16 +25,20 @@ namespace Game.Core
                     var go = new GameObject("[GameSession]");
                     _instance = go.AddComponent<GameSession>();
                     DontDestroyOnLoad(go);
-                    _instance.party = DemoFactory.CreateParty();
+                    _instance.State.party = DemoFactory.CreateParty();
                     Debug.Log("[Session] 新建会话，初始化演示队伍");
                 }
                 return _instance;
             }
         }
 
-        public List<Combatant> party = new();
-        public int gold = 500;
-        public int exp;
+        /// <summary>玩家可存档状态</summary>
+        public PlayerState State { get; private set; } = new(500);
+
+        // I-08 约定的读取入口
+        public List<Combatant> party => State.party;
+        public int gold { get => State.Gold; set => State.Gold = value; }
+        public int exp { get => State.exp; set => State.exp = value; }
 
         /// <summary>待进入的战斗的敌人列表</summary>
         public List<Combatant> PendingEnemies { get; private set; }
@@ -106,31 +110,15 @@ namespace Game.Core
             },
         };
 
+        /// <summary>初始战车：轻型底盘 + V8 + 基础 C 装置 + 75mm 炮 + 7.7mm 机枪</summary>
         public static TankLoadout CreateTank()
         {
-            var chassis = ScriptableObject.CreateInstance<ChassisData>();
-            chassis.partId = "TNK_Chassis_Light"; chassis.weight = 4f; chassis.defense = 10;
-
-            var engine = ScriptableObject.CreateInstance<EngineData>();
-            engine.partId = "TNK_Engine_V8"; engine.weight = 1f; engine.loadCapacity = 12f;
-
-            var cunit = ScriptableObject.CreateInstance<CUnitData>();
-            cunit.partId = "TNK_CUnit_Basic"; cunit.weight = 0.5f; cunit.hitBonus = 10; cunit.evadeBonus = 5;
-
-            var cannon = ScriptableObject.CreateInstance<WeaponData>();
-            cannon.partId = "WPN_Cannon_75"; cannon.weight = 2f; cannon.attack = 60;
-            cannon.weaponType = WeaponType.MainCannon; cannon.maxAmmo = 6;
-
-            var mg = ScriptableObject.CreateInstance<WeaponData>();
-            mg.partId = "WPN_MG_77"; mg.weight = 0.5f; mg.attack = 25;
-            mg.weaponType = WeaponType.SubGun; mg.range = AttackRange.Group; mg.maxAmmo = -1;
-
             var tank = new TankLoadout { tankName = "一号车" };
-            tank.TryEquip(new PartInstance(chassis), 0, out _, out _);
-            tank.TryEquip(new PartInstance(engine), 0, out _, out _);
-            tank.TryEquip(new PartInstance(cunit), 0, out _, out _);
-            tank.TryEquip(new PartInstance(cannon), 0, out _, out _);
-            tank.TryEquip(new PartInstance(mg), 1, out _, out _);
+            tank.TryEquip(new PartInstance(GameDB.Part("TNK_Chassis_Light")), 0, out _);
+            tank.TryEquip(new PartInstance(GameDB.Part("TNK_Engine_V8")), 0, out _);
+            tank.TryEquip(new PartInstance(GameDB.Part("TNK_CUnit_Basic")), 0, out _);
+            tank.TryEquip(new PartInstance(GameDB.Part("WPN_Cannon_75")), 0, out _);
+            tank.TryEquip(new PartInstance(GameDB.Part("WPN_MG_77")), 1, out _);
             tank.FillArmor();
             return tank;
         }

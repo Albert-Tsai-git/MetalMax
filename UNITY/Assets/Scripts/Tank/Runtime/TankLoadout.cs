@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Core;
 using UnityEngine;
 
 namespace Game.Tank
@@ -64,14 +65,23 @@ namespace Game.Tank
 
         #region 装配
 
+        /// <summary>换底盘时因武器孔不兼容被卸下的武器，由调用方取走放回背包</summary>
+        private readonly List<PartInstance> _detached = new();
+
+        public List<PartInstance> TakeDetachedWeapons()
+        {
+            var list = new List<PartInstance>(_detached);
+            _detached.Clear();
+            return list;
+        }
+
         /// <summary>
         /// 装配部件。武器需要指定武器孔下标，其他部件忽略 holeIndex。
-        /// 返回被替换下来的旧部件（可放回背包），失败返回 false。
+        /// replaced 为被替换下来的旧部件（可放回背包）。
         /// </summary>
-        public bool TryEquip(PartInstance part, int holeIndex, out PartInstance replaced, out string error)
+        public OpResult TryEquip(PartInstance part, int holeIndex, out PartInstance replaced)
         {
             replaced = null;
-            error = null;
 
             switch (part.data)
             {
@@ -81,9 +91,13 @@ namespace Game.Tank
                     // 底盘变了，武器孔要重建；不兼容的武器被卸下
                     var old = weapons;
                     weapons = new List<PartInstance>(new PartInstance[cd.weaponHoles.Length]);
-                    for (int i = 0; i < old.Count && i < weapons.Count; i++)
-                        if (old[i] != null && ((WeaponData)old[i].data).weaponType == cd.weaponHoles[i])
+                    for (int i = 0; i < old.Count; i++)
+                    {
+                        if (old[i] == null) continue;
+                        if (i < weapons.Count && ((WeaponData)old[i].data).weaponType == cd.weaponHoles[i])
                             weapons[i] = old[i];
+                        else _detached.Add(old[i]);
+                    }
                     break;
 
                 case EngineData:
@@ -97,23 +111,46 @@ namespace Game.Tank
                     break;
 
                 case WeaponData wd:
-                    if (chassis == null) { error = "没有底盘"; return false; }
+                    if (chassis == null) return OpResult.NoChassis;
                     var holes = ((ChassisData)chassis.data).weaponHoles;
-                    if (holeIndex < 0 || holeIndex >= holes.Length) { error = "武器孔不存在"; return false; }
-                    if (holes[holeIndex] != wd.weaponType) { error = $"该孔只能装 {holes[holeIndex]}"; return false; }
+                    if (holeIndex < 0 || holeIndex >= holes.Length) return OpResult.HoleNotFound;
+                    if (holes[holeIndex] != wd.weaponType) return OpResult.HoleTypeMismatch;
                     replaced = weapons[holeIndex];
                     weapons[holeIndex] = part;
                     break;
 
                 default:
-                    error = "未知部件类型";
-                    return false;
+                    return OpResult.UnknownPart;
             }
 
             ClampArmor();
-            Debug.Log($"[Tank] {tankName} 装配 {part.data.DisplayName}，总重 {TotalWeight:F1}/{LoadCapacity:F1}t");
+            Debug.Log($"[Tank] {tankName} 装配 {part.data.partId}，总重 {TotalWeight:F1}/{LoadCapacity:F1}t");
             OnChanged?.Invoke();
-            return true;
+            return OpResult.Ok;
+        }
+
+        /// <summary>卸下 C 装置或武器；底盘和引擎只能替换，不能卸下</summary>
+        public OpResult TryRemove(PartSlot slot, int holeIndex, out PartInstance removed)
+        {
+            removed = null;
+            switch (slot)
+            {
+                case PartSlot.CUnit:
+                    removed = cUnit;
+                    cUnit = null;
+                    break;
+                case PartSlot.Weapon:
+                    if (holeIndex < 0 || holeIndex >= weapons.Count) return OpResult.HoleNotFound;
+                    removed = weapons[holeIndex];
+                    weapons[holeIndex] = null;
+                    break;
+                default:
+                    return OpResult.CannotRemove;
+            }
+            if (removed == null) return OpResult.SlotEmpty;
+            Debug.Log($"[Tank] {tankName} 卸下 {removed.data.partId}");
+            OnChanged?.Invoke();
+            return OpResult.Ok;
         }
 
         /// <summary>超重时自动削减装甲，保证不超载</summary>
@@ -151,7 +188,7 @@ namespace Game.Tank
                     hit.condition = hit.condition == PartCondition.Normal
                         ? PartCondition.Damaged
                         : PartCondition.Broken;
-                    Debug.Log($"[Tank] {tankName} 的 {hit.data.DisplayName} → {hit.condition}");
+                    Debug.Log($"[Tank] {tankName} 的 {hit.data.partId} → {hit.condition}");
                 }
             }
 
@@ -173,14 +210,28 @@ namespace Game.Tank
 
         #region 修理与改造
 
-        /// <summary>修理全部部件并补满 SP、弹药，返回费用</summary>
-        public int RepairAll(int costPerDamaged = 100, int costPerBroken = 500)
+        /// <summary>修理单价（数值平衡阶段再调）</summary>
+        public const int RepairCostDamaged = 100;
+        public const int RepairCostBroken = 500;
+
+        /// <summary>全面修理的费用</summary>
+        public int RepairCost()
         {
             int cost = 0;
             foreach (var p in AllParts())
             {
-                if (p.condition == PartCondition.Damaged) cost += costPerDamaged;
-                else if (p.condition == PartCondition.Broken) cost += costPerBroken;
+                if (p.condition == PartCondition.Damaged) cost += RepairCostDamaged;
+                else if (p.condition == PartCondition.Broken) cost += RepairCostBroken;
+            }
+            return cost;
+        }
+
+        /// <summary>修理全部部件并补满 SP、弹药，返回费用（扣费由调用方负责）</summary>
+        public int RepairAll()
+        {
+            int cost = RepairCost();
+            foreach (var p in AllParts())
+            {
                 p.Repair();
                 p.Refill();
             }
@@ -190,27 +241,15 @@ namespace Game.Tank
             return cost;
         }
 
-        /// <summary>改造部件。改造后会超重则拒绝。</summary>
-        public bool TryUpgrade(PartInstance part, ref int money, out string error)
+        /// <summary>改造该部件后部件总重是否仍不超过载重（引擎改造提升载重，总是允许）</summary>
+        public bool CanUpgradeWithoutOverweight(PartInstance part) =>
+            part.data is EngineData || PartsWeight + part.data.weightPerUpgrade <= LoadCapacity;
+
+        /// <summary>部件属性在外部被修改（如改造）后调用：修正装甲并通知外观刷新</summary>
+        public void NotifyChanged()
         {
-            error = null;
-            int cost = part.NextUpgradeCost;
-            if (cost < 0) { error = "已达最大改造等级"; return false; }
-            if (money < cost) { error = "金钱不足"; return false; }
-
-            // 引擎改造会提升载重，不需要检查超重；其他部件改造会增重
-            if (part.data is not EngineData && PartsWeight + part.data.weightPerUpgrade > LoadCapacity)
-            {
-                error = "改造后超重";
-                return false;
-            }
-
-            money -= cost;
-            part.upgradeLevel++;
             ClampArmor();
-            Debug.Log($"[Tank] {part.data.DisplayName} 改造至 Lv{part.upgradeLevel}，花费 {cost}G");
             OnChanged?.Invoke();
-            return true;
         }
 
         #endregion

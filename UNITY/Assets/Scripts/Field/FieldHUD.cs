@@ -1,5 +1,6 @@
 using System.Linq;
 using Game.Core;
+using Game.Economy;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,13 +16,17 @@ namespace Game.Field
             if (Keyboard.current?.rKey.wasPressedThisFrame != true) return;
             var s = GameSession.Instance;
             int cost = 0;
+            var result = OpResult.Ok;
             foreach (var p in s.party)
             {
                 p.hp = p.maxHp;
-                if (p.tank != null) { cost += p.tank.RepairAll(); p.inTank = true; }
+                if (p.tank == null) continue;
+                result = GarageService.Repair(s.State, p.tank, out int c);
+                if (result != OpResult.Ok) break;
+                cost += c;
+                p.inTank = true;
             }
-            s.gold -= cost;
-            _msg = $"修理完成，花费 {cost}G";
+            _msg = result == OpResult.Ok ? $"修理完成，花费 {cost}G" : $"修理失败：{result}";
         }
 
         private void OnGUI()

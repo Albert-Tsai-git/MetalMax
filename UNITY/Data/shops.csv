@@ -1,0 +1,8 @@
+shop_id,part_id
+# 栈桥镇车库商店,
+SHP_Zhanqiao,TNK_Engine_V12
+SHP_Zhanqiao,TNK_Chassis_Heavy
+SHP_Zhanqiao,TNK_CUnit_Twin
+SHP_Zhanqiao,WPN_Cannon_75
+SHP_Zhanqiao,WPN_MG_77
+SHP_Zhanqiao,WPN_SE_Missile
