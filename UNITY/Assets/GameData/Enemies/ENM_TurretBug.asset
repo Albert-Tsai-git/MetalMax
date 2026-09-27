@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa021b1d4fc87c41aa9456f683d2758, type: 3}
+  m_Name: ENM_TurretBug
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Battle.EnemyData
+  enemyId: ENM_TurretBug
+  displayName: "\u70AE\u53F0\u866B"
+  modelPrefab: {fileID: 0}
+  maxHp: 90
+  attack: 35
+  defense: 15
+  speed: 5
+  evade: 0
+  accuracy: 80
+  expReward: 25
+  goldReward: 60
+  isBounty: 0
+  bounty: 0

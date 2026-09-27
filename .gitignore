@@ -1,0 +1,26 @@
+# Unity 生成内容
+UNITY/[Ll]ibrary/
+UNITY/[Tt]emp/
+UNITY/[Oo]bj/
+UNITY/[Bb]uild/
+UNITY/[Bb]uilds/
+UNITY/[Ll]ogs/
+UNITY/[Uu]ser[Ss]ettings/
+UNITY/MemoryCaptures/
+UNITY/*.csproj
+UNITY/*.sln
+UNITY/*.slnx
+UNITY/*.user
+UNITY/*.pidb
+UNITY/*.booproj
+UNITY/*.unityproj
+UNITY/.vs/
+UNITY/.vscode/
+UNITY/.idea/
+*.tmp
+# Blender 备份
+*.blend1
+*.blend2
+# 系统
+.DS_Store
+Thumbs.db

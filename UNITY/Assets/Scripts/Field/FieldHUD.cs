@@ -1,0 +1,37 @@
+using System.Linq;
+using Game.Core;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace Game.Field
+{
+    /// <summary>野外原型 HUD：显示金钱、经验、队伍状态；按 R 全面修理（模拟回城）</summary>
+    public class FieldHUD : MonoBehaviour
+    {
+        private string _msg = "WASD 移动，进入红色区域会随机遇敌，R 修理";
+
+        private void Update()
+        {
+            if (Keyboard.current?.rKey.wasPressedThisFrame != true) return;
+            var s = GameSession.Instance;
+            int cost = 0;
+            foreach (var p in s.party)
+            {
+                p.hp = p.maxHp;
+                if (p.tank != null) { cost += p.tank.RepairAll(); p.inTank = true; }
+            }
+            s.gold -= cost;
+            _msg = $"修理完成，花费 {cost}G";
+        }
+
+        private void OnGUI()
+        {
+            var s = GameSession.Instance;
+            var lines = s.party.Select(p =>
+                $"{p.name} HP {p.hp}/{p.maxHp}" + (p.tank != null ? $"  {p.tank.tankName} SP {p.tank.currentSp}/{p.tank.MaxSp}" : ""));
+            var style = new GUIStyle(GUI.skin.box) { fontSize = 16, alignment = TextAnchor.UpperLeft };
+            GUI.Box(new Rect(10, 10, 420, 130),
+                $"金钱 {s.gold}G    经验 {s.exp}\n{string.Join("\n", lines)}\n\n{_msg}", style);
+        }
+    }
+}

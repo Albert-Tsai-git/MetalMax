@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+  <defs>
+    <linearGradient id="paper" x2="0" y2="1"><stop stop-color="#f3f0e7"/><stop offset="1" stop-color="#e6e0d1"/></linearGradient>
+    <linearGradient id="bodyTop" x2="0.15" y2="1"><stop stop-color="#869388"/><stop offset="1" stop-color="#66766c"/></linearGradient>
+    <linearGradient id="bodySide" x2="0" y2="1"><stop stop-color="#606e63"/><stop offset="1" stop-color="#3f4940"/></linearGradient>
+    <linearGradient id="sandArmor" x2="0" y2="1"><stop stop-color="#d1bd8f"/><stop offset="1" stop-color="#a99468"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur stdDeviation="13"/></filter>
+    <style>
+      text{font-family:Arial,'Microsoft YaHei',sans-serif;fill:#343638}
+      .label{font-size:17px;letter-spacing:1px;font-weight:700}
+      .small{font-size:13px;fill:#777263;letter-spacing:.5px}
+      .line{stroke:#8c8068;stroke-width:1.5;fill:none}
+      .outline{stroke:#343b36;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+      .wheel{fill:#343638;stroke:#252829;stroke-width:3}
+      .hub{fill:#9a8b68;stroke:#353b37;stroke-width:2}
+      .orange{fill:#d4773e;stroke:#7f4c31;stroke-width:2}
+      .glass{fill:#526c70;stroke:#323a39;stroke-width:3}
+    </style>
+  </defs>
+  <rect width="1600" height="1100" fill="url(#paper)"/>
+  <rect x="32" y="30" width="1536" height="1040" rx="8" fill="none" stroke="#a99f89" stroke-width="2"/>
+  <text x="70" y="82" font-size="30" font-weight="800" letter-spacing="2">FIELD RECOVERY VEHICLE / LIGHT CLASS</text>
+  <text x="72" y="111" class="small">DESIGN STUDY 01  ·  MODULAR 2-SLOT CHASSIS  ·  ORIGINAL CONCEPT PROPOSAL</text>
+  <rect x="1370" y="54" width="142" height="32" rx="16" fill="#d4773e"/>
+  <text x="1441" y="76" text-anchor="middle" font-size="13" font-weight="700" fill="#fff8eb">BLOCKOUT GUIDE</text>
+  <path d="M70 136H1530" stroke="#a99f89" stroke-width="1.5"/>
+
+  <!-- hero three-quarter view -->
+  <text x="78" y="176" class="label">A / HERO 3⁄4</text>
+  <text x="78" y="199" class="small">front-left · main gun + coaxial sub-gun</text>
+  <ellipse cx="535" cy="597" rx="390" ry="69" fill="#514d43" opacity=".19" filter="url(#shadow)"/>
+  <!-- far wheels -->
+  <g opacity=".94">
+    <path class="wheel" d="M250 409 Q250 391 270 382 L311 363 Q328 357 338 374 L350 431 Q348 446 330 455 L285 475 Q263 480 256 460Z"/>
+    <path class="wheel" d="M505 437 Q505 419 525 410 L567 391 Q584 385 593 402 L605 459 Q603 475 585 483 L541 503 Q519 508 512 488Z"/>
+    <path class="wheel" d="M756 466 Q756 448 776 439 L817 420 Q834 414 844 431 L856 488 Q854 504 836 512 L792 532 Q770 537 763 517Z"/>
+    <circle class="hub" cx="300" cy="420" r="12"/><circle class="hub" cx="555" cy="455" r="12"/><circle class="hub" cx="806" cy="484" r="12"/>
+  </g>
+  <!-- near wheels -->
+  <g>
+    <path class="wheel" d="M240 557 Q239 533 262 522 L310 501 Q332 493 343 516 L356 584 Q354 604 333 614 L281 637 Q258 643 249 620Z"/>
+    <path class="wheel" d="M492 592 Q491 568 514 557 L562 536 Q584 528 595 551 L608 619 Q606 639 585 649 L533 672 Q510 678 501 655Z"/>
+    <path class="wheel" d="M744 626 Q743 602 766 591 L814 570 Q836 562 847 585 L860 653 Q858 673 837 683 L785 706 Q762 712 753 689Z"/>
+    <circle class="hub" cx="298" cy="570" r="14"/><circle class="hub" cx="550" cy="605" r="14"/><circle class="hub" cx="802" cy="639" r="14"/>
+    <path d="M266 548l8 66M281 538l8 71M518 582l8 68M533 572l8 74M770 616l8 68M785 606l8 74" stroke="#575a55" stroke-width="5"/>
+  </g>
+  <!-- chassis body -->
+  <path class="outline" fill="url(#bodySide)" d="M276 466 L390 393 L671 431 L814 503 L810 594 L704 662 L409 615 L286 555Z"/>
+  <path class="outline" fill="url(#bodyTop)" d="M276 466 L398 379 L674 416 L814 503 L690 573 L408 535Z"/>
+  <!-- front wedge -->
+  <path class="outline" fill="#9da48f" d="M276 466 L398 379 L478 389 L385 474 L286 521Z"/>
+  <path class="outline" fill="#c5b68e" d="M286 521 L385 474 L408 535 L307 579 L286 555Z"/>
+  <path class="outline" fill="#5a6c68" d="M385 474 L478 389 L509 400 L450 495 L408 535Z"/>
+  <!-- cabin -->
+  <path class="outline" fill="#596960" d="M388 399 L470 342 L589 359 L640 421 L532 476 L450 462Z"/>
+  <path class="glass" d="M427 399 L477 361 L520 367 L482 423Z"/>
+  <path class="glass" d="M495 365 L565 375 L601 418 L526 434 L486 423Z"/>
+  <path d="M490 371l-9 48M532 372l-5 58" stroke="#afc3bf" stroke-width="4" opacity=".65"/>
+  <!-- rear engine cage -->
+  <path class="outline" fill="#414a40" d="M620 432 L689 433 L780 490 L712 532 L628 510Z"/>
+  <path d="M652 447l-15 53M678 449l-16 57M706 460l-17 54M735 475l-18 48" stroke="#252b28" stroke-width="8"/>
+  <path d="M642 446l82 48M633 466l78 49" stroke="#b47749" stroke-width="4"/>
+  <rect x="671" y="415" width="53" height="17" rx="4" fill="#343638" stroke="#252829" stroke-width="2" transform="rotate(27 671 415)"/>
+  <!-- turret and weapons -->
+  <ellipse cx="513" cy="478" rx="75" ry="34" fill="#3e4941" stroke="#252b28" stroke-width="3" transform="rotate(-24 513 478)"/>
+  <path class="outline" fill="url(#sandArmor)" d="M456 461 L492 431 L550 438 L577 466 L542 499 L480 491Z"/>
+  <path class="outline" fill="#616d61" d="M479 456 L496 441 L540 446 L554 461 L531 478 L491 474Z"/>
+  <path d="M514 451 L530 430 L626 381 L641 389 L560 448 L551 466Z" fill="#73766a" stroke="#303633" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M620 384l19-10 16 7-12 15z" fill="#343638" stroke="#252829" stroke-width="2"/>
+  <path d="M474 447 L463 432 L487 415 L501 424" fill="#d4773e" stroke="#7f4c31" stroke-width="2"/>
+  <path d="M472 450 L432 430 L415 434 L459 462" fill="#555e54" stroke="#303633" stroke-width="3"/>
+  <rect x="402" y="425" width="47" height="10" rx="4" fill="#343638" transform="rotate(24 402 425)"/>
+  <circle cx="481" cy="460" r="5" fill="#d4773e"/>
+  <!-- armor plates and accents -->
+  <path d="M409 548l63 11-9 41-65-12z" fill="url(#sandArmor)" stroke="#343b36" stroke-width="3"/>
+  <path d="M486 562l57 10-7 43-59-11z" fill="#65746a" stroke="#343b36" stroke-width="3"/>
+  <path d="M581 578l53 9-7 38-54-9z" fill="url(#sandArmor)" stroke="#343b36" stroke-width="3"/>
+  <path d="M339 502l32-19 19 10-31 22z" fill="#d4773e" stroke="#7f4c31" stroke-width="2"/>
+  <rect x="355" y="526" width="30" height="8" rx="3" fill="#343638" transform="rotate(-23 355 526)"/>
+  <circle cx="780" cy="550" r="8" fill="#d4773e" stroke="#7f4c31" stroke-width="2"/>
+  <!-- callouts -->
+  <path class="line" d="M110 340 H247 L372 432"/><circle cx="372" cy="432" r="4" fill="#d4773e"/>
+  <text x="84" y="326" class="label">SLOPED NOSE</text><text x="84" y="347" class="small">sand-colored field repair plates</text>
+  <path class="line" d="M720 296 H807 L620 393"/><circle cx="620" cy="393" r="4" fill="#d4773e"/>
+  <text x="724" y="278" class="label">75mm MAIN / Mount_Main</text><text x="724" y="299" class="small">swappable turret + barrel assembly</text>
+  <path class="line" d="M111 690 H203 L291 622"/><circle cx="291" cy="622" r="4" fill="#d4773e"/>
+  <text x="84" y="716" class="label">3 × ALL-TERRAIN WHEELS</text><text x="84" y="738" class="small">per side · exposed for easy repair</text>
+  <path class="line" d="M738 688 H825 L732 508"/><circle cx="732" cy="508" r="4" fill="#d4773e"/>
+  <text x="739" y="714" class="label">REAR V8 DECK</text><text x="739" y="736" class="small">visible, serviceable engine silhouette</text>
+
+  <!-- views panel -->
+  <path d="M936 158V799" stroke="#b2a78e" stroke-width="1.5"/>
+  <text x="974" y="176" class="label">B / ORTHOGRAPHIC CHECKS</text>
+  <text x="974" y="199" class="small">proportions to hold across game views</text>
+  <!-- top view -->
+  <text x="1004" y="238" class="small">TOP</text>
+  <g transform="translate(1000 250)">
+    <path class="wheel" d="M20 10h26v48H20zM85 10h26v48H85zM150 10h26v48h-26zM20 184h26v48H20zM85 184h26v48H85zM150 184h26v48h-26z"/>
+    <path class="outline" fill="url(#bodyTop)" d="M57 20h77l21 39v104l-21 42H57l-20-42V59z"/>
+    <path class="outline" fill="#647168" d="M62 35h67l13 34H49z"/>
+    <path class="glass" d="M59 42l25-12h23l17 17-21 29H52z"/>
+    <path class="outline" fill="#b6a67c" d="M72 87l14-17h40l12 17-14 21H84z"/>
+    <path d="M101 82v-34l10-37h7l-5 47 7 27z" fill="#74776c" stroke="#303633" stroke-width="3"/>
+    <path d="M76 121h42v42H76z" fill="#424940" stroke="#303633" stroke-width="3"/>
+    <path d="M82 128h30M82 139h30M82 150h30" stroke="#282e2b" stroke-width="5"/>
+    <rect x="47" y="88" width="14" height="20" rx="3" fill="#d4773e"/>
+  </g>
+  <!-- side view -->
+  <text x="1252" y="238" class="small">LEFT SIDE</text>
+  <g transform="translate(1233 286)">
+    <ellipse cx="128" cy="149" rx="119" ry="22" fill="#655f52" opacity=".16"/>
+    <circle class="wheel" cx="45" cy="125" r="34"/><circle class="wheel" cx="128" cy="125" r="34"/><circle class="wheel" cx="211" cy="125" r="34"/>
+    <circle class="hub" cx="45" cy="125" r="9"/><circle class="hub" cx="128" cy="125" r="9"/><circle class="hub" cx="211" cy="125" r="9"/>
+    <path class="outline" fill="url(#bodySide)" d="M19 80l53-25 91 9 62 39-8 28H30z"/>
+    <path class="outline" fill="url(#bodyTop)" d="M19 80l57-34 85 9 64 48-63-10-57-17z"/>
+    <path class="outline" fill="#65746a" d="M78 55l34-39 59 8 21 50-71-13z"/>
+    <path class="glass" d="M91 48l26-25 23 3-15 31z"/><path class="glass" d="M146 27l22 3 17 39-53-11z"/>
+    <path d="M149 70l70-38 8 5-56 45z" fill="#74776c" stroke="#303633" stroke-width="3"/>
+    <path d="M177 76h49l20 23-50 3z" fill="#424940" stroke="#303633" stroke-width="3"/>
+    <path d="M188 82h40M184 91h40" stroke="#282e2b" stroke-width="4"/>
+    <path d="M23 80h38l-8 24H25z" fill="#c5b68e" stroke="#343b36" stroke-width="2"/>
+  </g>
+  <!-- front and rear mini views -->
+  <text x="1010" y="565" class="small">FRONT</text>
+  <g transform="translate(1007 581)">
+    <path class="wheel" d="M7 37h35v66H7zM154 37h35v66h-35z"/>
+    <path class="outline" fill="url(#bodyTop)" d="M41 38l20-24h74l20 24v57H41z"/>
+    <path class="glass" d="M54 39l15-15h58l15 15-9 22H63z"/>
+    <path class="outline" fill="#b5a67d" d="M56 72h92v20H56z"/>
+    <circle cx="78" cy="82" r="5" fill="#d4773e"/><circle cx="124" cy="82" r="5" fill="#d4773e"/>
+  </g>
+  <text x="1271" y="565" class="small">REAR</text>
+  <g transform="translate(1268 581)">
+    <path class="wheel" d="M7 37h35v66H7zM154 37h35v66h-35z"/>
+    <path class="outline" fill="url(#bodyTop)" d="M41 38l20-24h74l20 24v57H41z"/>
+    <path class="outline" fill="#424940" d="M55 38h93v43H55z"/>
+    <path d="M64 44v32M78 43v34M92 43v34M106 43v34M120 43v34M134 43v34" stroke="#262c29" stroke-width="6"/>
+    <path d="M50 91h83" stroke="#d4773e" stroke-width="5"/>
+  </g>
+
+  <!-- weapon module strip -->
+  <path d="M70 813H1530" stroke="#a99f89" stroke-width="1.5"/>
+  <text x="78" y="850" class="label">C / MODULAR WEAPON STUDY</text>
+  <text x="78" y="873" class="small">keep equipment as separate meshes, aligned to named mount pivots</text>
+  <!-- cannon module -->
+  <g transform="translate(104 899)">
+    <ellipse cx="174" cy="66" rx="142" ry="21" fill="#5d584d" opacity=".16"/>
+    <path class="outline" fill="#657268" d="M57 58l50-37h101l43 36-45 35H98z"/>
+    <path class="outline" fill="#b7a77d" d="M93 52l27-25h76l25 24-33 20h-65z"/>
+    <path d="M178 43l116-29 11 8-102 42-24-4z" fill="#7e8071" stroke="#303633" stroke-width="3"/>
+    <path d="M289 14l28-8 18 8-24 13z" fill="#343638" stroke="#252829" stroke-width="2"/>
+    <path d="M70 57h23v24H70z" fill="#343638"/>
+  </g>
+  <text x="128" y="1020" class="label">75mm FIELD CANNON</text>
+  <text x="128" y="1042" class="small">WPN_Cannon_75 · Mount_Main · single target</text>
+  <!-- mg module -->
+  <g transform="translate(542 906)">
+    <path d="M36 35h58v30H36z" fill="#6c786b" stroke="#343b36" stroke-width="3"/>
+    <path d="M71 37l170-19 9 8L96 53z" fill="#515951" stroke="#303633" stroke-width="3"/>
+    <path d="M232 17l25-5 10 6-21 11z" fill="#343638"/>
+    <path d="M61 28l20-15 23 13-20 18z" fill="#d4773e" stroke="#7f4c31" stroke-width="2"/>
+    <path d="M114 37l10-16M132 35l10-17M150 33l10-18" stroke="#343638" stroke-width="4"/>
+  </g>
+  <text x="574" y="1020" class="label">7.7mm COAXIAL MG</text>
+  <text x="574" y="1042" class="small">WPN_MG_77 · Mount_Sub · group target</text>
+  <!-- palette -->
+  <text x="1032" y="850" class="label">D / PALETTE</text>
+  <g transform="translate(1034 875)">
+    <rect width="68" height="55" rx="5" fill="#64766c"/><rect x="77" width="68" height="55" rx="5" fill="#414b3e"/>
+    <rect x="154" width="68" height="55" rx="5" fill="#b9a984"/><rect x="231" width="68" height="55" rx="5" fill="#343638"/>
+    <rect x="308" width="68" height="55" rx="5" fill="#9b5b3e"/><rect x="385" width="68" height="55" rx="5" fill="#d4773e"/>
+    <text x="0" y="78" class="small">SAGE</text><text x="77" y="78" class="small">OLIVE</text>
+    <text x="154" y="78" class="small">SALT / SAND</text><text x="231" y="78" class="small">MECHANICAL</text>
+    <text x="308" y="78" class="small">RUST</text><text x="385" y="78" class="small">SIGNAL</text>
+  </g>
+  <text x="1034" y="1000" class="small">Muted body colors; signal orange stays sparse and functional.</text>
+  <text x="1034" y="1025" class="small">Proposal only · validate silhouette in the actual overhead camera.</text>
+</svg>
