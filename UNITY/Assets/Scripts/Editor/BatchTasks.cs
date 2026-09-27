@@ -20,6 +20,7 @@ namespace Game.EditorTools
                 SaveSmokeTest.Run();
                 TownSmokeTest.Run();
                 ProgressionSmokeTest.Run();
+                StorySmokeTest.Run();
                 Debug.Log("[Batch] RebuildAll 完成");
             }
             catch (System.Exception e)

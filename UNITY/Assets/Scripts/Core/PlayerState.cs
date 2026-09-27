@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Game.Battle;
 using Game.Economy;
 using Game.Tank;
+using Game.Story;
 using Game.Town;
 
 namespace Game.Core
@@ -21,6 +22,10 @@ namespace Game.Core
         public string lastTown = DefaultTown;
         /// <summary>赏金首进度（未出现在列表中的视为通缉中）</summary>
         public List<BountyRecord> bounties = new();
+        /// <summary>剧情标记</summary>
+        public List<string> flags = new();
+        /// <summary>任务进度（未出现的任务视为未开始）</summary>
+        public List<QuestRecord> quests = new();
 
         public const string DefaultTown = "TWN_Zhanqiao";
 

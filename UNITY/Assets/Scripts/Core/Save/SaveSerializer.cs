@@ -20,6 +20,8 @@ namespace Game.Core.Save
                 position = position,
                 lastTown = s.lastTown,
                 bounties = new List<Game.Town.BountyRecord>(s.bounties),
+                flags = new List<string>(s.flags),
+                quests = new List<Game.Story.QuestRecord>(s.quests),
             };
             foreach (var c in s.party) d.party.Add(ToSave(c));
             foreach (var p in s.inventory) d.inventory.Add(ToSave(p));
@@ -32,6 +34,8 @@ namespace Game.Core.Save
             Migrate(d);
             var s = new PlayerState(d.gold) { exp = d.exp, lastTown = d.lastTown };
             if (d.bounties != null) s.bounties.AddRange(d.bounties);
+            if (d.flags != null) s.flags.AddRange(d.flags);
+            if (d.quests != null) s.quests.AddRange(d.quests);
             foreach (var c in d.party) s.party.Add(FromSave(c));
             foreach (var p in d.inventory)
             {
@@ -56,6 +60,12 @@ namespace Game.Core.Save
             {
                 // v2 → v3：新增角色等级与经验，旧存档从 1 级开始
                 foreach (var c in d.party) { c.level = 1; c.exp = 0; }
+            }
+            if (d.version < 4)
+            {
+                // v3 → v4：新增剧情标记与任务进度
+                d.flags ??= new List<string>();
+                d.quests ??= new List<Game.Story.QuestRecord>();
             }
             if (string.IsNullOrEmpty(d.lastTown)) d.lastTown = PlayerState.DefaultTown;
             d.version = SaveData.CurrentVersion;

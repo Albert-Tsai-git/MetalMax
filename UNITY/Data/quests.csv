@@ -1,0 +1,5 @@
+quest_id,step,objective,effects
+# 第一幕：欠账与信号（步骤结构；文本键 {任务ID}.name / .step{序号} 由 Codex 填写）,,,
+QST_Act1_Signal,0,flag:act1_heard_signal,
+QST_Act1_Signal,1,bounty:ENM_Bounty_IronCrab=defeated,set:act1_got_log
+QST_Act1_Signal,2,flag:act1_reported,set:act1_done

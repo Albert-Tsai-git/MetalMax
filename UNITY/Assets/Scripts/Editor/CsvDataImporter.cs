@@ -8,6 +8,7 @@ using Game.Battle;
 using Game.Core;
 using Game.Economy;
 using Game.Progression;
+using Game.Story;
 using Game.Tank;
 using Game.Town;
 using UnityEditor;
@@ -36,6 +37,8 @@ namespace Game.EditorTools
             n += Import("enemies.csv", $"{OutDir}/Enemies", CreateEnemy);
             n += Import("characters.csv", $"{OutDir}/Characters", CreateCharacter);
             n += ImportShops();
+            n += ImportQuests();
+            n += ImportDialogues();
             n += Import("towns.csv", $"{OutDir}/Towns", CreateTown);
             n += ImportTexts();
             AssetDatabase.SaveAssets();
@@ -87,6 +90,93 @@ namespace Game.EditorTools
             }
             Debug.Log($"[Import] {file} → {outDir}：{count} 条");
             return count;
+        }
+
+        /// <summary>按某一列分组读取表格行（保持原顺序）</summary>
+        private static Dictionary<string, List<Row>> GroupRows(string path, string key)
+        {
+            var groups = new Dictionary<string, List<Row>>();
+            foreach (var r in ReadCsv(path))
+            {
+                string id = r.Str(key);
+                if (id == "") continue;
+                if (!groups.TryGetValue(id, out var list)) groups[id] = list = new List<Row>();
+                list.Add(r);
+            }
+            return groups;
+        }
+
+        private static T LoadOrCreate<T>(string assetPath, out bool isNew) where T : ScriptableObject
+        {
+            var a = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+            isNew = a == null;
+            return a ?? ScriptableObject.CreateInstance<T>();
+        }
+
+        /// <summary>任务表 quests.csv：quest_id,step,objective,effects；同一任务按行顺序为步骤</summary>
+        private static int ImportQuests()
+        {
+            string path = Path.Combine(DataDir, "quests.csv");
+            if (!File.Exists(path)) { Debug.LogWarning($"[Import] 未找到 {path}，跳过"); return 0; }
+            string dir = $"{OutDir}/Quests";
+            Directory.CreateDirectory(dir);
+            var groups = GroupRows(path, "quest_id");
+            foreach (var (id, rows) in groups)
+            {
+                string assetPath = $"{dir}/{id}.asset";
+                var q = LoadOrCreate<QuestData>(assetPath, out bool isNew);
+                q.questId = id;
+                q.name = id;
+                q.steps = rows.OrderBy(r => r.Int("step"))
+                    .Select(r => new QuestData.Step { objective = r.Str("objective"), effects = r.Str("effects") }).ToList();
+                if (isNew) AssetDatabase.CreateAsset(q, assetPath);
+                EditorUtility.SetDirty(q);
+            }
+            Debug.Log($"[Import] quests.csv → {dir}：{groups.Count} 个任务");
+            return groups.Count;
+        }
+
+        /// <summary>
+        /// 对话表 Text/dialogue.csv：dialogue_id,node_id,type,speaker,text_key,next,condition,effects。
+        /// type=line 为台词节点（第一行台词为入口）；type=choice 为所属 node_id 的选项（text_key、next、condition）。
+        /// </summary>
+        private static int ImportDialogues()
+        {
+            string path = Path.Combine(TextDir, "dialogue.csv");
+            if (!File.Exists(path)) { Debug.LogWarning($"[Import] 未找到 {path}，跳过"); return 0; }
+            string dir = $"{OutDir}/Dialogues";
+            Directory.CreateDirectory(dir);
+            var groups = GroupRows(path, "dialogue_id");
+            foreach (var (id, rows) in groups)
+            {
+                string assetPath = $"{dir}/{id}.asset";
+                var d = LoadOrCreate<DialogueData>(assetPath, out bool isNew);
+                d.dialogueId = id;
+                d.name = id;
+                d.nodes = new List<DialogueData.Node>();
+                foreach (var r in rows.Where(r => r.Str("type", "line") == "line"))
+                    d.nodes.Add(new DialogueData.Node
+                    {
+                        nodeId = r.Str("node_id"), speaker = r.Str("speaker"), textKey = r.Str("text_key"),
+                        next = r.Str("next"), condition = r.Str("condition"), effects = r.Str("effects"),
+                    });
+                foreach (var r in rows.Where(r => r.Str("type") == "choice"))
+                {
+                    var node = d.Find(r.Str("node_id"));
+                    if (node == null) { Debug.LogError($"[Import] dialogue.csv 第 {r.Line} 行：选项所属节点 {r.Str("node_id")} 不存在"); continue; }
+                    node.choices.Add(new DialogueData.Choice { textKey = r.Str("text_key"), next = r.Str("next"), condition = r.Str("condition") });
+                }
+                foreach (var n in d.nodes)
+                {
+                    foreach (var target in n.choices.Select(c => c.next).Append(n.next))
+                        if (target != "" && d.Find(target) == null)
+                            Debug.LogError($"[Import] 对话 {id} 节点 {n.nodeId} 指向不存在的节点 {target}");
+                }
+                if (isNew) AssetDatabase.CreateAsset(d, assetPath);
+                EditorUtility.SetDirty(d);
+            }
+            Debug.Log($"[Import] dialogue.csv → {dir}：{groups.Count} 段对话");
+            return groups.Count;
         }
 
         /// <summary>商店表 shops.csv：shop_id,part_id，一行一件商品；同一商店的行合并为一个资产</summary>

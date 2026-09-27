@@ -3,6 +3,7 @@ using Game.Battle;
 using Game.Core.Save;
 using Game.Tank;
 using Game.Progression;
+using Game.Story;
 using Game.Town;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -85,6 +86,7 @@ namespace Game.Core
             }
 
             PendingEnemies = null;
+            StoryService.Refresh(State);
             Debug.Log($"[Session] 战斗结束 {result}，金钱 {gold}G，经验 {exp}");
             SceneManager.LoadScene(string.IsNullOrEmpty(_returnScene) ? FieldSceneName : _returnScene);
         }
@@ -111,6 +113,8 @@ namespace Game.Core
             if (r != OpResult.Ok) return r;
             State = state;
             PendingEnemies = null;
+            StoryService.AbortDialogue();
+            StoryService.Refresh(State);
             _returnPosition = data.position;
             _hasReturnPosition = true;
             SceneManager.LoadScene(string.IsNullOrEmpty(data.scene) ? FieldSceneName : data.scene);

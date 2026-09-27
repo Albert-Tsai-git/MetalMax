@@ -37,6 +37,7 @@ namespace Game.Town
                 Debug.Log($"[Bounty] 击败赏金首 {id}");
                 TownEvents.RaiseBountyDefeated(id);
             }
+            Game.Story.StoryService.Refresh(s);
         }
 
         /// <summary>在有赏金办事处的城镇领取全部已击败赏金首的赏金</summary>

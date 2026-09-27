@@ -13,6 +13,7 @@ namespace Game.Town
             s.lastTown = townId;
             Debug.Log($"[Town] 进入 {townId}");
             TownEvents.RaiseEntered(townId);
+            Game.Story.StoryService.Refresh(s);
             return OpResult.Ok;
         }
 

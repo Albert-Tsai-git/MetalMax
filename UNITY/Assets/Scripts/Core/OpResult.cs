@@ -23,5 +23,6 @@ namespace Game.Core
         Corrupted,          // 存档损坏，无法读取
         NotFound,           // 找不到对应数据（如城镇 ID）
         NoBountyOffice,     // 该城镇没有赏金办事处
+        ChoiceRequired,     // 对话节点有选项，需要选择
     }
 }

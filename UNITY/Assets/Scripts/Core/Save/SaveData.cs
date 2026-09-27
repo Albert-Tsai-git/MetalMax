@@ -11,7 +11,7 @@ namespace Game.Core.Save
     [Serializable]
     public class SaveData
     {
-        public const int CurrentVersion = 3;
+        public const int CurrentVersion = 4;
 
         public int version = CurrentVersion;
         public string savedAt;
@@ -24,6 +24,9 @@ namespace Game.Core.Save
         // v2
         public string lastTown;
         public List<Game.Town.BountyRecord> bounties = new();
+        // v4
+        public List<string> flags = new();
+        public List<Game.Story.QuestRecord> quests = new();
     }
 
     [Serializable]

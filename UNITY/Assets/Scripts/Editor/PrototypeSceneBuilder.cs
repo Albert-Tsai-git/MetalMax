@@ -137,6 +137,17 @@ namespace Game.EditorTools
 
             new GameObject("FieldHUD").AddComponent<FieldHUD>();
             new GameObject("TownDebugMenu").AddComponent<TownDebugMenu>();
+            new GameObject("DialogueDebugUI").AddComponent<DialogueDebugUI>();
+
+            // 第一幕开场：首次进入栈桥镇时播放开场对话（对话内容由 Codex 在 dialogue.csv 中编写）
+            var intro = new GameObject("StoryTrigger_act1_intro");
+            intro.transform.position = town.transform.position;
+            var introTrigger = intro.AddComponent<BoxCollider>();
+            introTrigger.isTrigger = true;
+            introTrigger.size = new Vector3(8, 3, 8);
+            var st = intro.AddComponent<StoryTrigger>();
+            st.triggerId = "act1_intro";
+            st.dialogueId = "DLG_Act1_Intro";
             EditorSceneManager.SaveScene(scene, $"{LogicDir}/{GameSession.FieldSceneName}.unity");
         }
 

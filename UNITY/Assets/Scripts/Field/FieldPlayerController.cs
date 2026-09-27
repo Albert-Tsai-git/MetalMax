@@ -47,7 +47,9 @@ namespace Game.Field
         private void Update()
         {
             var kb = Keyboard.current;
-            if (kb == null) return;
+            LastMoveDistance = 0f;
+            // 对话进行中不能移动
+            if (kb == null || Game.Story.StoryService.ActiveDialogue != null) return;
 
             var input = Vector2.zero;
             if (kb.wKey.isPressed || kb.upArrowKey.isPressed) input.y += 1;
