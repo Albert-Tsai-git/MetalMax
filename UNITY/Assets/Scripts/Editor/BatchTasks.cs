@@ -22,6 +22,7 @@ namespace Game.EditorTools
                 ProgressionSmokeTest.Run();
                 StorySmokeTest.Run();
                 BattleExtSmokeTest.Run();
+                DungeonSmokeTest.Run();
                 Debug.Log("[Batch] RebuildAll 完成");
             }
             catch (System.Exception e)

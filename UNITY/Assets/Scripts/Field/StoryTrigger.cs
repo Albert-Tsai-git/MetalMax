@@ -31,11 +31,9 @@ namespace Game.Field
             var s = GameSession.Instance.State;
             if (once && s.flags.Contains(DoneFlag)) return;
             if (!Conditions.Evaluate(condition, s)) return;
+            // 对话内容缺失时只记录警告，效果照常执行，避免剧情流程卡死
             if (!string.IsNullOrEmpty(dialogueId) && StoryService.StartDialogue(s, dialogueId) == null)
-            {
-                Debug.LogWarning($"[Story] 触发器 {triggerId} 无法开始对话 {dialogueId}");
-                return;
-            }
+                Debug.LogWarning($"[Story] 触发器 {triggerId} 无法开始对话 {dialogueId}（对话缺失或已有对话进行中）");
             Debug.Log($"[Story] 触发器 {triggerId}");
             if (once) StoryService.SetFlag(s, DoneFlag, true);
             Effects.Apply(effects, s);

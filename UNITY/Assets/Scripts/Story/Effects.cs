@@ -9,6 +9,7 @@ namespace Game.Story
     ///   set:标记 / clear:标记
     ///   gold:+数量 / gold:-数量（不足时扣到 0）
     ///   give:部件ID          放入背包
+    ///   item:道具ID[:数量]   获得道具（默认 1 个）
     ///   quest:start:任务ID
     ///   heal                 全员 HP 回满
     /// 执行后自动检查任务进度。
@@ -29,6 +30,13 @@ namespace Game.Story
                 {
                     var data = GameDB.Part(e.Substring(5));
                     if (data != null) s.AddToInventory(new PartInstance(data));
+                }
+                else if (e.StartsWith("item:"))
+                {
+                    var parts = e.Substring(5).Split(':');
+                    int count = parts.Length > 1 && int.TryParse(parts[1], out int c) ? c : 1;
+                    if (Game.Items.ItemService.Add(s, parts[0], count) != OpResult.Ok)
+                        Debug.LogWarning($"[Story] 无法获得道具 {e}");
                 }
                 else if (e.StartsWith("quest:start:")) StoryService.StartQuest(s, e.Substring(12));
                 else if (e == "heal") foreach (var c in s.party) c.hp = c.maxHp;

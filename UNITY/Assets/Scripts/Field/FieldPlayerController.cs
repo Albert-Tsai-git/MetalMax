@@ -29,6 +29,12 @@ namespace Game.Field
             // 从战斗返回时回到进入战斗前的位置；全灭时回到最后到访城镇的入口
             var session = GameSession.Instance;
             if (session.TryConsumeReturnPosition(out var pos)) Teleport(pos);
+            else if (SceneTravel.TryConsumeSpawn(out var spawnId))
+            {
+                var sp = SpawnPoint.Find(spawnId);
+                if (sp != null) { Teleport(sp.transform.position); transform.rotation = sp.transform.rotation; }
+                else Debug.LogWarning($"[Field] 场景中没有出生点 {spawnId}，保持原位");
+            }
             else if (session.TryConsumeRespawnTown(out var townId))
             {
                 var gate = TownGate.Find(townId);
