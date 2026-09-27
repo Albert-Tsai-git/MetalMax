@@ -25,5 +25,5 @@ MonoBehaviour:
   element: 1
   accuracy: 90
   maxAmmo: 4
-  ammoPrice: 150
+  ammoPrice: 100
   attackPerUpgrade: 8

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ENM_Ant
   m_EditorClassIdentifier: Assembly-CSharp::Game.Battle.EnemyData
   enemyId: ENM_Ant
-  maxHp: 40
+  maxHp: 36
   attack: 22
   defense: 6
   speed: 11

@@ -23,6 +23,9 @@ MonoBehaviour:
   defensePerLevel: 1
   speedPerLevel: 1
   evadePerLevel: 0
+  repair: 60
+  repairPerLevel: 8
+  partRepairLevel: 3
   maxLevel: 99
   expBase: 20
   expGrowth: 1.5

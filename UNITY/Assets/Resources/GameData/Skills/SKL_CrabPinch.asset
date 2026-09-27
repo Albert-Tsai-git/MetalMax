@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: SKL_CrabPinch
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.SkillData
   skillId: SKL_CrabPinch
-  power: 150
+  power: 130
   hits: 1
   range: 0
   element: 0
   accuracyBonus: 0
-  partBreakChance: 35
+  partBreakChance: 20
   pierceTank: 0
   healPercent: 0

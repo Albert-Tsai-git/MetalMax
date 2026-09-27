@@ -21,7 +21,7 @@ MonoBehaviour:
   upgradeCostBase: 200
   weaponType: 1
   range: 1
-  attack: 18
+  attack: 30
   element: 1
   accuracy: 80
   maxAmmo: -1
