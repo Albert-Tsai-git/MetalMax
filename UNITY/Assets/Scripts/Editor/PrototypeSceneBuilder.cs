@@ -66,10 +66,16 @@ namespace Game.EditorTools
             var scene = NewLogicScene();
             Ground(new Vector3(0, 0, 0), new Vector2(60, 60), new Color(0.55f, 0.48f, 0.35f));
 
-            // 遇敌区域（使用内置演示敌人）
+            // 野外遇敌区：较弱的组合，用于升级与攒钱（与 BattleSimulator.FieldTable 一致）
             var zone = TriggerBox("EncounterZone_Wasteland", new Vector3(0, 0.05f, 12), new Vector3(30, 2, 20),
                 new Color(0.8f, 0.2f, 0.2f), 0.1f);
-            zone.AddComponent<EncounterZone>();
+            zone.AddComponent<EncounterZone>().groups = new List<EncounterZone.EnemyGroup>
+            {
+                Group(3, "ENM_Ant", "ENM_Ant"),
+                Group(2, "ENM_Dog", "ENM_Dog"),
+                Group(2, "ENM_Ant", "ENM_Ant", "ENM_Ant"),
+                Group(1, "ENM_Dog", "ENM_Ant"),
+            };
 
             var player = Player(new Vector3(0, 1, -10));
             Spawn("start", player.transform.position);

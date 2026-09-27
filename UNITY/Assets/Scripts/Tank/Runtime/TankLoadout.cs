@@ -226,8 +226,10 @@ namespace Game.Tank
         /// <summary>修理单价（数值平衡阶段再调）</summary>
         public const int RepairCostDamaged = 100;
         public const int RepairCostBroken = 500;
+        /// <summary>每修复多少点 SP 收 1G（装甲修理费）</summary>
+        public const int SpPerGold = 2;
 
-        /// <summary>全面修理的费用</summary>
+        /// <summary>全面修理的费用：损坏/大破部件按件计价，损失的 SP 按点计价</summary>
         public int RepairCost()
         {
             int cost = 0;
@@ -236,6 +238,8 @@ namespace Game.Tank
                 if (p.condition == PartCondition.Damaged) cost += RepairCostDamaged;
                 else if (p.condition == PartCondition.Broken) cost += RepairCostBroken;
             }
+            int missingSp = Mathf.Max(0, MaxSp - currentSp);
+            cost += (missingSp + SpPerGold - 1) / SpPerGold;
             return cost;
         }
 

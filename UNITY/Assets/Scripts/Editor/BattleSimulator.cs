@@ -189,6 +189,9 @@ namespace Game.EditorTools
         /// 玩家策略（贪心）：乘车时在各武器与各目标中选“期望伤害 × 属性倍率 × 命中率 − 弹药价值”最高者；
         /// 步行时攻击预计能造成最多伤害的敌人。弹药价值按每发单价折算，让玩家在副炮足够时节省炮弹。
         /// </summary>
+        /// <summary>供其他模拟器复用的玩家策略</summary>
+        public static BattleAction DecideFor(Combatant p, BattleSystem b, PlayerState s, Random rng) => Decide(p, b, s, rng);
+
         private static BattleAction Decide(Combatant p, BattleSystem b, PlayerState s, Random rng)
         {
             var foes = b.AliveEnemies.ToList();

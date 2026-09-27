@@ -5,7 +5,9 @@ UNITY_EXE="${1:-/d/software/unity/Editor/6000.6.3f1/Editor/Unity.exe}"
 MAIN=$(git worktree list --porcelain | head -1 | cut -d' ' -f2)
 "$UNITY_EXE" -batchmode -projectPath "$MAIN/UNITY" -executeMethod Game.EditorTools.CsvDataImporter.ImportAll -quit -logFile "$MAIN/UNITY/Logs/sim_import.log" >/dev/null
 "$UNITY_EXE" -batchmode -projectPath "$MAIN/UNITY" -executeMethod Game.EditorTools.BattleSimulator.Run -quit -logFile "$MAIN/UNITY/Logs/sim_run.log" >/dev/null
-grep -hE "error CS|Exception" "$MAIN/UNITY/Logs/sim_import.log" "$MAIN/UNITY/Logs/sim_run.log" | head -5
+"$UNITY_EXE" -batchmode -projectPath "$MAIN/UNITY" -executeMethod Game.EditorTools.EconomySimulator.Run -quit -logFile "$MAIN/UNITY/Logs/sim_econ.log" >/dev/null
+grep -hE "error CS|Exception" "$MAIN/UNITY/Logs/sim_import.log" "$MAIN/UNITY/Logs/sim_run.log" "$MAIN/UNITY/Logs/sim_econ.log" | head -5
+PYTHONIOENCODING=utf-8 python -c "import sys;print(open(sys.argv[1],encoding='utf-8').read())" "$MAIN/docs/balance/economy_latest.md"
 PYTHONIOENCODING=utf-8 python - "$MAIN/docs/balance/sim_latest.md" <<'EOF'
 import sys
 s = open(sys.argv[1], encoding="utf-8").read()
