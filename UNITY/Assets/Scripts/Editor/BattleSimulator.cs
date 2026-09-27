@@ -85,7 +85,7 @@ namespace Game.EditorTools
             new() { name = "野狗×2+蚁×2", enemies = new[] { "ENM_Dog", "ENM_Dog", "ENM_Ant", "ENM_Ant" }, level = 3 },
             new() { name = "炮台虫+蚁×3", enemies = new[] { "ENM_TurretBug", "ENM_Ant", "ENM_Ant", "ENM_Ant" }, level = 3 },
             new() { name = "铁钳巨蟹", enemies = new[] { "ENM_Bounty_IronCrab" }, level = 5 },
-            new() { name = "泵站一趟（6 场+巨蟹）", enemies = new[] { "ENM_Bounty_IronCrab" }, level = 5, run = true, runEncounters = 6 },
+            new() { name = "泵站一趟（3 场+巨蟹）", enemies = new[] { "ENM_Bounty_IronCrab" }, level = 5, run = true, runEncounters = 3 },
         };
 
         [MenuItem("Game/批量战斗模拟（平衡）")]
