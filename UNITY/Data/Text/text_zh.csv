@@ -83,3 +83,14 @@ DLG_Qupo.Report.01,你们从泵站带回了什么？
 DLG_Qupo.Report.02,这份日志证明泵网仍在给空城送水，沿线聚落却被判成无人居住。
 DLG_Qupo.Report.03,我会把记录抄给路灯车队。水的账，得让每个聚落都看见。维修欠账先记在墙上。
 DLG_Qupo.Banter,车轮带回的盐先刮掉，别让它咬进轴承里。需要修理就跟我说。
+UI.Screen.Menu,行旅档案
+UI.Screen.WorldMap,荒野地图
+UI.Menu.Party,同伴
+UI.Menu.Items,补给
+UI.Menu.Tank,战车
+UI.Menu.Quests,任务
+UI.Menu.System,系统
+MAP_Wasteland.name,北境废土
+MAP_PumpStation.name,泵站深处
+LOC_PumpStation.name,废弃泵站
+LOC_PumpCrabNest.name,铁钳蟹巢

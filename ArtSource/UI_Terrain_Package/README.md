@@ -14,8 +14,9 @@ Original art source for the I-22 UI and I-23 map/terrain handoff to Claude. Thes
 - `Export/Field_Wasteland_513.raw`: 513×513, unsigned 16-bit little-endian, row-major south-to-north / west-to-east. Normalize each value by 65535 and assign it to a Unity Terrain with `TerrainData.size = (88, 12, 88)` and origin `(-44, 0, -44)`.
 - `Export/Field_Wasteland_513.pgm`: the same 16-bit height values in PGM P5 big-endian form for image tools.
 - `Export/Field_Wasteland_HeightPreview.png`: 8-bit grayscale preview only; do not use this as the source heightmap.
+- `Export/TEX_Wasteland_SaltGround.png`: separate 1024×1024 seamless salt-crust diffuse texture for the Unity TerrainLayer. It is a repeat-wrapped surface material; the map image above is UI artwork and must not be assigned as terrain diffuse.
 - Height generation is deterministic and editable in `generate_assets.py`. It makes connected rolling salt flats / shallow basins and a continuous raised rim beyond the 58×58 m map bounds. There are no scattered tree/rock props. Interaction pads use the I-23 coordinates for the town gate (-15,-14), pump entrance (22,24), Qupo (-9,-14), player spawn (0,-10), and (17,19), kept at base elevation within radius 6 m. The encounter basin is centered at (0,12), spans 30×20 m, and blends into adjacent landforms.
-- Create a Terrain GameObject and TerrainCollider from the imported height values; this package intentionally does not create/modify Unity scenes or colliders. Layer a Unity TerrainLayer palette using the ART_BIBLE salt/sand/rock colors, then verify the five pads and encounter area with Claude's RebuildAll.
+- The Unity integration creates a Terrain GameObject and TerrainCollider from the height values, and uses the dedicated salt-ground texture for the TerrainLayer. Verify the five pads and encounter area with Claude's RebuildAll.
 
 ## Rebuild and validation
 
@@ -24,4 +25,4 @@ python ArtSource/UI_Terrain_Package/generate_assets.py
 python ArtSource/UI_Terrain_Package/validate_assets.py
 ```
 
-The generators require Pillow. Unity integration and in-game visual QA are still pending the Unity lock handoff.
+The source height/icon generators require Pillow. Unity integration now exists under the Codex-owned `UNITY/Assets/Art/World`, `Scenes/Art`, and `Scripts/Presentation` paths; Claude's Build Settings synchronization and in-game visual QA remain pending his RebuildAll and native Play test.

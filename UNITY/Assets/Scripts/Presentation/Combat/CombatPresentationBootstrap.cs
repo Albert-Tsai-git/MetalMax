@@ -461,7 +461,7 @@ namespace Game.Presentation
                 if (collider != null) Destroy(collider);
                 var mat = _owner != null ? _owner.CreateRuntimeMaterial(new Color(1f, .58f, .16f), true) : null;
                 flash.GetComponent<Renderer>().sharedMaterial = mat;
-                Object.Destroy(flash, .12f);
+                UnityEngine.Object.Destroy(flash, .12f);
             }
 
             public void DamageFlash()
