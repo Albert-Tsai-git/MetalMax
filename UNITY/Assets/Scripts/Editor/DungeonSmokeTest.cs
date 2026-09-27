@@ -40,7 +40,8 @@ namespace Game.EditorTools
                 EditorSceneManager.OpenScene(PrototypeSceneBuilder.ScenePath(name), OpenSceneMode.Single);
                 spawns[name] = Find<SpawnPoint>().Select(s => s.spawnId).ToList();
                 portals.AddRange(Find<ScenePortal>().Select(p => (name, p.targetScene, p.targetSpawnId, p.condition)));
-                chests.AddRange(Find<TreasureChest>().Select(c => (c.chestId, c.contents)));
+                if (name == GameSession.PumpStationSceneName)
+                    chests.AddRange(Find<TreasureChest>().Select(c => (c.chestId, c.contents)));
                 foreach (var t in Find<StoryTrigger>()) triggers[t.triggerId] = (t.condition, t.effects);
                 if (Find<BountyZone>().Any(b => b.bounty != null && b.bounty.enemyId == "ENM_Bounty_IronCrab")) bountyScenes.Add(name);
                 foreach (var z in Find<EncounterZone>())
@@ -51,7 +52,7 @@ namespace Game.EditorTools
             foreach (var (scene, target, spawn, _) in portals)
                 Check(buildScenes.Contains(target) && spawns.TryGetValue(target, out var list) && list.Contains(spawn),
                     $"{scene} 的传送口指向 {target}/{spawn} 存在");
-            Check(chests.Count == 3 && chests.Select(c => c.id).Distinct().Count() == chests.Count, "3 个宝箱且 ID 唯一");
+            Check(chests.Count == 3 && chests.Select(c => c.id).Distinct().Count() == chests.Count, "泵站 3 个宝箱且 ID 唯一");
             Check(bountyScenes.SequenceEqual(new[] { GameSession.PumpStationSceneName }), "铁钳巨蟹只在泵站");
             Check(triggers.ContainsKey("act1_intro") && !triggers.ContainsKey("act1_report"), "第一幕开场触发器存在，回报不走镇口触发器");
             // 回报由曲婆对话的条件节点承接

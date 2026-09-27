@@ -19,6 +19,10 @@ namespace Game.Core
         public const string BattleSceneName = "Battle";
         public const string FieldSceneName = "Field";
         public const string PumpStationSceneName = "Dungeon_PumpStation";
+        public const string SaltBeltSceneName = "Field_SaltBelt";
+        public const string GhostCitySceneName = "Dungeon_GhostCity";
+        public const string SaltBasinSceneName = "Field_SaltBasin";
+        public const string ControlStationSceneName = "Dungeon_ControlStation";
 
         private static GameSession _instance;
         public static GameSession Instance
@@ -101,9 +105,17 @@ namespace Game.Core
             foreach (var p in party) p.tankAway = false;
             StoryService.Refresh(State);
             Debug.Log($"[Session] 战斗结束 {result}，金钱 {gold}G，经验 {exp}");
-            // 全灭时城镇入口在野外，无论在哪个场景战败都回到野外
-            bool toField = result == BattleState.Defeat || string.IsNullOrEmpty(_returnScene);
-            SceneManager.LoadScene(toField ? FieldSceneName : _returnScene);
+            // 全灭时回到最后到访城镇入口所在的野外场景
+            string scene = result == BattleState.Defeat ? TownFieldScene(_respawnTown)
+                : string.IsNullOrEmpty(_returnScene) ? FieldSceneName : _returnScene;
+            SceneManager.LoadScene(scene);
+        }
+
+        /// <summary>城镇入口所在的野外场景（未配置时为 Field）</summary>
+        public static string TownFieldScene(string townId)
+        {
+            string s = GameDB.Town(townId)?.fieldScene;
+            return string.IsNullOrEmpty(s) ? FieldSceneName : s;
         }
 
         /// <summary>野外场景加载后，取出全灭后应复活的城镇（只取一次）</summary>

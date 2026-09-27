@@ -25,6 +25,8 @@ namespace Game.EditorTools
                 DungeonSmokeTest.Run();
                 WorldMapSmokeTest.Run();
                 GearSmokeTest.Run();
+                Act2SmokeTest.Run();
+                Act3SmokeTest.Run();
                 BalanceMechanicsSmokeTest.Run();
                 FieldModeSmokeTest.Run();
                 Debug.Log("[Batch] RebuildAll 完成");

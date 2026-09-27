@@ -22,3 +22,31 @@ SHP_Zhanqiao,EQP_Jacket
 SHP_Zhanqiao,EQP_Vest
 SHP_Zhanqiao,EQP_Gloves
 SHP_Zhanqiao,EQP_Boots
+# 盐井聚落商店（第二幕）,
+SHP_Saltwell,TNK_CUnit_Tracker
+SHP_Saltwell,WPN_Cannon_105
+SHP_Saltwell,WPN_CryoGun
+SHP_Saltwell,WPN_SonicBlaster
+SHP_Saltwell,TNK_Chassis_Heavy
+SHP_Saltwell,TNK_Engine_V12
+SHP_Saltwell,WPN_SE_Missile
+SHP_Saltwell,WPN_Flamethrower
+SHP_Saltwell,WPN_ShockCannon
+SHP_Saltwell,ITM_Tonic
+SHP_Saltwell,ITM_ReviveKit
+SHP_Saltwell,ITM_RepairPack
+SHP_Saltwell,ITM_AmmoCrate
+# 路灯车队营地商店（第三幕）,
+SHP_Lampcamp,TNK_Chassis_Assault
+SHP_Lampcamp,TNK_Engine_Turbo
+SHP_Lampcamp,WPN_Railgun
+SHP_Lampcamp,WPN_PlasmaArc
+SHP_Lampcamp,WPN_Cannon_105
+SHP_Lampcamp,WPN_CryoGun
+SHP_Lampcamp,WPN_SonicBlaster
+SHP_Lampcamp,TNK_CUnit_Tracker
+SHP_Lampcamp,WPN_SE_Missile
+SHP_Lampcamp,ITM_Tonic
+SHP_Lampcamp,ITM_ReviveKit
+SHP_Lampcamp,ITM_RepairPack
+SHP_Lampcamp,ITM_AmmoCrate
