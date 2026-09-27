@@ -12,5 +12,5 @@ TNK_CUnit_Twin,cunit,0.8,8000,0,3,0,800,,,,,,15,10,2,,,,,,,,
 WPN_Cannon_75,weapon,2,1200,0,5,0.2,300,,,,,,,,,MainCannon,Single,60,80,6,10,Normal,30
 WPN_MG_77,weapon,0.5,400,0,5,0.1,150,,,,,,,,,SubGun,Group,25,85,-1,5,Normal,0
 WPN_SE_Missile,weapon,1.5,4000,0,5,0.2,500,,,,,,,,,SpecialEq,All,45,90,4,8,Fire,100
-WPN_Flamethrower,weapon,0.8,900,0,5,0.1,200,,,,,,,,,SubGun,Group,30,80,-1,4,Fire,0
-WPN_ShockCannon,weapon,2.2,2200,0,5,0.2,350,,,,,,,,,MainCannon,Single,50,85,8,8,Electric,40
+WPN_Flamethrower,weapon,0.8,700,0,5,0.1,200,,,,,,,,,SubGun,Group,30,80,-1,4,Fire,0
+WPN_ShockCannon,weapon,2.2,1500,0,5,0.2,350,,,,,,,,,MainCannon,Single,50,85,8,8,Electric,40
