@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cb9d9fc150761843bac8809a8690f6b, type: 3}
+  m_Name: DLG_Act1_Intro
+  m_EditorClassIdentifier: Game.Runtime::Game.Story.DialogueData
+  dialogueId: DLG_Act1_Intro
+  nodes:
+  - nodeId: 01
+    speaker: CHR_Hunter
+    textKey: DLG_Act1_Intro.01
+    next: 02
+    condition: 
+    effects: 
+    choices: []
+  - nodeId: 02
+    speaker: CHR_Mechanic
+    textKey: DLG_Act1_Intro.02
+    next: 03
+    condition: 
+    effects: 
+    choices: []
+  - nodeId: 03
+    speaker: CHR_Mechanic
+    textKey: DLG_Act1_Intro.03
+    next: 
+    condition: 
+    effects: 
+    choices: []
