@@ -21,5 +21,7 @@ namespace Game.Core
         SlotNotFound,       // 存档槽位不存在
         IoError,            // 文件读写失败
         Corrupted,          // 存档损坏，无法读取
+        NotFound,           // 找不到对应数据（如城镇 ID）
+        NoBountyOffice,     // 该城镇没有赏金办事处
     }
 }

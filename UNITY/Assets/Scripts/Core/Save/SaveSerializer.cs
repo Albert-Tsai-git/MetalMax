@@ -18,6 +18,8 @@ namespace Game.Core.Save
                 exp = s.exp,
                 scene = scene,
                 position = position,
+                lastTown = s.lastTown,
+                bounties = new List<Game.Town.BountyRecord>(s.bounties),
             };
             foreach (var c in s.party) d.party.Add(ToSave(c));
             foreach (var p in s.inventory) d.inventory.Add(ToSave(p));
@@ -28,7 +30,8 @@ namespace Game.Core.Save
         public static PlayerState FromSave(SaveData d)
         {
             Migrate(d);
-            var s = new PlayerState(d.gold) { exp = d.exp };
+            var s = new PlayerState(d.gold) { exp = d.exp, lastTown = d.lastTown };
+            if (d.bounties != null) s.bounties.AddRange(d.bounties);
             foreach (var c in d.party) s.party.Add(FromSave(c));
             foreach (var p in d.inventory)
             {
@@ -43,7 +46,13 @@ namespace Game.Core.Save
         {
             if (d.version > SaveData.CurrentVersion)
                 Debug.LogWarning($"[Save] 存档版本 {d.version} 高于当前 {SaveData.CurrentVersion}，按当前结构读取");
-            // 目前只有版本 1，后续版本在此按顺序迁移
+            if (d.version < 2)
+            {
+                // v1 → v2：新增最后到访城镇与赏金首进度
+                d.lastTown = PlayerState.DefaultTown;
+                d.bounties ??= new List<Game.Town.BountyRecord>();
+            }
+            if (string.IsNullOrEmpty(d.lastTown)) d.lastTown = PlayerState.DefaultTown;
             d.version = SaveData.CurrentVersion;
         }
 

@@ -26,13 +26,22 @@ namespace Game.Field
 
         private void Start()
         {
-            // 从战斗返回时，回到进入战斗前的位置
-            if (GameSession.Instance.TryConsumeReturnPosition(out var pos))
+            // 从战斗返回时回到进入战斗前的位置；全灭时回到最后到访城镇的入口
+            var session = GameSession.Instance;
+            if (session.TryConsumeReturnPosition(out var pos)) Teleport(pos);
+            else if (session.TryConsumeRespawnTown(out var townId))
             {
-                _cc.enabled = false;
-                transform.position = pos;
-                _cc.enabled = true;
+                var gate = TownGate.Find(townId);
+                if (gate != null) Teleport(gate.RespawnPoint);
+                else Debug.LogWarning($"[Field] 场景中没有城镇入口 {townId}，保持原位");
             }
+        }
+
+        private void Teleport(Vector3 pos)
+        {
+            _cc.enabled = false;
+            transform.position = pos;
+            _cc.enabled = true;
         }
 
         private void Update()

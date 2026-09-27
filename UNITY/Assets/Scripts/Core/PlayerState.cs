@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Game.Battle;
 using Game.Economy;
 using Game.Tank;
+using Game.Town;
 
 namespace Game.Core
 {
@@ -16,6 +17,12 @@ namespace Game.Core
         public int exp;
         /// <summary>未装备的备用部件</summary>
         public List<PartInstance> inventory = new();
+        /// <summary>最后到访的城镇，全灭后在此复活</summary>
+        public string lastTown = DefaultTown;
+        /// <summary>赏金首进度（未出现在列表中的视为通缉中）</summary>
+        public List<BountyRecord> bounties = new();
+
+        public const string DefaultTown = "TWN_Zhanqiao";
 
         private int _gold;
         public int Gold

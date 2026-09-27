@@ -8,6 +8,7 @@ using Game.Battle;
 using Game.Core;
 using Game.Economy;
 using Game.Tank;
+using Game.Town;
 using UnityEditor;
 using UnityEngine;
 
@@ -33,6 +34,7 @@ namespace Game.EditorTools
             n += Import("parts.csv", $"{OutDir}/Parts", CreatePart);
             n += Import("enemies.csv", $"{OutDir}/Enemies", CreateEnemy);
             n += ImportShops();
+            n += Import("towns.csv", $"{OutDir}/Towns", CreateTown);
             n += ImportTexts();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -134,6 +136,8 @@ namespace Game.EditorTools
                 string path = Path.Combine(DataDir, file);
                 if (File.Exists(path)) foreach (var r in ReadCsv(path)) if (r.Str("id") != "") ids.Add(r.Str("id"));
             }
+            string townsPath = Path.Combine(DataDir, "towns.csv");
+            if (File.Exists(townsPath)) foreach (var r in ReadCsv(townsPath)) if (r.Str("id") != "") ids.Add(r.Str("id"));
             string shopsPath = Path.Combine(DataDir, "shops.csv");
             if (File.Exists(shopsPath)) foreach (var r in ReadCsv(shopsPath)) if (r.Str("shop_id") != "") ids.Add(r.Str("shop_id"));
 
@@ -219,6 +223,18 @@ namespace Game.EditorTools
             p.upgradeCostBase = r.Int("up_cost", 200);
             p.name = p.partId;
             return p;
+        }
+
+        private static ScriptableObject CreateTown(Row r, ScriptableObject existing)
+        {
+            var t = Reuse<TownData>(existing);
+            t.townId = r.Str("id");
+            t.innPrice = r.Int("inn_price", 10);
+            t.shopId = r.Str("shop_id");
+            t.hasGarage = r.Bool("garage");
+            t.hasBountyOffice = r.Bool("bounty_office");
+            t.name = t.townId;
+            return t;
         }
 
         private static ScriptableObject CreateEnemy(Row r, ScriptableObject existing)

@@ -18,6 +18,7 @@
 | I-11 | 商店与车库（`Game.Economy`）：`ShopService.Buy/Sell/SellPrice`、`GarageService.Equip/Unequip/Upgrade/Repair/FillArmor`，均返回 `Game.Core.OpResult`；玩家状态 `GameSession.Instance.State`（`PlayerState`：`Gold`、`inventory`）；商店 `GameDB.Shop(ID).goods`。事件 `EconomyEvents`：`GoldChanged(旧, 新)`、`InventoryChanged()`、`Bought(商店ID, 部件)`、`Sold(部件, 金钱)`、`Upgraded(部件)`。 | ✅ | ✅ |
 | I-12 | 操作结果提示文本键 `UI.Result.{OpResult 枚举名}`（如 `UI.Result.NotEnoughGold`）；商店 ID 前缀 `SHP_`，名称键 `{ID}.name`。 | ✅ | ✅ |
 | I-13 | 存档（`Game.Core.Save`）：3 个槽位（0～2）；`GameSession.Instance.SaveGame(槽位, 玩家位置)`、`LoadGame(槽位)`；存档列表用 `SaveSystem.Peek(槽位)`（`savedAt`、`gold`、`scene`），`SaveSystem.Exists/Delete`；结果为 `OpResult`（新增 `SlotNotFound`、`IoError`、`Corrupted`，文本键同 I-12）。事件 `SaveSystem.Saved(槽位, 结果)`、`Loaded(槽位, 结果)`。 | ✅ | ✅ |
+| I-14 | 城镇与赏金首（`Game.Town`）：城镇 ID 前缀 `TWN_`（名称键 `{ID}.name`），`GameDB.Town(ID)`（`innPrice`、`shopId`、`hasGarage`、`hasBountyOffice`）；`TownService.Enter/Leave/Rest`、`BountyService.All/StateOf/ClaimAll` 返回 `OpResult`（新增 `NotFound`、`NoBountyOffice`）；`PlayerState.lastTown`、`bounties`。野外 `TownGate.Current` 为当前所在城镇入口（null 表示不在城镇）。事件 `TownEvents`：`Entered(城镇ID)`、`Left(城镇ID)`、`Rested(城镇ID, 花费)`、`BountyDefeated(敌人ID)`、`BountyClaimed(敌人ID, 金额)`。 | ✅ | ⏳ |
 
 ## 待定条款
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Game.Battle;
 using Game.Economy;
 using Game.Tank;
+using Game.Town;
 using UnityEngine;
 
 namespace Game.Core
@@ -15,10 +16,18 @@ namespace Game.Core
         private static Dictionary<string, TankPartData> _parts;
         private static Dictionary<string, EnemyData> _enemies;
         private static Dictionary<string, ShopData> _shops;
+        private static Dictionary<string, TownData> _towns;
 
         public static TankPartData Part(string id) => Find(ref _parts, "GameData/Parts", id);
         public static EnemyData Enemy(string id) => Find(ref _enemies, "GameData/Enemies", id);
         public static ShopData Shop(string id) => Find(ref _shops, "GameData/Shops", id);
+        public static TownData Town(string id) => Find(ref _towns, "GameData/Towns", id);
+
+        public static IEnumerable<EnemyData> AllEnemies()
+        {
+            Find(ref _enemies, "GameData/Enemies", null);
+            return _enemies.Values;
+        }
 
         /// <summary>数据重新导入后清除缓存</summary>
         public static void Reload()
@@ -26,6 +35,7 @@ namespace Game.Core
             _parts = null;
             _enemies = null;
             _shops = null;
+            _towns = null;
         }
 
         private static T Find<T>(ref Dictionary<string, T> map, string folder, string id) where T : ScriptableObject

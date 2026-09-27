@@ -106,7 +106,37 @@ namespace Game.EditorTools
             cam.transform.localRotation = Quaternion.Euler(50, 0, 0);
             cam.AddComponent<KeepWorldRotation>();
 
+            // 城镇入口：栈桥镇（南侧）
+            var town = new GameObject("TownGate_TWN_Zhanqiao");
+            town.transform.position = new Vector3(-15, 0, -14);
+            var townTrigger = town.AddComponent<BoxCollider>();
+            townTrigger.isTrigger = true;
+            townTrigger.size = new Vector3(8, 3, 8);
+            town.AddComponent<TownGate>().townId = PlayerState.DefaultTown;
+            var townView = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            townView.name = "TownGate_Greybox";
+            Object.DestroyImmediate(townView.GetComponent<Collider>());
+            townView.transform.SetParent(town.transform, false);
+            townView.transform.localScale = new Vector3(8, 0.2f, 8);
+            Greybox(townView, new Color(0.3f, 0.45f, 0.8f));
+
+            // 赏金首出没点：铁钳巨蟹（遇敌区北端）
+            var bountyZone = new GameObject("BountyZone_ENM_Bounty_IronCrab");
+            bountyZone.transform.position = new Vector3(0, 0, 28);
+            var bountyTrigger = bountyZone.AddComponent<BoxCollider>();
+            bountyTrigger.isTrigger = true;
+            bountyTrigger.size = new Vector3(6, 3, 6);
+            bountyZone.AddComponent<BountyZone>().bounty =
+                AssetDatabase.LoadAssetAtPath<EnemyData>("Assets/Resources/GameData/Enemies/ENM_Bounty_IronCrab.asset");
+            var bountyView = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            bountyView.name = "BountyZone_Greybox";
+            Object.DestroyImmediate(bountyView.GetComponent<Collider>());
+            bountyView.transform.SetParent(bountyZone.transform, false);
+            bountyView.transform.localScale = new Vector3(6, 0.1f, 6);
+            Greybox(bountyView, new Color(0.9f, 0.6f, 0.1f));
+
             new GameObject("FieldHUD").AddComponent<FieldHUD>();
+            new GameObject("TownDebugMenu").AddComponent<TownDebugMenu>();
             EditorSceneManager.SaveScene(scene, $"{LogicDir}/{GameSession.FieldSceneName}.unity");
         }
 

@@ -42,7 +42,7 @@ namespace Game.Field
 
         private void Update()
         {
-            if (!encountersEnabled || _triggered || _zones.Count == 0) return;
+            if (!encountersEnabled || _triggered || _zones.Count == 0 || TownGate.Current != null) return;
 
             float dist = _mover.LastMoveDistance;
             if (dist <= 0f) return;

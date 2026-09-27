@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Game.Battle;
 using Game.Core.Save;
 using Game.Tank;
+using Game.Town;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -59,28 +60,40 @@ namespace Game.Core
             SceneManager.LoadScene(BattleSceneName);
         }
 
-        /// <summary>战斗结束：发放奖励并返回野外；全灭时回满状态（原型阶段先这样处理）</summary>
+        /// <summary>全灭后待复活的城镇 ID，野外场景加载时取用</summary>
+        private string _respawnTown;
+
+        /// <summary>
+        /// 战斗结束：胜利发放奖励并登记赏金首；全灭时全员复活、金钱减半，回到最后到访城镇。
+        /// </summary>
         public void EndBattle(BattleState result, int expGain, int goldGain)
         {
             if (result == BattleState.Victory)
             {
                 exp += expGain;
                 gold += goldGain;
+                if (PendingEnemies != null) BountyService.OnVictory(State, PendingEnemies);
             }
             else if (result == BattleState.Defeat)
             {
-                // TODO: 正式版改为回到最后到过的城镇、扣除一半金钱
                 foreach (var p in party) p.hp = p.maxHp;
                 gold /= 2;
-                Debug.Log("[Session] 全灭：队伍回满，金钱减半");
+                _respawnTown = State.lastTown;
+                _hasReturnPosition = false;
+                Debug.Log($"[Session] 全灭：金钱减半，回到 {_respawnTown}");
             }
-
-            // 倒下的角色保留 1 HP，便于原型测试
-            foreach (var p in party) if (p.hp <= 0) p.hp = 1;
 
             PendingEnemies = null;
             Debug.Log($"[Session] 战斗结束 {result}，金钱 {gold}G，经验 {exp}");
             SceneManager.LoadScene(string.IsNullOrEmpty(_returnScene) ? FieldSceneName : _returnScene);
+        }
+
+        /// <summary>野外场景加载后，取出全灭后应复活的城镇（只取一次）</summary>
+        public bool TryConsumeRespawnTown(out string townId)
+        {
+            townId = _respawnTown;
+            _respawnTown = null;
+            return !string.IsNullOrEmpty(townId);
         }
 
         /// <summary>存档：记录当前逻辑场景与玩家位置</summary>
