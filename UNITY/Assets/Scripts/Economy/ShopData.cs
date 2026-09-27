@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Core;
+using Game.Items;
 using Game.Tank;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace Game.Economy
     {
         public string shopId;
         public List<TankPartData> goods = new();
+        public List<ItemData> items = new();
 
         public string DisplayName => TextDB.Name(shopId);
     }

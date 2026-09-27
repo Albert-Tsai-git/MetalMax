@@ -22,6 +22,7 @@ namespace Game.Core.Save
                 bounties = new List<Game.Town.BountyRecord>(s.bounties),
                 flags = new List<string>(s.flags),
                 quests = new List<Game.Story.QuestRecord>(s.quests),
+                items = s.items.ConvertAll(i => new Game.Items.ItemStack { id = i.id, count = i.count }),
             };
             foreach (var c in s.party) d.party.Add(ToSave(c));
             foreach (var p in s.inventory) d.inventory.Add(ToSave(p));
@@ -36,6 +37,10 @@ namespace Game.Core.Save
             if (d.bounties != null) s.bounties.AddRange(d.bounties);
             if (d.flags != null) s.flags.AddRange(d.flags);
             if (d.quests != null) s.quests.AddRange(d.quests);
+            if (d.items != null)
+                foreach (var i in d.items)
+                    if (i.count > 0 && GameDB.Item(i.id) != null) s.items.Add(i);
+                    else Debug.LogWarning($"[Save] 存档中的道具 {i.id} 无效，已跳过");
             foreach (var c in d.party) s.party.Add(FromSave(c));
             foreach (var p in d.inventory)
             {
@@ -67,6 +72,7 @@ namespace Game.Core.Save
                 d.flags ??= new List<string>();
                 d.quests ??= new List<Game.Story.QuestRecord>();
             }
+            if (d.version < 5) d.items ??= new List<Game.Items.ItemStack>(); // v4 → v5：新增道具
             if (string.IsNullOrEmpty(d.lastTown)) d.lastTown = PlayerState.DefaultTown;
             d.version = SaveData.CurrentVersion;
         }

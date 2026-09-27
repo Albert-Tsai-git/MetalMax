@@ -1,0 +1,6 @@
+id,price,kind,amount,all
+# 数值为占位,,,,
+ITM_Tonic,20,HealHp,50,0
+ITM_ReviveKit,150,Revive,30,0
+ITM_RepairPack,80,RepairSp,150,0
+ITM_AmmoCrate,120,Refill,0,0

@@ -1,4 +1,5 @@
 using Game.Core;
+using Game.Items;
 using Game.Tank;
 using UnityEngine;
 
@@ -23,6 +24,18 @@ namespace Game.Economy
             s.AddToInventory(bought);
             Debug.Log($"[Shop] {shop.shopId} 买入 {item.partId}，花费 {item.price}G，余额 {s.Gold}G");
             EconomyEvents.RaiseBought(shop.shopId, bought);
+            return OpResult.Ok;
+        }
+
+        /// <summary>买入道具</summary>
+        public static OpResult BuyItem(PlayerState s, ShopData shop, ItemData item, int count = 1)
+        {
+            if (shop == null || item == null || !shop.items.Contains(item)) return OpResult.NotInShop;
+            if (count <= 0) return OpResult.NothingToDo;
+            if (ItemService.Count(s, item.itemId) + count > ItemService.MaxStack) return OpResult.StackFull;
+            if (!s.TrySpend(item.price * count)) return OpResult.NotEnoughGold;
+            ItemService.Add(s, item.itemId, count);
+            Debug.Log($"[Shop] {shop.shopId} 买入道具 {item.itemId} ×{count}，余额 {s.Gold}G");
             return OpResult.Ok;
         }
 

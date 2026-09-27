@@ -196,6 +196,19 @@ namespace Game.Tank
             return hit;
         }
 
+        /// <summary>随机损坏一个仍可用的部件（技能附带效果），没有可损坏的返回 null</summary>
+        public PartInstance BreakRandomPart(System.Random rng)
+        {
+            var candidates = new List<PartInstance>();
+            foreach (var p in AllParts()) if (p.IsFunctional) candidates.Add(p);
+            if (candidates.Count == 0) return null;
+            var hit = candidates[rng.Next(candidates.Count)];
+            hit.condition = hit.condition == PartCondition.Normal ? PartCondition.Damaged : PartCondition.Broken;
+            Debug.Log($"[Tank] {tankName} 的 {hit.data.partId} 被技能破坏 → {hit.condition}");
+            OnChanged?.Invoke();
+            return hit;
+        }
+
         /// <summary>所有部件是否全部大破（战车失去战斗能力）</summary>
         public bool IsDestroyed
         {

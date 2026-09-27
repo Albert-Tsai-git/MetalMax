@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Core;
+using Game.Items;
 using Game.Tank;
 using UnityEngine;
 using Random = System.Random;
@@ -34,6 +36,9 @@ namespace Game.Battle
         /// <summary>单次伤害：攻击者、目标、伤害值、是否打在战车上</summary>
         public event Action<Combatant, Combatant, int, bool> OnDamage;
         public event Action<BattleState> OnBattleEnd;
+
+        /// <summary>道具所在的玩家状态；为空时不能使用道具</summary>
+        public PlayerState Inventory { get; set; }
 
         /// <summary>逃跑成功率</summary>
         public float escapeChance = 0.5f;
@@ -115,6 +120,12 @@ namespace Game.Battle
                 case ActionType.Defend:
                     Log($"{a.actor} 进入防御姿态");
                     break;
+                case ActionType.Skill:
+                    DoSkill(a);
+                    break;
+                case ActionType.UseItem:
+                    DoUseItem(a);
+                    break;
                 case ActionType.Escape:
                     bool escaped = _rng.NextDouble() < escapeChance;
                     BattleEvents.RaiseEscapeAttempted(a.actor, escaped);
@@ -178,14 +189,76 @@ namespace Game.Battle
             }
         }
 
-        /// <summary>伤害落点：乘车时打战车，否则打人</summary>
-        private void ApplyDamage(Combatant attacker, Combatant target, int dmg)
+        private void DoSkill(BattleAction a)
+        {
+            var actor = a.actor;
+            var skill = a.skill;
+            if (skill == null) return;
+            Log($"{actor} 使用 {skill.DisplayName}！");
+            BattleEvents.RaiseSkillUsed(actor, skill.skillId);
+
+            if (skill.IsHeal)
+            {
+                int amount = Math.Max(1, actor.maxHp * skill.healPercent / 100);
+                int before = actor.hp;
+                actor.hp = Math.Min(actor.maxHp, actor.hp + amount);
+                Log($"  {actor} 回复 {actor.hp - before} HP");
+                BattleEvents.RaiseHealed(actor, actor.hp - before);
+                return;
+            }
+
+            var foes = actor.side == Side.Player ? AliveEnemies.ToList() : AlivePlayers.ToList();
+            var targets = skill.range switch
+            {
+                AttackRange.Single => new List<Combatant> { RetargetIfDead(a) },
+                AttackRange.Group => foes.Take(3).ToList(),
+                _ => foes,
+            };
+            int atk = actor.attack * skill.power / 100;
+            for (int h = 0; h < skill.hits; h++)
+            {
+                foreach (var t in targets.Where(t => t != null && t.IsAlive))
+                {
+                    if (!DamageCalculator.RollHit(DamageCalculator.HumanBaseAccuracy + skill.accuracyBonus, t.TotalEvade, _rng))
+                    {
+                        Log($"  没有命中 {t}");
+                        BattleEvents.RaiseMissed(actor, t);
+                        continue;
+                    }
+                    // 穿透战车的技能按乘员自身防御计算
+                    int def = skill.pierceTank ? t.defense : t.TotalDefense;
+                    ApplyDamage(actor, t, DamageCalculator.Damage(atk, def, _rng), skill.pierceTank, skill.partBreakChance);
+                }
+            }
+        }
+
+        private void DoUseItem(BattleAction a)
+        {
+            if (Inventory == null) { Log("无法使用道具"); return; }
+            var target = a.targets.FirstOrDefault();
+            var r = ItemService.Use(Inventory, a.itemId, a.actor, target);
+            if (r != OpResult.Ok)
+            {
+                Log($"{a.actor} 的道具没有效果");
+                return;
+            }
+            Log($"{a.actor} 使用了 {GameDB.Item(a.itemId)?.DisplayName}");
+            BattleEvents.RaiseItemUsed(a.actor, a.itemId, target);
+        }
+
+        /// <summary>
+        /// 伤害落点：乘车时打战车，否则打人。pierceTank 时直接打乘员；
+        /// partBreakChance 为命中战车时额外损坏部件的概率（百分比）。
+        /// </summary>
+        private void ApplyDamage(Combatant attacker, Combatant target, int dmg, bool pierceTank = false, int partBreakChance = 0)
         {
             if (_defending.Contains(target)) dmg = Math.Max(1, dmg / 2);
 
-            if (target.IsTankActive)
+            if (target.IsTankActive && !pierceTank)
             {
                 var broken = target.tank.TakeDamage(dmg, _rng);
+                if (broken == null && partBreakChance > 0 && _rng.Next(100) < partBreakChance)
+                    broken = target.tank.BreakRandomPart(_rng);
                 Log($"  {target} 的战车受到 {dmg} 伤害，SP 剩余 {target.tank.currentSp}");
                 OnDamage?.Invoke(attacker, target, dmg, true);
                 BattleEvents.RaiseHit(attacker, target, dmg, true);
@@ -228,13 +301,16 @@ namespace Game.Battle
 
         #region 敌人 AI
 
-        /// <summary>最简单的 AI：随机攻击一名存活玩家。后续可以按敌人类型扩展。</summary>
+        /// <summary>每个存活敌人按自身 AI 类型与技能表决定行动</summary>
         private IEnumerable<BattleAction> EnemyAI()
         {
             var targets = AlivePlayers.ToList();
             if (targets.Count == 0) yield break;
             foreach (var e in AliveEnemies)
-                yield return BattleAction.Attack(e, targets[_rng.Next(targets.Count)]);
+            {
+                var a = Battle.EnemyAI.Decide(e, targets, _rng);
+                if (a != null) yield return a;
+            }
         }
 
         #endregion

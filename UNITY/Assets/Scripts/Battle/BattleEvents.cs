@@ -29,6 +29,12 @@ namespace Game.Battle
         public static event Action<Combatant> Defeated;
         /// <summary>逃跑判定：行动者、是否成功</summary>
         public static event Action<Combatant, bool> EscapeAttempted;
+        /// <summary>使用技能：行动者、技能 ID</summary>
+        public static event Action<Combatant, string> SkillUsed;
+        /// <summary>使用道具：使用者、道具 ID、指定目标（全体道具为选择的目标或 null）</summary>
+        public static event Action<Combatant, string, Combatant> ItemUsed;
+        /// <summary>HP 回复：单位、回复量</summary>
+        public static event Action<Combatant, int> Healed;
         /// <summary>战斗结束：结果、获得经验、获得金钱（非胜利时为 0）</summary>
         public static event Action<BattleState, int, int> Ended;
 
@@ -42,6 +48,9 @@ namespace Game.Battle
         internal static void RaiseBoardChanged(Combatant a, bool inTank) => BoardChanged?.Invoke(a, inTank);
         internal static void RaiseDefeated(Combatant c) => Defeated?.Invoke(c);
         internal static void RaiseEscapeAttempted(Combatant a, bool ok) => EscapeAttempted?.Invoke(a, ok);
+        internal static void RaiseSkillUsed(Combatant a, string id) => SkillUsed?.Invoke(a, id);
+        internal static void RaiseItemUsed(Combatant a, string id, Combatant t) => ItemUsed?.Invoke(a, id, t);
+        internal static void RaiseHealed(Combatant c, int amount) => Healed?.Invoke(c, amount);
         internal static void RaiseEnded(BattleState r, int exp, int gold) => Ended?.Invoke(r, exp, gold);
     }
 }

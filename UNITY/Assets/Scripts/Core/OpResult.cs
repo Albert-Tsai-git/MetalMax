@@ -24,5 +24,7 @@ namespace Game.Core
         NotFound,           // 找不到对应数据（如城镇 ID）
         NoBountyOffice,     // 该城镇没有赏金办事处
         ChoiceRequired,     // 对话节点有选项，需要选择
+        StackFull,          // 道具已达持有上限
+        InvalidTarget,      // 目标无效
     }
 }

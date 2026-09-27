@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Game.Battle;
 using Game.Economy;
+using Game.Items;
 using Game.Progression;
 using Game.Story;
 using Game.Tank;
@@ -21,6 +22,8 @@ namespace Game.Core
         private static Dictionary<string, TownData> _towns;
         private static Dictionary<string, CharacterData> _characters;
         private static Dictionary<string, QuestData> _quests;
+        private static Dictionary<string, SkillData> _skills;
+        private static Dictionary<string, ItemData> _items;
         private static Dictionary<string, DialogueData> _dialogues;
 
         public static TankPartData Part(string id) => Find(ref _parts, "GameData/Parts", id);
@@ -29,6 +32,8 @@ namespace Game.Core
         public static TownData Town(string id) => Find(ref _towns, "GameData/Towns", id);
         public static CharacterData Character(string id) => Find(ref _characters, "GameData/Characters", id);
         public static QuestData Quest(string id) => Find(ref _quests, "GameData/Quests", id);
+        public static SkillData Skill(string id) => Find(ref _skills, "GameData/Skills", id);
+        public static ItemData Item(string id) => Find(ref _items, "GameData/Items", id);
         public static DialogueData Dialogue(string id) => Find(ref _dialogues, "GameData/Dialogues", id);
 
         public static IEnumerable<EnemyData> AllEnemies()
@@ -46,6 +51,8 @@ namespace Game.Core
             _towns = null;
             _characters = null;
             _quests = null;
+            _skills = null;
+            _items = null;
             _dialogues = null;
         }
 

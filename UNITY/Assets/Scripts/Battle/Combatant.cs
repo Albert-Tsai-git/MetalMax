@@ -33,6 +33,8 @@ namespace Game.Battle
         /// <summary>击败后的奖励（敌人用）</summary>
         public int expReward;
         public int goldReward;
+        /// <summary>敌人配置（技能与 AI），玩家与演示单位为空；不存档</summary>
+        [NonSerialized] public EnemyData enemyData;
 
         public bool IsAlive => hp > 0;
 

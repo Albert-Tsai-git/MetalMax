@@ -7,6 +7,7 @@ using System.Text;
 using Game.Battle;
 using Game.Core;
 using Game.Economy;
+using Game.Items;
 using Game.Progression;
 using Game.Story;
 using Game.Tank;
@@ -33,6 +34,8 @@ namespace Game.EditorTools
         public static void ImportAll()
         {
             int n = 0;
+            n += Import("skills.csv", $"{OutDir}/Skills", CreateSkill);
+            n += Import("items.csv", $"{OutDir}/Items", CreateItem);
             n += Import("parts.csv", $"{OutDir}/Parts", CreatePart);
             n += Import("enemies.csv", $"{OutDir}/Enemies", CreateEnemy);
             n += Import("characters.csv", $"{OutDir}/Characters", CreateCharacter);
@@ -187,15 +190,24 @@ namespace Game.EditorTools
             string dir = $"{OutDir}/Shops";
             Directory.CreateDirectory(dir);
 
+            // part_id 列：ITM_ 开头为道具，其余为部件
             var groups = new Dictionary<string, List<TankPartData>>();
+            var itemGroups = new Dictionary<string, List<ItemData>>();
             foreach (var r in ReadCsv(path))
             {
-                string shopId = r.Str("shop_id"), partId = r.Str("part_id");
+                string shopId = r.Str("shop_id"), goodsId = r.Str("part_id");
                 if (shopId == "") continue;
-                var part = AssetDatabase.LoadAssetAtPath<TankPartData>($"{OutDir}/Parts/{partId}.asset");
-                if (part == null) { Debug.LogError($"[Import] shops.csv 第 {r.Line} 行：部件 {partId} 不存在"); continue; }
-                if (!groups.TryGetValue(shopId, out var list)) groups[shopId] = list = new List<TankPartData>();
-                list.Add(part);
+                if (!groups.ContainsKey(shopId)) { groups[shopId] = new List<TankPartData>(); itemGroups[shopId] = new List<ItemData>(); }
+                if (goodsId.StartsWith("ITM_"))
+                {
+                    var item = AssetDatabase.LoadAssetAtPath<ItemData>($"{OutDir}/Items/{goodsId}.asset");
+                    if (item == null) { Debug.LogError($"[Import] shops.csv 第 {r.Line} 行：道具 {goodsId} 不存在"); continue; }
+                    itemGroups[shopId].Add(item);
+                    continue;
+                }
+                var part = AssetDatabase.LoadAssetAtPath<TankPartData>($"{OutDir}/Parts/{goodsId}.asset");
+                if (part == null) { Debug.LogError($"[Import] shops.csv 第 {r.Line} 行：部件 {goodsId} 不存在"); continue; }
+                groups[shopId].Add(part);
             }
             foreach (var (shopId, goods) in groups)
             {
@@ -205,6 +217,7 @@ namespace Game.EditorTools
                 if (isNew) shop = ScriptableObject.CreateInstance<ShopData>();
                 shop.shopId = shopId;
                 shop.goods = goods;
+                shop.items = itemGroups[shopId];
                 shop.name = shopId;
                 if (isNew) AssetDatabase.CreateAsset(shop, assetPath);
                 EditorUtility.SetDirty(shop);
@@ -223,7 +236,7 @@ namespace Game.EditorTools
             }
             Directory.CreateDirectory(TextOutDir);
             var ids = new HashSet<string>();
-            foreach (var file in new[] { "parts.csv", "enemies.csv", "characters.csv" })
+            foreach (var file in new[] { "parts.csv", "enemies.csv", "characters.csv", "skills.csv", "items.csv" })
             {
                 string path = Path.Combine(DataDir, file);
                 if (File.Exists(path)) foreach (var r in ReadCsv(path)) if (r.Str("id") != "") ids.Add(r.Str("id"));
@@ -338,6 +351,33 @@ namespace Game.EditorTools
             return c;
         }
 
+        private static ScriptableObject CreateSkill(Row r, ScriptableObject existing)
+        {
+            var k = Reuse<SkillData>(existing);
+            k.skillId = r.Str("id");
+            k.power = r.Int("power", 100);
+            k.hits = Math.Max(1, r.Int("hits", 1));
+            k.range = (AttackRange)Enum.Parse(typeof(AttackRange), r.Str("range", "Single"), true);
+            k.accuracyBonus = r.Int("accuracy_bonus");
+            k.partBreakChance = r.Int("part_break");
+            k.pierceTank = r.Bool("pierce_tank");
+            k.healPercent = r.Int("heal_percent");
+            k.name = k.skillId;
+            return k;
+        }
+
+        private static ScriptableObject CreateItem(Row r, ScriptableObject existing)
+        {
+            var i = Reuse<ItemData>(existing);
+            i.itemId = r.Str("id");
+            i.price = r.Int("price", 10);
+            i.kind = (ItemKind)Enum.Parse(typeof(ItemKind), r.Str("kind"), true);
+            i.amount = r.Int("amount");
+            i.allAllies = r.Bool("all");
+            i.name = i.itemId;
+            return i;
+        }
+
         private static ScriptableObject CreateTown(Row r, ScriptableObject existing)
         {
             var t = Reuse<TownData>(existing);
@@ -364,6 +404,16 @@ namespace Game.EditorTools
             e.goldReward = r.Int("gold");
             e.isBounty = r.Bool("bounty_flag");
             e.bounty = r.Int("bounty");
+            e.ai = (AiType)Enum.Parse(typeof(AiType), r.Str("ai", "Random"), true);
+            e.attackWeight = r.Int("attack_weight", 1);
+            // skills 列：SKL_A:3|SKL_B:1（冒号后为权重，省略为 1）
+            e.skills = r.List("skills").Select(x =>
+            {
+                var kv = x.Split(':');
+                var skill = AssetDatabase.LoadAssetAtPath<SkillData>($"{OutDir}/Skills/{kv[0]}.asset");
+                if (skill == null) Debug.LogError($"[Import] enemies.csv 第 {r.Line} 行：技能 {kv[0]} 不存在");
+                return new WeightedSkill { skillId = kv[0], weight = kv.Length > 1 && int.TryParse(kv[1], out int w) ? w : 1 };
+            }).ToList();
             e.name = e.enemyId;
             return e;
         }

@@ -27,6 +27,7 @@ namespace Game.Battle
         private Combatant _current;
         private ActionType? _chosenType;
         private PartInstance _chosenWeapon;
+        private string _chosenItem;
         private float _endTimer = -1f;
 
         private GUIStyle _box, _btn, _label;
@@ -40,7 +41,7 @@ namespace Game.Battle
                 new() { id = "ENM_TurretBug", name = TextDB.Name("ENM_TurretBug"), side = Side.Enemy, maxHp = 90, hp = 90, attack = 35, defense = 15, speed = 5, expReward = 25, goldReward = 60 },
             };
 
-            _battle = new BattleSystem(session.party, enemies);
+            _battle = new BattleSystem(session.party, enemies) { Inventory = session.State };
             _battle.OnLog += AddLog;
             AddLog($"战斗开始！遭遇 {string.Join("、", enemies)}");
             _battle.OnBattleEnd += _ => _endTimer = returnDelay;
@@ -186,6 +187,20 @@ namespace Game.Battle
 
             GUILayout.Label($"<b>{_current.name}</b> 的行动：", _label);
 
+            // 第二步（道具）：选我方目标
+            if (_chosenType == ActionType.UseItem)
+            {
+                GUILayout.Label("选择对象：", _label);
+                foreach (var p in _battle.players)
+                {
+                    if (!GUILayout.Button($"{p.name} (HP {p.hp}/{p.maxHp})", _btn)) continue;
+                    Commit(BattleAction.Item(_current, _chosenItem, p));
+                    return;
+                }
+                if (GUILayout.Button("返回", _btn)) { _chosenType = null; _chosenItem = null; }
+                return;
+            }
+
             // 第二步：选目标
             if (_chosenType is ActionType.HumanAttack or ActionType.TankWeapon)
             {
@@ -239,6 +254,13 @@ namespace Game.Battle
                 {
                     Commit(BattleAction.Simple(_current, ActionType.BoardTank)); return;
                 }
+            }
+            foreach (var stack in GameSession.Instance.State.items)
+            {
+                if (!GUILayout.Button($"{Game.Core.GameDB.Item(stack.id)?.DisplayName ?? stack.id} ×{stack.count}", _btn)) continue;
+                _chosenItem = stack.id;
+                _chosenType = ActionType.UseItem;
+                return;
             }
             if (GUILayout.Button("防御", _btn)) { Commit(BattleAction.Simple(_current, ActionType.Defend)); return; }
             if (GUILayout.Button("逃跑", _btn)) { Commit(BattleAction.Simple(_current, ActionType.Escape)); return; }

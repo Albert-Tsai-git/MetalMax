@@ -1,8 +1,17 @@
+using System;
+using System.Collections.Generic;
 using Game.Core;
 using UnityEngine;
 
 namespace Game.Battle
 {
+    [Serializable]
+    public class WeightedSkill
+    {
+        public string skillId;
+        [Min(0)] public int weight = 1;
+    }
+
     /// <summary>敌人配置（普通怪和赏金首共用）</summary>
     [CreateAssetMenu(menuName = "Game/Battle/Enemy", fileName = "ENM_")]
     public class EnemyData : ScriptableObject
@@ -19,6 +28,12 @@ namespace Game.Battle
         [Range(0, 100)] public int evade = 5;
         [Range(0, 100)] public int accuracy = 85;
 
+        [Header("行动")]
+        public AiType ai = AiType.Random;
+        [Tooltip("普通攻击的权重，与技能权重一起抽取")]
+        [Min(0)] public int attackWeight = 1;
+        public List<WeightedSkill> skills = new();
+
         [Header("奖励")]
         [Min(0)] public int expReward = 10;
         [Min(0)] public int goldReward = 20;
@@ -32,6 +47,7 @@ namespace Game.Battle
         public Combatant CreateCombatant(string suffix = "") => new()
         {
             id = enemyId,
+            enemyData = this,
             name = DisplayName + suffix,
             side = Side.Enemy,
             maxHp = maxHp,

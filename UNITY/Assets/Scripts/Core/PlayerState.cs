@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Game.Battle;
 using Game.Economy;
+using Game.Items;
 using Game.Tank;
 using Game.Story;
 using Game.Town;
@@ -18,6 +19,8 @@ namespace Game.Core
         public int exp;
         /// <summary>未装备的备用部件</summary>
         public List<PartInstance> inventory = new();
+        /// <summary>道具（ID 与数量）</summary>
+        public List<ItemStack> items = new();
         /// <summary>最后到访的城镇，全灭后在此复活</summary>
         public string lastTown = DefaultTown;
         /// <summary>赏金首进度（未出现在列表中的视为通缉中）</summary>
