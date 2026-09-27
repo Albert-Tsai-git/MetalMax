@@ -2,7 +2,6 @@ using System.Linq;
 using Game.Core;
 using Game.Economy;
 using Game.UI;
-using Game.WorldMap;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -58,34 +57,6 @@ namespace Game.Field
             string mode = player != null && player.OnFoot ? "步行" : "乘车";
             GUI.Box(new Rect(10, 10, 520, 150),
                 $"金钱 {s.gold}G    经验 {s.exp}    [{mode}]\n{string.Join("\n", lines)}\n\n{_msg}", style);
-            if (UIRouter.Current == UIScreen.WorldMap && player != null) DrawMapDebug(player, style);
-            else if (UIRouter.Current == UIScreen.Menu) DrawMenuDebug(style);
-        }
-
-        // 调试用地图：正式界面由 Codex 在表现层实现后删除
-        private static void DrawMapDebug(FieldPlayerController player, GUIStyle style)
-        {
-            const float size = 360;
-            var area = new Rect(Screen.width - size - 20, 20, size, size);
-            GUI.Box(area, player.Map != null ? player.Map.DisplayName : "（无地图）", style);
-            if (player.Map == null) return;
-            void Dot(Vector2 n, string label)
-            {
-                float x = area.x + n.x * size, y = area.y + (1 - n.y) * size;
-                GUI.Label(new Rect(x - 4, y - 10, 160, 20), label);
-            }
-            foreach (var l in WorldMapService.KnownLocations(GameSession.Instance.State, player.Map.entryId))
-                Dot(WorldMapService.Normalize(player.Map, new Vector3(l.position.x, 0, l.position.y)), "■ " + l.DisplayName);
-            Dot(WorldMapService.Normalize(player.Map, player.transform.position), "▲ 我");
-        }
-
-        // 调试用菜单：只显示分页，正式内容由表现层绘制
-        private static void DrawMenuDebug(GUIStyle style)
-        {
-            var tabs = string.Join("  ", System.Enum.GetNames(typeof(MenuTab))
-                .Select(t => t == UIRouter.Tab.ToString() ? $"[{t}]" : t));
-            GUI.Box(new Rect(Screen.width / 2f - 250, Screen.height / 2f - 60, 500, 120),
-                $"菜单（调试）\n{tabs}\nQ/E 切换分页，Esc 关闭", style);
         }
     }
 }
