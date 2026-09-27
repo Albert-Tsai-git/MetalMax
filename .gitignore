@@ -24,3 +24,6 @@ UNITY/.idea/
 # 系统
 .DS_Store
 Thumbs.db
+
+# Claude/Codex 本机通讯数据
+comms/

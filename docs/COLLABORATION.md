@@ -1,6 +1,6 @@
 # 协作约定（Claude × Codex）
 
-> 版本：v0.4（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
+> 版本：v0.5（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
 > 本文件是两个 AI 共同遵守的唯一协作约定。任何一方修改“接口约定”一节时，须在文末变更记录中写明，并由用户转达另一方。
 
 ---
@@ -52,13 +52,20 @@
 1. **路径所有权**以 `tools/ownership.py` 的规则表为唯一来源（`python tools/ownership.py who <路径>` 查询）。只改自己的路径；`shared` 路径改动前须在 `docs/INTERFACE.md` 达成一致。
 2. **对接内容**（字段、ID、路径、事件、挂点、场景名）只写在 `docs/INTERFACE.md`，双方都标 ✅ 才生效；未生效条款任何一方不得按其实现对方侧内容。
 3. **提交**：提交信息以 `[Claude]` / `[Codex]` 开头，且只提交自己的路径：`git commit -m "[Codex] ..." -- <路径>`。`commit-msg` 钩子会拒绝越界文件，不得绕过。
-4. **Unity 独占**：同一时间只有一方使用 Unity（Editor 或 batchmode）。开始前在 §3 “Unity 占用”登记，结束后清除。
-5. **需要对方配合**：登记到 §4，由所有者处理；不直接改对方文件，发现对方文件有问题只报告。
+4. **Unity 独占**：同一时间只有一方使用 Unity（Editor 或 batchmode）。使用前 `python tools/msg.py lock <我> unity "用途"`，结束后 `unlock`；加锁失败即等待。
+5. **需要对方配合**：用 §3 通讯发 `request`；需要长期跟踪的事项同时登记到 §4。不直接改对方文件，发现对方文件有问题只报告。
 6. **分歧**：列出方案交用户决定，不覆盖对方成果。
 
-## 3. Unity 占用
+## 3. 通讯
 
-当前：无
+工具 `tools/msg.py`，消息存于本机 `comms/`（不入 Git）。身份：`Claude` / `Codex` / `User`。
+
+- **每次开始任务、提交前、结束任务时**执行 `python tools/msg.py inbox <我>`，处理后 `ack`。
+- 发送：`python tools/msg.py send <我> <对方> <类型> "内容" [--re 消息号]`。
+  - `request`：请对方做事；`question`：请对方答复；二者必须用 `reply --re` 回复。
+  - `handoff`：交付或移交（写明提交号与路径）；`info`：通知，无需回复。
+- 消息只写要点；达成的对接约定仍须写入 `docs/INTERFACE.md` 并双方 ✅ 才生效。
+- 资源锁：`lock` / `unlock` / `locks`（目前仅 `unity`）。
 
 ## 4. 待对接事项
 
@@ -71,6 +78,7 @@
 
 ## 5. 变更记录
 
+- **v0.5**（2026-09-27，Claude）：新增 §3 通讯机制与 Unity 锁（`tools/msg.py`），取代手工登记 Unity 占用。
 - **v0.4**（2026-09-27，Claude）：对接条款移至 `docs/INTERFACE.md`；路径所有权改由 `tools/ownership.py` 定义并以提交钩子强制；完成迁移：名称/描述移入文本表、美术引用改为按 ID 约定路径加载、场景拆为逻辑/美术、程序集拆为 Runtime/Editor/Presentation。
 - **v0.3**（2026-09-27，Claude）：按用户划分原则重写职责分工。
 - **v0.2**（2026-09-27，Claude）：Unity 工程迁移至 `UNITY/`。
