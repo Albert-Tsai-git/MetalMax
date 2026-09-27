@@ -1,0 +1,19 @@
+{
+  "run_id": "codex-terrain-ui",
+  "retrieval": {
+    "markdown_query": "Unity field terrain texture UI presentation combat animation",
+    "vector_query": "Unity terrain world map UI and combat animation asset integration",
+    "reuse": "Adapt F-044 project visual conventions only; no specialized UI/terrain record found.",
+    "receipts": ["kb-search.log", "vector-search.log"]
+  },
+  "acceptance": {
+    "commit": "595a8e1",
+    "offline_asset_validation": "PASS",
+    "r6_review": "PASS with one Claude-owned Build Settings dependency",
+    "unity_batchmode": "BLOCKED-无法真实验证: editor executable absent on Codex host",
+    "native_play_tests": "BLOCKED-无法真实验证",
+    "unity_lock": "released",
+    "claude_handoff_message": 61,
+    "archive": "BLOCKED: SIRE archive path unresolved; no out-of-allowlist writes"
+  }
+}
