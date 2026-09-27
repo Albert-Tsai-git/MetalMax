@@ -1,5 +1,7 @@
 using System.Linq;
 using Game.Core;
+using Game.UI;
+using Game.WorldMap;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -44,9 +46,13 @@ namespace Game.Field
         /// <summary>是否下车步行</summary>
         public bool OnFoot => GameSession.Instance.State.vehicle.parked;
 
+        /// <summary>当前所在地图（worldmap.csv 中与本场景对应的 Map），没有配置为 null</summary>
+        public WorldMapData Map { get; private set; }
+
         private void Awake()
         {
             _cc = GetComponent<CharacterController>();
+            Map = WorldMapService.MapOfScene(CurrentScene);
         }
 
         private void Start()
@@ -76,9 +82,23 @@ namespace Game.Field
         private static string CurrentScene => ArtSceneLoader.CurrentLogicScene ?? gameObjectSceneFallback;
         private static string gameObjectSceneFallback => UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
+        private void OnEnable() => ArtSceneLoader.TerrainReady += SnapToGround;
+        private void OnDisable() => ArtSceneLoader.TerrainReady -= SnapToGround;
+
+        /// <summary>落到脚下地面（换成起伏的美术地形后避免卡在地下或悬空）</summary>
+        private void SnapToGround() => Teleport(transform.position);
+
         private void Teleport(Vector3 pos)
         {
+            // 从高处向下找地面（只认地形与灰盒地面，避免站到战车等物体顶上）
             _cc.enabled = false;
+            foreach (var hit in Physics.RaycastAll(pos + Vector3.up * 50f, Vector3.down, 200f, ~0, QueryTriggerInteraction.Ignore)
+                         .OrderBy(h => h.distance))
+            {
+                if (!(hit.collider is TerrainCollider) && hit.collider.GetComponent<GreyboxGround>() == null) continue;
+                pos.y = hit.point.y + _cc.height / 2f - _cc.center.y + _cc.skinWidth;
+                break;
+            }
             transform.position = pos;
             _cc.enabled = true;
             _velocity = Vector3.zero;
@@ -89,7 +109,7 @@ namespace Game.Field
             var kb = Keyboard.current;
             LastMoveDistance = 0f;
             IsRunning = false;
-            bool blocked = kb == null || Game.Story.StoryService.ActiveDialogue != null;
+            bool blocked = kb == null || UIRouter.BlocksFieldInput;
 
             if (!blocked && kb.fKey.wasPressedThisFrame)
             {
@@ -132,9 +152,19 @@ namespace Game.Field
 
             var before = transform.position;
             _cc.Move(_velocity * Time.deltaTime);
+            // 地图边界：走到边缘停下
+            var clamped = WorldMapService.Clamp(Map, transform.position);
+            if (clamped != transform.position)
+            {
+                _cc.enabled = false;
+                transform.position = clamped;
+                _cc.enabled = true;
+            }
             var delta = transform.position - before;
             delta.y = 0;
             LastMoveDistance = delta.magnitude;
+            if (Map != null && LastMoveDistance > 0f)
+                WorldMapService.Tick(GameSession.Instance.State, Map.entryId, transform.position);
 
             if (dir.sqrMagnitude > 0.01f)
             {

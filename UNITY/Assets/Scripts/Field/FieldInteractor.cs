@@ -16,7 +16,7 @@ namespace Game.Field
             var s = GameSession.Instance.State;
             Interactable best = null;
             float bestDist = float.MaxValue;
-            if (StoryService.ActiveDialogue == null)
+            if (!Game.UI.UIRouter.BlocksFieldInput)
             {
                 foreach (var it in Interactable.All)
                 {

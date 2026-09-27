@@ -197,6 +197,7 @@ namespace Game.EditorTools
         {
             var ground = new GameObject("Ground");
             ground.transform.position = center;
+            ground.AddComponent<GreyboxGround>();
             var box = ground.AddComponent<BoxCollider>();
             box.size = new Vector3(size.x, 0.2f, size.y);
             box.center = new Vector3(0, -0.1f, 0);

@@ -6,6 +6,7 @@ using Game.Progression;
 using Game.Story;
 using Game.Tank;
 using Game.Town;
+using Game.WorldMap;
 using UnityEngine;
 
 namespace Game.Core
@@ -25,6 +26,7 @@ namespace Game.Core
         private static Dictionary<string, SkillData> _skills;
         private static Dictionary<string, ItemData> _items;
         private static Dictionary<string, DialogueData> _dialogues;
+        private static Dictionary<string, WorldMapData> _mapEntries;
 
         public static TankPartData Part(string id) => Find(ref _parts, "GameData/Parts", id);
         public static EnemyData Enemy(string id) => Find(ref _enemies, "GameData/Enemies", id);
@@ -35,6 +37,14 @@ namespace Game.Core
         public static SkillData Skill(string id) => Find(ref _skills, "GameData/Skills", id);
         public static ItemData Item(string id) => Find(ref _items, "GameData/Items", id);
         public static DialogueData Dialogue(string id) => Find(ref _dialogues, "GameData/Dialogues", id);
+
+        public static WorldMapData MapEntry(string id) => Find(ref _mapEntries, "GameData/WorldMap", id);
+
+        public static IEnumerable<WorldMapData> AllMapEntries()
+        {
+            Find(ref _mapEntries, "GameData/WorldMap", null);
+            return _mapEntries.Values;
+        }
 
         public static IEnumerable<EnemyData> AllEnemies()
         {
@@ -54,6 +64,7 @@ namespace Game.Core
             _skills = null;
             _items = null;
             _dialogues = null;
+            _mapEntries = null;
         }
 
         private static T Find<T>(ref Dictionary<string, T> map, string folder, string id) where T : ScriptableObject

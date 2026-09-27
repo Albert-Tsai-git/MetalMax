@@ -12,6 +12,7 @@ using Game.Progression;
 using Game.Story;
 using Game.Tank;
 using Game.Town;
+using Game.WorldMap;
 using UnityEditor;
 using UnityEngine;
 
@@ -43,6 +44,7 @@ namespace Game.EditorTools
             n += ImportQuests();
             n += ImportDialogues();
             n += Import("towns.csv", $"{OutDir}/Towns", CreateTown);
+            n += Import("worldmap.csv", $"{OutDir}/WorldMap", CreateMapEntry);
             n += ImportTexts();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -401,6 +403,20 @@ namespace Game.EditorTools
             t.hasBountyOffice = r.Bool("bounty_office");
             t.name = t.townId;
             return t;
+        }
+
+        private static ScriptableObject CreateMapEntry(Row r, ScriptableObject existing)
+        {
+            var e = Reuse<WorldMapData>(existing);
+            e.entryId = r.Str("id");
+            e.kind = ParseEnum(r.Str("kind"), MapEntryKind.Landmark, r);
+            e.mapId = r.Str("map");
+            e.scene = r.Str("scene");
+            e.position = new Vector2(r.Float("x"), r.Float("z"));
+            e.size = new Vector2(r.Float("size_x"), r.Float("size_z"));
+            e.condition = r.Str("condition");
+            e.name = e.entryId;
+            return e;
         }
 
         private static ScriptableObject CreateEnemy(Row r, ScriptableObject existing)

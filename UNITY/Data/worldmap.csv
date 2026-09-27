@@ -1,0 +1,7 @@
+id,kind,map,scene,x,z,size_x,size_z,condition
+# kind=Map：scene 为逻辑场景，x/z 为边界中心，size 为可活动范围；其余为地点：x/z 为位置，size_x 为发现半径，condition 为可发现条件,,,,,,,,
+MAP_Wasteland,Map,,Field,0,0,58,58,
+MAP_PumpStation,Map,,Dungeon_PumpStation,0,40,11,83,
+TWN_Zhanqiao,Town,MAP_Wasteland,,-15,-14,14,,
+LOC_PumpStation,Dungeon,MAP_Wasteland,,22,24,12,,flag:act1_heard_signal
+LOC_PumpCrabNest,Landmark,MAP_PumpStation,,0,72,8,,
