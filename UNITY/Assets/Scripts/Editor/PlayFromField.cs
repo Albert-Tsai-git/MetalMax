@@ -10,6 +10,7 @@ namespace Game.EditorTools
     /// 编辑器中点 Play 时，若当前打开的不是逻辑场景（Field / Battle / 迷宫等），先切换到 Field 再进入 Play。
     /// 不依赖 playModeStartScene：工程开启了“进入 Play 不重载场景”，该设置会被忽略。
     /// 可通过菜单 Game/Play 从 Field 开始 关闭，设置按本机保存。
+    /// 同时保证进入 Play 时重载脚本与场景。
     /// </summary>
     [InitializeOnLoad]
     public static class PlayFromField
@@ -21,6 +22,19 @@ namespace Game.EditorTools
         {
             EditorSceneManager.playModeStartScene = null; // 清除旧版本设置
             EditorApplication.playModeStateChanged += OnPlayModeChanged;
+            EnsureFullReload();
+        }
+
+        /// <summary>
+        /// 进入 Play 时总是重载脚本域与场景（关闭“Enter Play Mode Options”），
+        /// 避免静态状态（对话、传送、城镇等）残留到下一次试玩。
+        /// </summary>
+        private static void EnsureFullReload()
+        {
+            if (!EditorSettings.enterPlayModeOptionsEnabled) return;
+            EditorSettings.enterPlayModeOptionsEnabled = false;
+            AssetDatabase.SaveAssets();
+            Debug.Log("[PlayFromField] 已开启进入 Play 时重载脚本与场景（关闭 Enter Play Mode Options）");
         }
 
         private static bool Enabled
