@@ -8,3 +8,10 @@ QST_Act2_Ledger,0,flag:act2_started,
 QST_Act2_Ledger,1,flag:act2_met_saltwell,
 QST_Act2_Ledger,2,bounty:ENM_Bounty_SaltWyrm=defeated,set:act2_got_ledger
 QST_Act2_Ledger,3,flag:act2_found_lock,set:act2_done
+# 第三幕：谁来开闸（最后一步由主控室抉择对话设置 act3_choice_made 及结局标记）,,,
+QST_Act3_Floodgate,0,flag:act3_started,
+QST_Act3_Floodgate,1,flag:act3_met_lampcamp,
+QST_Act3_Floodgate,2,flag:act3_power_restored,
+QST_Act3_Floodgate,3,bounty:ENM_Bounty_Dredger=defeated,set:act3_filters_restored
+QST_Act3_Floodgate,4,bounty:ENM_Bounty_GateWarden=defeated,
+QST_Act3_Floodgate,5,flag:act3_choice_made,set:act3_done

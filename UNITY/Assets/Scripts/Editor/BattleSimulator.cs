@@ -17,7 +17,7 @@ namespace Game.EditorTools
     /// <summary>
     /// 批量战斗模拟：多种武器配置 × 多种战斗场景，输出胜率、回合、损耗、弹药与修理费用的收益表，
     /// 用于检查“是否存在全面压制的配置”“每类武器是否有自己的最优场景”。
-    /// 第一幕结果写入 docs/balance/sim_latest.md，第二幕写入 docs/balance/sim_act2_latest.md。
+    /// 第一幕结果写入 docs/balance/sim_latest.md，第二、三幕写入 docs/balance/sim_act{2,3}_latest.md。
     /// </summary>
     public static class BattleSimulator
     {
@@ -132,6 +132,43 @@ namespace Game.EditorTools
 
         #endregion
 
+        #region 第三幕
+
+        /// <summary>主控站遇敌表（与 PrototypeSceneBuilder.BuildControlStation 一致）</summary>
+        private static readonly (int weight, string[] members)[] ControlStationTable =
+        {
+            (3, new[] { "ENM_GuardBot", "ENM_GuardBot", "ENM_GuardBot", "ENM_StormCaller" }),
+            (2, new[] { "ENM_Juggernaut", "ENM_GuardBot" }),
+            (2, new[] { "ENM_Scavenger", "ENM_Scavenger", "ENM_Scavenger", "ENM_SandShark" }),
+            (1, new[] { "ENM_Juggernaut", "ENM_StormCaller", "ENM_StormCaller" }),
+        };
+
+        private const string ControlStationChests = "gold:+2000; item:ITM_RepairPack:4; item:ITM_AmmoCrate:2; item:ITM_ReviveKit:3; item:ITM_Tonic:6";
+
+        /// <summary>第三幕配置：第二幕毕业配置 + 各新装备的代表配置</summary>
+        private static readonly Loadout[] Act3Loadouts =
+        {
+            new() { name = "第二幕毕业（重型+电击+冷冻+导弹）", chassis = "TNK_Chassis_Heavy", engine = "TNK_Engine_V12", cunit = "TNK_CUnit_Tracker", weapons = new[] { "WPN_ShockCannon", "WPN_CryoGun", "WPN_SE_Missile" } },
+            new() { name = "轨道炮（重型+轨道炮+机枪+音波）", chassis = "TNK_Chassis_Heavy", engine = "TNK_Engine_V12", weapons = new[] { "WPN_Railgun", "WPN_MG_77", "WPN_SonicBlaster" } },
+            new() { name = "等离子（重型+105炮+等离子+导弹+追踪C）", chassis = "TNK_Chassis_Heavy", engine = "TNK_Engine_V12", cunit = "TNK_CUnit_Tracker", weapons = new[] { "WPN_Cannon_105", "WPN_PlasmaArc", "WPN_SE_Missile" } },
+            new() { name = "突击（突击底盘+涡轮+轨道炮+等离子+音波）", chassis = "TNK_Chassis_Assault", engine = "TNK_Engine_Turbo", weapons = new[] { "WPN_Railgun", "WPN_PlasmaArc", "WPN_SonicBlaster" } },
+            new() { name = "音波（重型+105炮+火焰+音波）", chassis = "TNK_Chassis_Heavy", engine = "TNK_Engine_V12", weapons = new[] { "WPN_Cannon_105", "WPN_Flamethrower", "WPN_SonicBlaster" } },
+        };
+
+        private static readonly Scenario[] Act3Scenarios =
+        {
+            new() { name = "沙鲨×2", enemies = new[] { "ENM_SandShark", "ENM_SandShark" }, level = 13 },
+            new() { name = "警卫机×3", enemies = new[] { "ENM_GuardBot", "ENM_GuardBot", "ENM_GuardBot" }, level = 13 },
+            new() { name = "重装机", enemies = new[] { "ENM_Juggernaut" }, level = 13 },
+            new() { name = "风暴术士×2", enemies = new[] { "ENM_StormCaller", "ENM_StormCaller" }, level = 13 },
+            new() { name = "拾荒者×4", enemies = new[] { "ENM_Scavenger", "ENM_Scavenger", "ENM_Scavenger", "ENM_Scavenger" }, level = 13 },
+            new() { name = "疏浚机", enemies = new[] { "ENM_Bounty_Dredger" }, level = 14 },
+            new() { name = "闸卫七号", enemies = new[] { "ENM_Bounty_GateWarden" }, level = 15 },
+            new() { name = "主控站一趟（4 场+闸卫）", enemies = new[] { "ENM_Bounty_GateWarden" }, level = 15, run = true, runEncounters = 4 },
+        };
+
+        #endregion
+
         private static readonly Suite Act1 = new()
         {
             title = "第一幕", outPath = "../docs/balance/sim_latest.md", chests = PumpChests,
@@ -144,11 +181,20 @@ namespace Game.EditorTools
             table = GhostCityTable, loadouts = Act2Loadouts, scenarios = Act2Scenarios,
         };
 
+        private static readonly Suite Act3 = new()
+        {
+            title = "第三幕", outPath = "../docs/balance/sim_act3_latest.md", chests = ControlStationChests,
+            table = ControlStationTable, loadouts = Act3Loadouts, scenarios = Act3Scenarios,
+        };
+
         [MenuItem("Game/批量战斗模拟（平衡）")]
         public static void Run() => RunSuite(Act1);
 
         [MenuItem("Game/第二幕批量战斗模拟（平衡）")]
         public static void RunAct2() => RunSuite(Act2);
+
+        [MenuItem("Game/第三幕批量战斗模拟（平衡）")]
+        public static void RunAct3() => RunSuite(Act3);
 
         private static void RunSuite(Suite su)
         {

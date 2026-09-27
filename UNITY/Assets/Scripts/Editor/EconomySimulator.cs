@@ -20,6 +20,8 @@ namespace Game.EditorTools
     /// 结果写入 docs/balance/economy_latest.md。
     /// 第二幕（RunAct2）：Lv6、4000G、第一幕毕业战车（轻型 + V12 + 电击炮 + 火焰喷射器）在白盐带外缘战斗，
     /// 盐滩与管线两个遇敌区各半，回盐井聚落补给；结果写入 docs/balance/economy_act2_latest.md。
+    /// 第三幕（RunAct3）：Lv11、10000G、第二幕毕业战车（重型 + V12 + 追踪 C + 电击 + 冷冻 + 导弹）在盐盆中心战斗，
+    /// 回路灯车队营地补给；结果写入 docs/balance/economy_act3_latest.md。
     /// </summary>
     public static class EconomySimulator
     {
@@ -60,6 +62,30 @@ namespace Game.EditorTools
             ("Lv10 且可买重型底盘 + 冷冻炮", s => s.party[0].level >= 10 && s.Gold >= Price("TNK_Chassis_Heavy") + Price("WPN_CryoGun")),
         };
 
+        /// <summary>盐盆中心遇敌表：风暴盐原 + 管沟（与 PrototypeSceneBuilder.BuildSaltBasin 一致，两区各半）</summary>
+        public static readonly (int weight, string[] members)[] SaltBasinTable =
+        {
+            (3, new[] { "ENM_SandShark", "ENM_SandShark" }),
+            (2, new[] { "ENM_StormCaller", "ENM_StormCaller" }),
+            (2, new[] { "ENM_Scavenger", "ENM_Scavenger", "ENM_Scavenger", "ENM_Scavenger" }),
+            (1, new[] { "ENM_StormCaller", "ENM_Scavenger", "ENM_Scavenger" }),
+            (3, new[] { "ENM_GuardBot", "ENM_GuardBot", "ENM_GuardBot" }),
+            (2, new[] { "ENM_Juggernaut" }),
+            (2, new[] { "ENM_Juggernaut", "ENM_GuardBot", "ENM_GuardBot" }),
+            (1, new[] { "ENM_SandShark", "ENM_SandShark", "ENM_StormCaller" }),
+        };
+
+        private static readonly (string name, Func<PlayerState, bool> reached)[] Act3Milestones =
+        {
+            ("可买等离子弧", s => s.Gold >= Price("WPN_PlasmaArc")),
+            ("可买涡轮引擎", s => s.Gold >= Price("TNK_Engine_Turbo")),
+            ("可买轨道炮", s => s.Gold >= Price("WPN_Railgun")),
+            ("可买突击底盘", s => s.Gold >= Price("TNK_Chassis_Assault")),
+            ("升到 Lv13", s => s.party[0].level >= 13),
+            ("升到 Lv15（闸卫推荐）", s => s.party[0].level >= 15),
+            ("Lv15 且可买轨道炮 + 等离子弧", s => s.party[0].level >= 15 && s.Gold >= Price("WPN_Railgun") + Price("WPN_PlasmaArc")),
+        };
+
         /// <summary>一幕的进度模拟配置</summary>
         private class Act
         {
@@ -97,21 +123,37 @@ namespace Game.EditorTools
             table = SaltBeltTable, milestones = Act2Milestones,
         });
 
-        /// <summary>第二幕起点：队伍升到 Lv6，第一幕毕业战车</summary>
-        private static PlayerState Act2Start()
+        [MenuItem("Game/第三幕进度模拟（经济）")]
+        public static void RunAct3() => RunAct(new Act
         {
-            var s = new PlayerState(4000) { party = DemoFactory.CreateParty() };
+            title = "第三幕", outPath = "../docs/balance/economy_act3_latest.md", town = "TWN_Lampcamp",
+            startDesc = "Lv11、10000G、重型 + V12 + 追踪 C + 电击炮 + 冷冻炮 + 导弹　|　遇敌表见 EconomySimulator.SaltBasinTable",
+            start = () => StartAt(11, 10000, new[] { "TNK_Chassis_Heavy", "TNK_Engine_V12", "TNK_CUnit_Tracker" },
+                new[] { "WPN_ShockCannon", "WPN_CryoGun", "WPN_SE_Missile" }),
+            table = SaltBasinTable, milestones = Act3Milestones,
+        });
+
+        /// <summary>第二幕起点：队伍升到 Lv6，第一幕毕业战车</summary>
+        private static PlayerState Act2Start() =>
+            StartAt(6, 4000, new[] { "TNK_Chassis_Light", "TNK_Engine_V12", "TNK_CUnit_Basic" },
+                new[] { "WPN_ShockCannon", "WPN_Flamethrower" });
+
+        /// <summary>中途起点：队伍升到指定等级，按底盘/引擎/C 装置与按武器孔顺序的武器组装战车</summary>
+        private static PlayerState StartAt(int level, int gold, string[] body, string[] weapons)
+        {
+            var s = new PlayerState(gold) { party = DemoFactory.CreateParty() };
             foreach (var p in s.party)
             {
                 var data = GameDB.Character(p.id);
-                for (int lv = 1; lv < 6; lv++) Game.Progression.LevelService.GainExp(p, data.ExpToNext(p.level));
+                for (int lv = 1; lv < level; lv++) Game.Progression.LevelService.GainExp(p, data.ExpToNext(p.level));
                 p.hp = p.maxHp;
             }
-            var tank = new TankLoadout { tankName = "Act2" };
-            foreach (var id in new[] { "TNK_Chassis_Light", "TNK_Engine_V12", "TNK_CUnit_Basic" })
+            var tank = new TankLoadout { tankName = $"Lv{level}" };
+            foreach (var id in body)
                 tank.TryEquip(new PartInstance(GameDB.Part(id)), 0, out _);
-            tank.TryEquip(new PartInstance(GameDB.Part("WPN_ShockCannon")), 0, out _);
-            tank.TryEquip(new PartInstance(GameDB.Part("WPN_Flamethrower")), 1, out _);
+            for (int i = 0; i < weapons.Length; i++)
+                if (tank.TryEquip(new PartInstance(GameDB.Part(weapons[i])), i, out _) != OpResult.Ok)
+                    throw new Exception($"[EconSim] 无法在第 {i} 孔装 {weapons[i]}");
             tank.FillArmor();
             s.party[0].tank = tank;
             s.party[0].inTank = true;

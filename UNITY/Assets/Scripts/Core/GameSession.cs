@@ -21,6 +21,8 @@ namespace Game.Core
         public const string PumpStationSceneName = "Dungeon_PumpStation";
         public const string SaltBeltSceneName = "Field_SaltBelt";
         public const string GhostCitySceneName = "Dungeon_GhostCity";
+        public const string SaltBasinSceneName = "Field_SaltBasin";
+        public const string ControlStationSceneName = "Dungeon_ControlStation";
 
         private static GameSession _instance;
         public static GameSession Instance

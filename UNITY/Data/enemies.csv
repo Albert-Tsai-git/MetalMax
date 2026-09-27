@@ -12,3 +12,12 @@ ENM_SaltCrawler,180,42,70,7,0,85,45,150,,,TankHunter,2,SKL_AcidSpit:1,,Fire|Elec
 ENM_PipeSentry,110,40,25,9,5,85,35,120,,,TankHunter,2,SKL_TwinShot:1,Electric,Fire|Normal|Sonic,
 # 第二幕赏金首（空城遗址）,,,,,,,,,,,,,,,,
 ENM_Bounty_SaltWyrm,900,68,35,10,5,85,900,2000,1,8000,TankHunter,2,SKL_Quake:2|SKL_Swallow:1|SKL_Burrow:1,Ice,Normal,
+# 第三幕：盐盆中心与主控站,,,,,,,,,,,,,,,,
+ENM_SandShark,220,70,20,16,20,88,60,190,,,Weakest,2,SKL_Swallow:1,Sonic,Normal|Electric,
+ENM_GuardBot,120,55,30,12,5,88,40,130,,,Random,2,SKL_TwinShot:1,Electric,Normal|Fire|Sonic,
+ENM_Juggernaut,420,80,110,6,0,85,120,420,,,TankHunter,2,SKL_CrabPinch:1,,Electric|Sonic,Fire|Ice
+ENM_StormCaller,70,60,10,20,35,90,55,180,,,Random,1,SKL_Storm:2,,,Electric
+ENM_Scavenger,70,48,15,15,10,88,30,90,,,HumanHunter,2,SKL_Ambush:1,Sonic,Electric,
+# 第三幕赏金首（主控站）,,,,,,,,,,,,,,,,
+ENM_Bounty_Dredger,2000,90,60,9,0,85,2500,4000,1,12000,TankHunter,2,SKL_Quake:1|SKL_CrabPinch:2|SKL_ShellMend:1,Electric,Normal|Ice,
+ENM_Bounty_GateWarden,3000,100,70,12,5,90,4000,0,1,6000,Random,1,SKL_Lockdown:2|SKL_Recalibrate:1|SKL_TwinShot:1,,Fire|Ice|Sonic,

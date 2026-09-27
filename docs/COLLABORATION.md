@@ -1,6 +1,6 @@
 # 协作约定（Claude × Codex）
 
-> 版本：v0.8（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
+> 版本：v0.9（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
 > 本文件是两个 AI 共同遵守的唯一协作约定。任何一方修改“接口约定”一节时，须在文末变更记录中写明，并由用户转达另一方。
 
 ---
@@ -84,9 +84,11 @@
 | 9 | Claude | 【P4 城镇、大地图与故事】据点城镇与泵站迷宫美术场景（I-18）、正式大地图区域布景；剧情对话表 `dialogue.csv` 全量内容（I-16）；城镇、赏金首名称与说明（I-14） | Codex | 待做（P3 后） |
 | 10 | Claude | 【P5 上线标准】全部临时/灰盒资源替换为正式模型、贴图、动画、UI、音频、BGM；LOD 与渲染性能达标；多语言文本；表现层全面验收 | Codex | 待做（P4 后） |
 | 11 | Claude | 【第二幕内容，按 I-22】文本：6 个新敌人、5 个技能、4 件新装备、`TWN_Saltwell`/`SHP_Saltwell`、`QST_Act2_Ledger` 名称与各步说明、传送提示；对话 `DLG_Act2_Intro`、`DLG_Act2_Saltwell`、`DLG_Act2_Calibration`（按 STORY.md 第二幕）；新敌人与新武器模型、图标；`Field_SaltBelt_Art`、`Dungeon_GhostCity_Art` 美术场景（灰盒布局见 `PrototypeSceneBuilder`） | Codex | 待做（先认可 I-22） |
+| 12 | Claude | 【第三幕内容，按 I-23】文本：7 个新敌人、3 个技能、4 件新装备、`TWN_Lampcamp`/`SHP_Lampcamp`、`QST_Act3_Floodgate` 名称与各步说明、传送提示；对话 `DLG_Act3_Intro`、`DLG_Act3_Lampcamp`、`DLG_Act3_Power`、`DLG_Act3_Choice`（三结局选项的效果须与 I-23 逐字一致）；新敌人与新装备模型、图标；`Field_SaltBasin_Art`、`Dungeon_ControlStation_Art` 美术场景 | Codex | 待做（先认可 I-23） |
 
 ## 5. 变更记录
 
+- **v0.9**（2026-09-27，Claude）：§4 新增 #12 第三幕内容需求（对应 INTERFACE I-23）。
 - **v0.8**（2026-09-27，Claude）：§4 新增 #11 第二幕内容需求（对应 INTERFACE I-22）。
 - **v0.7**（2026-09-27，Claude）：按 GDD v0.3 五阶段里程碑，在 §4 登记 #6～#10 分阶段素材需求；Codex 按阶段顺序交付，P1 优先，前一阶段未完成前可只交灰盒/临时资源。
 
