@@ -1,28 +1,28 @@
 # 第二幕进度模拟
 
-> 生成：2026-09-29 09:58　|　200 次　|　起点：Lv6、4000G、轻型 + V12 + 电击炮 + 火焰喷射器　|　遇敌表见 EconomySimulator.SaltBeltTable
+> 生成：2026-09-29 10:16　|　200 次　|　起点：Lv6、4000G、轻型 + V12 + 电击炮 + 火焰喷射器　|　遇敌表见 EconomySimulator.SaltBeltTable
 
 | 里程碑 | 达成率 | 所需战斗场数（10% / 中位 / 90%） |
 |---|---|---|
 | 可买追踪 C 装置 | 100% | 1 / 1 / 90 |
 | 可买冷冻炮 | 100% | 1 / 1 / 90 |
-| 可买音波炮 | 100% | 2 / 73 / 119 |
-| 可买 105 炮 | 100% | 6 / 98 / 132 |
+| 可买音波炮 | 100% | 2 / 72 / 124 |
+| 可买 105 炮 | 100% | 6 / 97 / 132 |
 | 可买重型底盘 | 100% | 87 / 113 / 146 |
 | 升到 Lv8 | 100% | 13 / 17 / 21 |
 | 升到 Lv10（巨虫推荐） | 100% | 35 / 40 / 46 |
 | Lv10 且可买重型底盘 + 冷冻炮 | 97% | 126 / 150 / 179 |
 
-- 平均每场收入 258G；每次回城开销 317G；每 1.7 场回城一次
-- 全灭 2115 次，共 30482 场（200 次模拟合计，全灭率 6.9%）
+- 平均每场收入 258G；每次回城开销 318G；每 1.7 场回城一次
+- 全灭 2095 次，共 30413 场（200 次模拟合计，全灭率 6.9%）
 
 | 遇敌组合 | 场数 | 全灭率 |
 |---|---|---|
-| ENM_SaltCrawler×1+ENM_ScorpionSwarm×3 | 3742 | 23% |
-| ENM_SaltCrawler×1 | 5602 | 22% |
-| ENM_PipeSentry×1+ENM_Raider×2 | 1909 | 0% |
-| ENM_PipeSentry×2 | 3896 | 0% |
-| ENM_ScrapDrone×2 | 3744 | 0% |
-| ENM_ScorpionSwarm×5 | 5730 | 0% |
-| ENM_Raider×3 | 3889 | 0% |
-| ENM_Raider×2+ENM_ScrapDrone×1 | 1970 | 0% |
+| ENM_SaltCrawler×1+ENM_ScorpionSwarm×3 | 3731 | 23% |
+| ENM_SaltCrawler×1 | 5581 | 22% |
+| ENM_PipeSentry×1+ENM_Raider×2 | 1905 | 0% |
+| ENM_Raider×2+ENM_ScrapDrone×1 | 1965 | 0% |
+| ENM_PipeSentry×2 | 3886 | 0% |
+| ENM_ScrapDrone×2 | 3740 | 0% |
+| ENM_ScorpionSwarm×5 | 5720 | 0% |
+| ENM_Raider×3 | 3885 | 0% |
