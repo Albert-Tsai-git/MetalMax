@@ -46,6 +46,8 @@ namespace Game.PlayTests
             _player = Object.FindAnyObjectByType<FieldPlayerController>();
             Assert.NotNull(_player, "Field 场景中有玩家");
             UIRouter.CloseAll();
+            // 移动测试不应被随机遇敌打断（遇敌会切到战斗场景，玩家物体被销毁）
+            foreach (var re in Object.FindObjectsByType<RandomEncounter>(FindObjectsInactive.Include)) re.enabled = false;
         }
 
         [UnityTearDown]
