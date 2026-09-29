@@ -5,6 +5,7 @@ using System.Linq;
 using Game.Battle;
 using Game.Tank;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 namespace Game.Presentation
@@ -12,14 +13,18 @@ namespace Game.Presentation
     /// <summary>Builds the battle tableau and plays presentation from the agreed BattleEvents contract.</summary>
     public sealed class CombatPresentationBootstrap : MonoBehaviour
     {
-        private static readonly Vector3[] PlayerPositions = { new(-3.2f, 0f, -1.2f), new(-4.6f, 0f, -2.1f), new(-2.1f, 0f, -2.1f) };
-        private static readonly Vector3[] EnemyPositions = { new(3.2f, 0f, 1.2f), new(4.6f, 0f, 2.1f), new(2.1f, 0f, 2.1f), new(5.5f, 0f, 0f) };
+        private static readonly Vector3[] PlayerPositions = { new(3.2f, 0f, 1.2f), new(4.6f, 0f, 2.1f), new(2.1f, 0f, 2.1f) };
+        private static readonly Vector3[] EnemyPositions = { new(-3.2f, 0f, -1.2f), new(-4.6f, 0f, -2.1f), new(-2.1f, 0f, -2.1f), new(-5.5f, 0f, 0f) };
 
         private readonly Dictionary<Combatant, CombatantPresentation> _views = new();
         private readonly List<Material> _transientMaterials = new();
         private readonly Queue<(Action play, float hold)> _cues = new();
         private readonly HashSet<CombatantPresentation> _pendingDismounts = new();
         private Transform _stage;
+        private Transform _battleCamera;
+        private Vector3 _defaultCameraPosition;
+        private Quaternion _defaultCameraRotation;
+        private int _cameraQuarterTurns;
         private Coroutine _cuePlayback;
         private BattleSystem _battle;
         private bool _battleEnded;
@@ -70,6 +75,7 @@ namespace Game.Presentation
             BattleEvents.TankDisabled -= OnTankDisabled;
             BattleEvents.Ended -= OnEnded;
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            RestoreBattleCamera();
             StopCuePlayback();
             _cues.Clear();
             _pendingDismounts.Clear();
@@ -81,6 +87,7 @@ namespace Game.Presentation
         {
             _battle = battle;
             _battleEnded = false;
+            CacheBattleCamera();
             StopCuePlayback();
             ClearVisualStage();
             _views.Clear();
@@ -96,6 +103,63 @@ namespace Game.Presentation
                 var view = CreateUnitView(unit, position, player);
                 _views.Add(unit, view);
             }
+        }
+
+        private void Update()
+        {
+            if (_battle == null || _battleEnded || _stage == null || _battleCamera == null ||
+                SceneManager.GetActiveScene().name != "Battle") return;
+
+            var keyboard = Keyboard.current;
+            if (keyboard == null) return;
+
+            if (keyboard.qKey.wasPressedThisFrame) RotateBattleCamera(-1);
+            if (keyboard.eKey.wasPressedThisFrame) RotateBattleCamera(1);
+            if (keyboard.rKey.wasPressedThisFrame) ResetBattleCamera();
+        }
+
+        private void CacheBattleCamera()
+        {
+            var camera = Camera.main;
+            _battleCamera = camera != null ? camera.transform : null;
+            if (_battleCamera == null) return;
+
+            _defaultCameraPosition = _battleCamera.position;
+            _defaultCameraRotation = _battleCamera.rotation;
+            _cameraQuarterTurns = 0;
+        }
+
+        private void RotateBattleCamera(int quarterTurn)
+        {
+            if (_battleCamera == null || _stage == null) return;
+            _cameraQuarterTurns = (_cameraQuarterTurns + quarterTurn + 8) % 8;
+            ApplyBattleCameraRotation();
+        }
+
+        private void ResetBattleCamera()
+        {
+            _cameraQuarterTurns = 0;
+            ApplyBattleCameraRotation();
+        }
+
+        private void ApplyBattleCameraRotation()
+        {
+            var yaw = _cameraQuarterTurns * 45f;
+            var rotation = Quaternion.AngleAxis(yaw, Vector3.up);
+            var offset = _defaultCameraPosition - _stage.position;
+            _battleCamera.position = _stage.position + rotation * offset;
+            _battleCamera.rotation = rotation * _defaultCameraRotation;
+        }
+
+        private void RestoreBattleCamera()
+        {
+            if (_battleCamera != null)
+            {
+                _battleCamera.position = _defaultCameraPosition;
+                _battleCamera.rotation = _defaultCameraRotation;
+            }
+            _battleCamera = null;
+            _cameraQuarterTurns = 0;
         }
 
         private CombatantPresentation CreateUnitView(Combatant unit, Vector3 position, bool player)
@@ -185,6 +249,7 @@ namespace Game.Presentation
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (scene.name == "Battle") return;
+            RestoreBattleCamera();
             _battle = null;
             _battleEnded = false;
             if (_stage == null) return;
