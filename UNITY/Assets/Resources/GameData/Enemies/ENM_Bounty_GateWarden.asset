@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: ENM_Bounty_GateWarden
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.EnemyData
   enemyId: ENM_Bounty_GateWarden
-  maxHp: 1600
+  maxHp: 1100
   attack: 66
-  defense: 70
+  defense: 40
   speed: 12
   evade: 5
   accuracy: 90
