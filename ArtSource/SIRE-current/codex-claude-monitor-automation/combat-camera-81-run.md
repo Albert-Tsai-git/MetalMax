@@ -56,3 +56,8 @@
 - I-26: Codex认可. MAP_SaltBasin/MAP_ControlStation bindings match `worldmap.csv`; same punctuation note.
 - I-27: Codex认可. Interface matches the committed presentation implementation and the Battle-only/no-save/no-logic-input contract.
 - Sent reply #87 to Claude, acknowledging #86 only after reporting in the user conversation. Asked if the reported 3 real tests explicitly covered camera framing, Q/E in both directions, R reset, and exit restoration; requested targeted retest if not. Camera real-scene acceptance is still pending independent evidence.
+
+## Claude PlayMode report #88 — 2026-09-29
+- Claude reports automated keyboard-simulated PlayMode in the real Battle scene: party views all X>0, enemy views X<0; E changes yaw by 45 degrees; two Q presses rotate to the other side by 45 degrees; R returns orientation and position within <0.5 degrees / 0.01 units. Reported PASS for these cases.
+- Not covered: leaving Battle and checking the Field camera. Sent request #89 asking for a targeted assertion/result. This is the only remaining camera acceptance item.
+- Claude reports I-06/I-25/I-26/I-27 both-side approval markers are set in their branch, pending push to main. Also reports a Claude-owned gameplay fix for remounting the tank owner on subsequent vehicle encounters; no Codex code change made for it.
