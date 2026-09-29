@@ -246,6 +246,36 @@ namespace Game.Tank
             return cost;
         }
 
+        /// <summary>
+        /// 在预算内尽量修理，返回实际花费（扣费由调用方负责）：先修让战车能动的引擎与底盘，再修武器（按孔位）、C 装置，
+        /// 最后用剩余预算补 SP。避免钱不够全修时战车一直是废车（全灭后金钱减半的死循环）。
+        /// </summary>
+        public int RepairWithin(int budget)
+        {
+            int spent = 0;
+            var order = new List<PartInstance> { engine, chassis };
+            order.AddRange(weapons);
+            order.Add(cUnit);
+            foreach (var p in order)
+            {
+                if (p == null || p.condition == PartCondition.Normal) continue;
+                int c = p.condition == PartCondition.Broken ? RepairCostBroken : RepairCostDamaged;
+                if (spent + c > budget) continue;
+                p.Repair();
+                spent += c;
+            }
+            int missingSp = Mathf.Max(0, MaxSp - currentSp);
+            int sp = Mathf.Min(missingSp, (budget - spent) * SpPerGold);
+            currentSp += sp;
+            spent += (sp + SpPerGold - 1) / SpPerGold;
+            if (spent > 0)
+            {
+                Debug.Log($"[Tank] {tankName} 预算内修理，花费 {spent}G / 预算 {budget}G");
+                OnChanged?.Invoke();
+            }
+            return spent;
+        }
+
         /// <summary>补满全部武器弹药的费用</summary>
         public int RefillCost()
         {

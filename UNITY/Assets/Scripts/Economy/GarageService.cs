@@ -58,6 +58,18 @@ namespace Game.Economy
         }
 
         /// <summary>修理全部部件并补满 SP；金钱不足时不修理（弹药用 Refill 另行补给）</summary>
+        /// <summary>钱不够全面修理时，用现有金钱尽量修（引擎、底盘优先）。什么都修不了返回 NotEnoughGold</summary>
+        public static OpResult RepairAffordable(PlayerState s, TankLoadout tank, out int cost)
+        {
+            cost = 0;
+            if (tank.RepairCost() == 0) return OpResult.NothingToDo;
+            if (Repair(s, tank, out cost) == OpResult.Ok) return OpResult.Ok;
+            cost = tank.RepairWithin(s.Gold);
+            if (cost == 0) return OpResult.NotEnoughGold;
+            s.TrySpend(cost);
+            return OpResult.Ok;
+        }
+
         public static OpResult Repair(PlayerState s, TankLoadout tank, out int cost)
         {
             cost = tank.RepairCost();

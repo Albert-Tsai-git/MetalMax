@@ -36,7 +36,8 @@ namespace Game.Field
             {
                 p.hp = p.maxHp;
                 if (p.tank == null) continue;
-                result = GarageService.Repair(s.State, p.tank, out int c);
+                result = GarageService.RepairAffordable(s.State, p.tank, out int c);
+                if (result == OpResult.NothingToDo) result = OpResult.Ok;
                 if (result != OpResult.Ok) break;
                 cost += c;
                 p.inTank = true;

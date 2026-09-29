@@ -86,6 +86,18 @@ namespace Game.EditorTools
                 s.Gold = cost;
                 Check(GarageService.Repair(s, tank, out _) == OpResult.Ok && s.Gold == 0 && tank.engine.IsFunctional, "修理成功并扣费");
 
+                // 预算内修理：钱不够全修时优先修引擎与底盘，花费不超过现有金钱
+                foreach (var part in tank.AllParts()) part.condition = PartCondition.Broken;
+                s.Gold = TankLoadout.RepairCostBroken * 2 + 10;
+                int full = tank.RepairCost();
+                Check(GarageService.RepairAffordable(s, tank, out int spent) == OpResult.Ok && spent <= TankLoadout.RepairCostBroken * 2 + 10
+                      && spent < full && tank.engine.IsFunctional && tank.chassis.IsFunctional && s.Gold >= 0, "钱不够时优先修引擎和底盘");
+                s.Gold = 0;
+                Check(GarageService.RepairAffordable(s, tank, out _) == OpResult.NotEnoughGold, "没钱时预算修理失败");
+                s.Gold = 99999;
+                Check(GarageService.RepairAffordable(s, tank, out _) == OpResult.Ok && tank.RepairCost() == 0, "有钱时全面修理");
+                Check(GarageService.RepairAffordable(s, tank, out _) == OpResult.NothingToDo, "无需修理");
+
                 Check(goldEvents > 0 && invEvents > 0, "经济事件已触发");
                 Debug.Log($"[EconomyTest] 全部通过（金钱事件 {goldEvents}，背包事件 {invEvents}）");
             }

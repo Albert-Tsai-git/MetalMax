@@ -1,6 +1,6 @@
 # 第三幕进度模拟
 
-> 生成：2026-09-29 10:04　|　200 次　|　起点：Lv11、10000G、重型 + V12 + 追踪 C + 电击炮 + 冷冻炮 + 导弹　|　遇敌表见 EconomySimulator.SaltBasinTable
+> 生成：2026-09-29 10:22　|　200 次　|　起点：Lv11、10000G、重型 + V12 + 追踪 C + 电击炮 + 冷冻炮 + 导弹　|　遇敌表见 EconomySimulator.SaltBasinTable
 
 | 里程碑 | 达成率 | 所需战斗场数（10% / 中位 / 90%） |
 |---|---|---|
@@ -8,20 +8,20 @@
 | 可买涡轮引擎 | 66% | 1 / 1 / 1 |
 | 可买轨道炮 | 0% | — |
 | 可买突击底盘 | 0% | — |
-| 升到 Lv13 | 59% | 49 / 137 / 186 |
-| 升到 Lv15（闸卫推荐） | 4% | 99 / 192 / 200 |
+| 升到 Lv13 | 69% | 49 / 120 / 184 |
+| 升到 Lv15（闸卫推荐） | 4% | 82 / 178 / 198 |
 | Lv15 且可买轨道炮 + 等离子弧 | 0% | — |
 
-- 平均每场收入 45G；每次回城开销 38G；每 1.0 场回城一次
-- 全灭 36425 次，共 40000 场（200 次模拟合计，全灭率 91.1%）
+- 平均每场收入 51G；每次回城开销 55G；每 1.0 场回城一次
+- 全灭 36032 次，共 40000 场（200 次模拟合计，全灭率 90.1%）
 
 | 遇敌组合 | 场数 | 全灭率 |
 |---|---|---|
-| ENM_Juggernaut×1+ENM_GuardBot×2 | 5011 | 99% |
-| ENM_GuardBot×3 | 7389 | 98% |
-| ENM_SandShark×2+ENM_StormCaller×1 | 2527 | 97% |
-| ENM_Scavenger×4 | 5069 | 97% |
-| ENM_SandShark×2 | 7456 | 97% |
-| ENM_Juggernaut×1 | 5109 | 95% |
-| ENM_StormCaller×1+ENM_Scavenger×2 | 2553 | 86% |
-| ENM_StormCaller×2 | 4886 | 54% |
+| ENM_Juggernaut×1+ENM_GuardBot×2 | 5043 | 99% |
+| ENM_GuardBot×3 | 7427 | 98% |
+| ENM_SandShark×2+ENM_StormCaller×1 | 2534 | 97% |
+| ENM_SandShark×2 | 7419 | 97% |
+| ENM_Scavenger×4 | 5021 | 96% |
+| ENM_Juggernaut×1 | 5071 | 93% |
+| ENM_StormCaller×1+ENM_Scavenger×2 | 2518 | 85% |
+| ENM_StormCaller×2 | 4967 | 49% |

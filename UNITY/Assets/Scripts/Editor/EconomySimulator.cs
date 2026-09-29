@@ -276,7 +276,7 @@ namespace Game.EditorTools
             int before = s.Gold;
             Game.Town.TownService.Rest(s, town);
             var tank = s.party[0].tank;
-            if (GarageService.Repair(s, tank, out _) == OpResult.Ok) GarageService.FillArmor(tank);
+            if (GarageService.RepairAffordable(s, tank, out _) == OpResult.Ok && !tank.IsDestroyed) GarageService.FillArmor(tank);
             GarageService.Refill(s, tank, out _);
             // 修好后车主回到车上（战斗中战车被打坏时车主会下车）
             if (!tank.IsDestroyed) s.party[0].inTank = true;
