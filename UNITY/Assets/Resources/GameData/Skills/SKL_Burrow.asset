@@ -20,4 +20,4 @@ MonoBehaviour:
   accuracyBonus: 0
   partBreakChance: 0
   pierceTank: 0
-  healPercent: 8
+  healPercent: 4

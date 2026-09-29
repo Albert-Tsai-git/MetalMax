@@ -45,6 +45,8 @@ namespace Game.Tank
 
         public float TotalWeight => PartsWeight + armorTons;
         public float LoadCapacity => engine?.LoadCapacity ?? 0f;
+        /// <summary>额定载重（不计引擎损坏），用于装甲上限</summary>
+        public float NominalLoadCapacity => engine?.NominalLoadCapacity ?? 0f;
         public float FreeLoad => LoadCapacity - TotalWeight;
         public int MaxSp => Mathf.FloorToInt(armorTons * SpPerTon);
 
@@ -55,7 +57,7 @@ namespace Game.Tank
         /// <summary>把所有剩余载重都换成装甲（修理厂“装甲补满”）</summary>
         public void FillArmor()
         {
-            armorTons = Mathf.Max(0f, LoadCapacity - PartsWeight);
+            armorTons = Mathf.Max(0f, NominalLoadCapacity - PartsWeight);
             currentSp = MaxSp;
             Debug.Log($"[Tank] {tankName} 装甲补满：{armorTons:F1}t / SP {currentSp}");
             OnChanged?.Invoke();
@@ -156,7 +158,8 @@ namespace Game.Tank
         /// <summary>超重时自动削减装甲，保证不超载</summary>
         private void ClampArmor()
         {
-            float maxArmor = Mathf.Max(0f, LoadCapacity - PartsWeight);
+            // 按额定载重：引擎受损时不能因战中修理/道具而丢失装甲
+            float maxArmor = Mathf.Max(0f, NominalLoadCapacity - PartsWeight);
             if (armorTons > maxArmor) armorTons = maxArmor;
             currentSp = Mathf.Min(currentSp, MaxSp);
         }
@@ -273,7 +276,7 @@ namespace Game.Tank
 
         /// <summary>改造该部件后部件总重是否仍不超过载重（引擎改造提升载重，总是允许）</summary>
         public bool CanUpgradeWithoutOverweight(PartInstance part) =>
-            part.data is EngineData || PartsWeight + part.data.weightPerUpgrade <= LoadCapacity;
+            part.data is EngineData || PartsWeight + part.data.weightPerUpgrade <= NominalLoadCapacity;
 
         /// <summary>部件属性在外部被修改（如改造）后调用：修正装甲并通知外观刷新</summary>
         public void NotifyChanged()

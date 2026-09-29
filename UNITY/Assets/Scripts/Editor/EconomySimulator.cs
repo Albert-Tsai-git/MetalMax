@@ -166,6 +166,8 @@ namespace Game.EditorTools
             var milestones = act.milestones;
             var reachedAt = milestones.Select(_ => new List<int>()).ToArray();
             int defeats = 0, townTrips = 0, totalFights = 0;
+            // 按遇敌组合统计场数与全灭数，定位是哪种组合导致全灭
+            var byGroup = new Dictionary<string, (int fights, int losses)>();
             long upkeep = 0, income = 0;
 
             for (int seed = 1; seed <= Runs; seed++)
@@ -176,21 +178,29 @@ namespace Game.EditorTools
                 for (int fight = 1; fight <= MaxFights && done.Any(d => !d); fight++)
                 {
                     totalFights++;
-                    var enemies = Roll(act.table, rng).Select((id, i) => GameDB.Enemy(id).CreateCombatant($" {i}")).ToList();
+                    var group = Roll(act.table, rng);
+                    string key = string.Join("+", group.GroupBy(x => x).Select(g => $"{g.Key}×{g.Count()}"));
+                    var enemies = group.Select((id, i) => GameDB.Enemy(id).CreateCombatant($" {i}")).ToList();
                     var battle = new BattleSystem(s.party, enemies, seed * 1000 + fight) { Inventory = s };
                     while (battle.State == BattleState.WaitingForCommands && battle.Turn <= 60)
                         battle.SubmitCommands(battle.AlivePlayers.Select(p => BattleSimulator.DecideFor(p, battle, s, rng)).ToList());
 
+                    byGroup[key] = (byGroup.TryGetValue(key, out var gf) ? gf.fights + 1 : 1, byGroup.TryGetValue(key, out var gf2) ? gf2.losses : 0);
                     if (battle.State == BattleState.Victory)
                     {
                         Game.Progression.LevelService.AwardBattleExp(s, battle.TotalExp);
                         s.Gold += battle.TotalGold;
                         income += battle.TotalGold;
                     }
+                    else if (battle.State == BattleState.WaitingForCommands)
+                    {
+                        // 超过回合上限：视为撤退（玩家会逃跑），不减半金钱
+                    }
                     else
                     {
                         // 与 GameSession.EndBattle 一致：全灭后金钱减半、回城复活
                         defeats++;
+                        byGroup[key] = (byGroup.TryGetValue(key, out var gl) ? gl.fights : 0, (byGroup.TryGetValue(key, out var gl2) ? gl2.losses : 0) + 1);
                         s.Gold /= 2;
                         foreach (var p in s.party) p.hp = p.maxHp;
                     }
@@ -223,6 +233,11 @@ namespace Game.EditorTools
             sb.AppendLine();
             sb.AppendLine($"- 平均每场收入 {(float)income / Math.Max(1, totalFights):F0}G；每次回城开销 {(float)upkeep / Math.Max(1, townTrips):F0}G；每 {(float)totalFights / Math.Max(1, townTrips):F1} 场回城一次");
             sb.AppendLine($"- 全灭 {defeats} 次，共 {totalFights} 场（{Runs} 次模拟合计，全灭率 {(float)defeats / Math.Max(1, totalFights):P1}）");
+            sb.AppendLine();
+            sb.AppendLine("| 遇敌组合 | 场数 | 全灭率 |");
+            sb.AppendLine("|---|---|---|");
+            foreach (var (k, v) in byGroup.OrderByDescending(x => (float)x.Value.losses / Math.Max(1, x.Value.fights)))
+                sb.AppendLine($"| {k} | {v.fights} | {(float)v.losses / Math.Max(1, v.fights):P0} |");
 
             string full = Path.GetFullPath(act.outPath);
             Directory.CreateDirectory(Path.GetDirectoryName(full)!);
@@ -263,6 +278,8 @@ namespace Game.EditorTools
             var tank = s.party[0].tank;
             if (GarageService.Repair(s, tank, out _) == OpResult.Ok) GarageService.FillArmor(tank);
             GarageService.Refill(s, tank, out _);
+            // 修好后车主回到车上（战斗中战车被打坏时车主会下车）
+            if (!tank.IsDestroyed) s.party[0].inTank = true;
             return before - s.Gold;
         }
     }

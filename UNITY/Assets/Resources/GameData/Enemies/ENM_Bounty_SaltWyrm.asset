@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ENM_Bounty_SaltWyrm
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.EnemyData
   enemyId: ENM_Bounty_SaltWyrm
-  maxHp: 600
-  attack: 50
+  maxHp: 450
+  attack: 42
   defense: 35
   speed: 10
   evade: 5

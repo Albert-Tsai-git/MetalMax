@@ -66,6 +66,8 @@ namespace Game.Core
             {
                 p.tankAway = onFoot;
                 if (onFoot) p.inTank = false;
+                // 乘车遇敌：车主坐回自己的战车（上一场战斗中下车或战车被打瘫、之后已修好的情况）
+                else if (p.tank != null && !p.tank.IsDestroyed) p.inTank = true;
             }
             _returnScene = ArtSceneLoader.CurrentLogicScene ?? SceneManager.GetActiveScene().name;
             _returnPosition = playerPosition;

@@ -5,14 +5,14 @@ SKL_TwinShot,60,2,Single,-10,0,0,0,Normal
 SKL_Howl,0,1,Single,0,0,0,20,Normal
 SKL_CrabPinch,130,1,Single,0,20,0,0,Normal
 SKL_BrineSpray,60,1,All,10,0,0,0,Ice
-SKL_ShellMend,0,1,Single,0,0,0,10,Normal
+SKL_ShellMend,0,1,Single,0,0,0,6,Normal
 # 第二幕,,,,,,,,
 SKL_DroneBurst,45,3,Single,0,0,0,0,Electric
 SKL_Ambush,90,1,Single,10,0,1,0,Normal
 SKL_Quake,40,1,All,0,10,0,0,Normal
-SKL_Swallow,100,1,Single,0,0,1,0,Normal
-SKL_Burrow,0,1,Single,0,0,0,8,Normal
+SKL_Swallow,70,1,Single,0,0,1,0,Normal
+SKL_Burrow,0,1,Single,0,0,0,4,Normal
 # 第三幕,,,,,,,,
 SKL_Storm,60,1,All,0,0,0,0,Electric
 SKL_Lockdown,55,1,All,0,15,0,0,Electric
-SKL_Recalibrate,0,1,Single,0,0,0,8,Normal
+SKL_Recalibrate,0,1,Single,0,0,0,3,Normal
