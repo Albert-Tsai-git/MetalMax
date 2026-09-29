@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.EnemyData
   enemyId: ENM_Juggernaut
   maxHp: 420
-  attack: 80
-  defense: 110
+  attack: 65
+  defense: 65
   speed: 6
   evade: 0
   accuracy: 85
@@ -28,6 +28,6 @@ MonoBehaviour:
   resist: 0300000004000000i
   immune: 0100000002000000i
   expReward: 120
-  goldReward: 420
+  goldReward: 630
   isBounty: 0
   bounty: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SKL_DroneBurst
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.SkillData
   skillId: SKL_DroneBurst
-  power: 60
+  power: 45
   hits: 3
   range: 0
   element: 3

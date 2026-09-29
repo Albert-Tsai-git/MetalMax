@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.EnemyData
   enemyId: ENM_GuardBot
   maxHp: 120
-  attack: 55
+  attack: 48
   defense: 30
   speed: 12
   evade: 5
@@ -28,6 +28,6 @@ MonoBehaviour:
   resist: 000000000100000004000000i
   immune: 
   expReward: 40
-  goldReward: 130
+  goldReward: 200
   isBounty: 0
   bounty: 0

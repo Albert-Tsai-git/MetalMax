@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SKL_Lockdown
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.SkillData
   skillId: SKL_Lockdown
-  power: 90
+  power: 55
   hits: 1
   range: 2
   element: 3

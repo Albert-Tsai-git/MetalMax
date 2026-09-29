@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyId: ENM_SaltCrawler
   maxHp: 180
   attack: 42
-  defense: 70
+  defense: 45
   speed: 7
   evade: 0
   accuracy: 85
@@ -28,6 +28,6 @@ MonoBehaviour:
   resist: 0100000003000000i
   immune: 
   expReward: 45
-  goldReward: 150
+  goldReward: 240
   isBounty: 0
   bounty: 0

@@ -1,6 +1,6 @@
 # 协作约定（Claude × Codex）
 
-> 版本：v1.0（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
+> 版本：v1.1（草案）　|　更新日期：2026-09-27　|　适用项目：`D:\code\GAME`（Unity 工程位于 `UNITY/`，Unity 6 + URP）
 > 本文件是两个 AI 共同遵守的唯一协作约定。任何一方修改“接口约定”一节时，须在文末变更记录中写明，并由用户转达另一方。
 
 ---
@@ -84,11 +84,12 @@
 | 8 | Claude | 【P3 系统与机制】战斗界面（替换 `BattleController.OnGUI`，I-09/I-10/I-19/I-20）、背包/商店/车库界面（I-11/I-12）、升级提示（I-15）；首批敌人模型、武器模型与图标（I-03）；技能/道具名称与说明（I-17）；命中/击毁等特效与音效 | Codex | 待做（P2 后） |
 | 9 | Claude | 【P4 城镇、大地图与故事】据点城镇与泵站迷宫美术场景（I-18）、正式大地图区域布景；剧情对话表 `dialogue.csv` 全量内容（I-16）；城镇、赏金首名称与说明（I-14） | Codex | 待做（P3 后） |
 | 10 | Claude | 【P5 上线标准】全部临时/灰盒资源替换为正式模型、贴图、动画、UI、音频、BGM；LOD 与渲染性能达标；多语言文本；表现层全面验收 | Codex | 待做（P4 后） |
-| 11 | Claude | 【第二幕内容，按 I-25】文本：6 个新敌人、5 个技能、4 件新装备、`TWN_Saltwell`/`SHP_Saltwell`、`QST_Act2_Ledger` 名称与各步说明、传送提示；对话 `DLG_Act2_Intro`、`DLG_Act2_Saltwell`、`DLG_Act2_Calibration`（按 STORY.md 第二幕）；新敌人与新武器模型、图标；`Field_SaltBelt_Art`、`Dungeon_GhostCity_Art` 美术场景（灰盒布局见 `PrototypeSceneBuilder`） | Codex | 待做（先认可 I-22） |
-| 12 | Claude | 【第三幕内容，按 I-26】文本：7 个新敌人、3 个技能、4 件新装备、`TWN_Lampcamp`/`SHP_Lampcamp`、`QST_Act3_Floodgate` 名称与各步说明、传送提示；对话 `DLG_Act3_Intro`、`DLG_Act3_Lampcamp`、`DLG_Act3_Power`、`DLG_Act3_Choice`（三结局选项的效果须与 I-23 逐字一致）；新敌人与新装备模型、图标；`Field_SaltBasin_Art`、`Dungeon_ControlStation_Art` 美术场景 | Codex | 待做（先认可 I-23） |
+| 11 | Claude | 【第二幕内容，按 I-25】文本：6 个新敌人、5 个技能、4 件新装备、`TWN_Saltwell`/`SHP_Saltwell`、`QST_Act2_Ledger` 名称与各步说明、传送提示；对话 `DLG_Act2_Intro`、`DLG_Act2_Saltwell`、`DLG_Act2_Calibration`（按 STORY.md 第二幕）；新敌人与新武器模型、图标；`Field_SaltBelt_Art`、`Dungeon_GhostCity_Art` 美术场景（灰盒布局见 `PrototypeSceneBuilder`） | Codex | 待做（先认可 I-25） |
+| 12 | Claude | 【第三幕内容，按 I-26】文本：7 个新敌人、3 个技能、4 件新装备、`TWN_Lampcamp`/`SHP_Lampcamp`、`QST_Act3_Floodgate` 名称与各步说明、传送提示；对话 `DLG_Act3_Intro`、`DLG_Act3_Lampcamp`、`DLG_Act3_Power`、`DLG_Act3_Choice`（三结局选项的效果须与 I-26 逐字一致）；新敌人与新装备模型、图标；`Field_SaltBasin_Art`、`Dungeon_ControlStation_Art` 美术场景 | Codex | 待做（先认可 I-26） |
 
 ## 5. 变更记录
 
+- **v1.1**（2026-09-28，Claude，按 Codex #79）：§4 #11/#12 先决条款改指 I-25/I-26；INTERFACE I-06 增加野外地形 TerrainCollider 例外、I-25/I-26 补大地图绑定，三条重置为待 Codex 认可。
 - **v1.0**（2026-09-27，用户要求）：收到对方消息须在对话中以【接收到 X 消息：#编号 要点】展示给用户，并说明是否执行、结果与未执行原因。
 - **v0.9**（2026-09-27，Claude）：§4 新增 #12 第三幕内容需求（对应 INTERFACE I-26）。
 - **v0.8**（2026-09-27，Claude）：§4 新增 #11 第二幕内容需求（对应 INTERFACE I-25）。

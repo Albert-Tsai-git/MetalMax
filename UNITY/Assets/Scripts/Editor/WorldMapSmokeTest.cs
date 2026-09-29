@@ -18,6 +18,8 @@ namespace Game.EditorTools
             var field = WorldMapService.MapOfScene(GameSession.FieldSceneName);
             var pump = WorldMapService.MapOfScene(GameSession.PumpStationSceneName);
             Check(field != null && pump != null, "野外与泵站都有地图配置");
+            foreach (var scene in PrototypeSceneBuilder.LogicScenes.Where(sc => sc != GameSession.BattleSceneName))
+                Check(WorldMapService.MapOfScene(scene) != null, $"逻辑场景 {scene} 有地图配置（I-23）");
             Check(GameDB.AllMapEntries().Where(e => !e.IsMap).All(e => GameDB.MapEntry(e.mapId)?.IsMap == true),
                 "每个地点都属于存在的地图");
 

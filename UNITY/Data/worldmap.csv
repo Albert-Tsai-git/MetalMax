@@ -5,3 +5,16 @@ MAP_PumpStation,Map,,Dungeon_PumpStation,0,40,11,83,
 TWN_Zhanqiao,Town,MAP_Wasteland,,-15,-14,14,,
 LOC_PumpStation,Dungeon,MAP_Wasteland,,22,24,12,,flag:act1_heard_signal
 LOC_PumpCrabNest,Landmark,MAP_PumpStation,,0,72,8,,
+LOC_SaltBeltRoad,Landmark,MAP_Wasteland,,29,0,10,,flag:act1_done
+MAP_SaltBelt,Map,,Field_SaltBelt,0,0,78,78,
+MAP_GhostCity,Map,,Dungeon_GhostCity,0,50,13,103,
+TWN_Saltwell,Town,MAP_SaltBelt,,0,0,14,,
+LOC_GhostCity,Dungeon,MAP_SaltBelt,,34,34,12,,quest:QST_Act2_Ledger>=2
+LOC_SaltBasinRoad,Landmark,MAP_SaltBelt,,39,0,10,,flag:act2_done
+LOC_SaltWyrmNest,Landmark,MAP_GhostCity,,0,92,8,,
+MAP_SaltBasin,Map,,Field_SaltBasin,0,0,88,88,
+MAP_ControlStation,Map,,Dungeon_ControlStation,0,62,15,127,
+TWN_Lampcamp,Town,MAP_SaltBasin,,0,0,14,,
+LOC_ControlStation,Dungeon,MAP_SaltBasin,,39,39,12,,quest:QST_Act3_Floodgate>=2
+LOC_DredgerPit,Landmark,MAP_ControlStation,,0,64,8,,
+LOC_GateWardenHall,Landmark,MAP_ControlStation,,0,104,8,,

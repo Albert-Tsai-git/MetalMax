@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SKL_Ambush
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.SkillData
   skillId: SKL_Ambush
-  power: 120
+  power: 90
   hits: 1
   range: 0
   element: 0
