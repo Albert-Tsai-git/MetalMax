@@ -60,6 +60,11 @@ namespace Game.PlayTests
         [UnityTest]
         public IEnumerator 默认敌左我右_QE旋转_R复位()
         {
+            // 记录野外相机的默认姿态（相对玩家的偏移与朝向），用于战斗结束返回后比对
+            var fieldPlayer = Object.FindAnyObjectByType<Game.Field.FieldPlayerController>().transform;
+            var fieldCamOffset = Camera.main.transform.position - fieldPlayer.position;
+            var fieldCamRot = Camera.main.transform.rotation;
+
             var enemies = new List<Combatant> { GameDB.Enemy("ENM_Ant").CreateCombatant(" 0"), GameDB.Enemy("ENM_Ant").CreateCombatant(" 1") };
             foreach (var e in enemies) { e.attack = 0; e.maxHp = e.hp = 99999; }
             GameSession.Instance.StartBattle(enemies, Vector3.zero);
@@ -96,6 +101,24 @@ namespace Game.PlayTests
             Assert.AreEqual(0f, DeltaYaw(yaw0, Yaw), 0.5f, "R 复位朝向");
             Assert.Less(Vector3.Distance(pos0, Camera.main.transform.position), 0.01f, "R 复位位置");
             Debug.Log($"[PlayTest] 战斗镜头：默认 yaw {yaw0:F1}，E 后变化 {afterE:F1}°，R 复位");
+
+            // 转动后结束战斗（逃跑）回到野外：野外相机应保持默认姿态，不受战斗镜头旋转影响
+            yield return Tap(Key.E);
+            GameSession.Instance.EndBattle(BattleState.Escaped, 0, 0);
+            end = Time.realtimeSinceStartup + 10f;
+            Game.Field.FieldPlayerController back = null;
+            while (Time.realtimeSinceStartup < end && back == null)
+            {
+                yield return null;
+                if (SceneManager.GetActiveScene().name != GameSession.BattleSceneName)
+                    back = Object.FindAnyObjectByType<Game.Field.FieldPlayerController>();
+            }
+            Assert.NotNull(back, "战斗结束后回到野外");
+            yield return null;
+            var offset = Camera.main.transform.position - back.transform.position;
+            Assert.Less(Vector3.Distance(offset, fieldCamOffset), 0.05f, "野外相机相对玩家的位置保持默认");
+            Assert.Less(Quaternion.Angle(Camera.main.transform.rotation, fieldCamRot), 0.5f, "野外相机朝向保持默认");
+            Debug.Log("[PlayTest] 战斗结束返回野外：相机姿态保持默认");
         }
     }
 }

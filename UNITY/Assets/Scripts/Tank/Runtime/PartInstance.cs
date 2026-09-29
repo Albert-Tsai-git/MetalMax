@@ -47,9 +47,10 @@ namespace Game.Tank
             : 0;
 
         /// <summary>引擎当前载重（含改造与损坏修正）</summary>
-        public float LoadCapacity => data is EngineData e
-            ? (e.loadCapacity + e.loadPerUpgrade * upgradeLevel) * PerformanceRate
-            : 0f;
+        public float LoadCapacity => NominalLoadCapacity * PerformanceRate;
+
+        /// <summary>引擎额定载重（含改造，不计损坏）：装甲上限按它计算，损坏只影响能否行驶</summary>
+        public float NominalLoadCapacity => data is EngineData e ? e.loadCapacity + e.loadPerUpgrade * upgradeLevel : 0f;
 
         public bool HasAmmo => data is WeaponData w && (w.maxAmmo < 0 || currentAmmo > 0);
 

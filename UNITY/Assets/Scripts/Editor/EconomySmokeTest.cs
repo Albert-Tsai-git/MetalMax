@@ -65,6 +65,14 @@ namespace Game.EditorTools
                 Check(GarageService.Upgrade(s, cannon, tank) == OpResult.Overweight && cannon.upgradeLevel == 0, "超重时拒绝改造");
                 Check(ShopService.Buy(s, shop, GameDB.Part("TNK_Engine_V12"), out var v12) == OpResult.Ok, "购买 V12");
                 Check(GarageService.Equip(s, tank, v12) == OpResult.Ok && tank.CanMove, "换 V12 后可行驶");
+
+                // 引擎受损后战中修理/道具刷新不能丢失装甲（装甲上限按额定载重）
+                GarageService.FillArmor(tank);
+                float armor = tank.armorTons;
+                tank.engine.condition = PartCondition.Damaged;
+                tank.NotifyChanged();
+                Check(Mathf.Approximately(tank.armorTons, armor) && tank.MaxSp > 0, "引擎受损不丢装甲");
+                tank.engine.condition = PartCondition.Normal;
                 Check(GarageService.Upgrade(s, cannon, tank) == OpResult.Ok && cannon.upgradeLevel == 1, "主炮改造 Lv1");
                 cannon.upgradeLevel = cannon.data.maxUpgradeLevel;
                 Check(GarageService.Upgrade(s, cannon, tank) == OpResult.MaxUpgrade, "满级拒绝改造");

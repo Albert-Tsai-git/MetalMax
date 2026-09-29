@@ -192,6 +192,10 @@ namespace Game.EditorTools
                         s.Gold += battle.TotalGold;
                         income += battle.TotalGold;
                     }
+                    else if (battle.State == BattleState.WaitingForCommands)
+                    {
+                        // 超过回合上限：视为撤退（玩家会逃跑），不减半金钱
+                    }
                     else
                     {
                         // 与 GameSession.EndBattle 一致：全灭后金钱减半、回城复活
