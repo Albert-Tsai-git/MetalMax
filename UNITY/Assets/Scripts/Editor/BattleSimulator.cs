@@ -71,6 +71,9 @@ namespace Game.EditorTools
         private class Result
         {
             public int wins, turns, hpLost, spLost, ammoCost, repairCost, reward;
+            /// <summary>失败原因：超过回合上限 / 全灭；以及失败时最后一场敌人剩余 HP 比例之和</summary>
+            public int timeouts, wipes;
+            public float foeHpLeft;
             public float WinRate => (float)wins / Runs;
             public float AvgTurns => (float)turns / Runs;
             /// <summary>净收益 = 战利品 - 弹药费 - 修理费（每场平均）</summary>
@@ -238,7 +241,12 @@ namespace Game.EditorTools
                         battle.SubmitCommands(battle.AlivePlayers.Select(p => Decide(p, battle, state, rng)).ToList());
                     turns += battle.Turn;
                     if (battle.State == BattleState.Victory) state.Gold += battle.TotalGold;
-                    else alive = false;
+                    else
+                    {
+                        alive = false;
+                        if (battle.State == BattleState.WaitingForCommands) r.timeouts++; else r.wipes++;
+                        r.foeHpLeft += (float)enemies.Sum(e => Math.Max(0, e.hp)) / Math.Max(1, enemies.Sum(e => e.maxHp));
+                    }
                     // 战后倒下的队员保留 1 HP（与游戏一致）
                     foreach (var p in state.party) if (p.hp <= 0) p.hp = 1;
                 }
@@ -382,6 +390,7 @@ namespace Game.EditorTools
                 sb.AppendLine();
             }
             Table("胜率", r => $"{r.WinRate:P0}", r => r.WinRate, true);
+            Table("失败原因（超时/全灭，失败时敌方剩余 HP）", r => r.wins == Runs ? "—" : $"{r.timeouts}/{r.wipes} {r.foeHpLeft / Math.Max(1, r.timeouts + r.wipes):P0}", r => r.WinRate, true);
             Table("平均回合数（越少越好）", r => $"{r.AvgTurns:F1}", r => r.AvgTurns, false);
             Table("平均 HP 损失（越少越好）", r => $"{(float)r.hpLost / Runs:F0}", r => (float)r.hpLost / Runs, false);
             Table("平均 SP 损失（越少越好）", r => $"{(float)r.spLost / Runs:F0}", r => (float)r.spLost / Runs, false);

@@ -15,7 +15,7 @@ for act in "$@"; do
 import sys
 s = open(sys.argv[1], encoding="utf-8").read()
 print(s.splitlines()[0])
-for sec in ["## 胜率", "## 平均回合数"]:
+for sec in ["## 胜率", "## 失败原因"]:
     i = s.index(sec); j = s.find("\n## ", i + 3)
     print(s[i:j].strip())
 e = open(sys.argv[2], encoding="utf-8").read().splitlines()

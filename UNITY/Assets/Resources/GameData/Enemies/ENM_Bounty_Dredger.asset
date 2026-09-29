@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ENM_Bounty_Dredger
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.EnemyData
   enemyId: ENM_Bounty_Dredger
-  maxHp: 2000
-  attack: 90
+  maxHp: 1100
+  attack: 62
   defense: 60
   speed: 9
   evade: 0

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.EnemyData
   enemyId: ENM_Raider
   maxHp: 55
-  attack: 32
+  attack: 28
   defense: 12
   speed: 15
   evade: 10
@@ -28,6 +28,6 @@ MonoBehaviour:
   resist: 
   immune: 
   expReward: 20
-  goldReward: 65
+  goldReward: 100
   isBounty: 0
   bounty: 0

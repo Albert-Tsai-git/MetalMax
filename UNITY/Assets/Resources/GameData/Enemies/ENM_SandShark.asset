@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ENM_SandShark
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.EnemyData
   enemyId: ENM_SandShark
-  maxHp: 220
-  attack: 70
+  maxHp: 180
+  attack: 55
   defense: 20
   speed: 16
   evade: 20
@@ -28,6 +28,6 @@ MonoBehaviour:
   resist: 0000000003000000i
   immune: 
   expReward: 60
-  goldReward: 190
+  goldReward: 280
   isBounty: 0
   bounty: 0

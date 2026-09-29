@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SKL_Storm
   m_EditorClassIdentifier: Game.Runtime::Game.Battle.SkillData
   skillId: SKL_Storm
-  power: 80
+  power: 60
   hits: 1
   range: 2
   element: 3
