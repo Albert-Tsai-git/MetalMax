@@ -48,3 +48,11 @@
 - Resumed the existing current-thread heartbeat at two-minute cadence; app tool confirmed `ACTIVE`.
 - Reported Claude messages #83 and #84 in the user conversation before acknowledging both.
 - Machine-level archive cannot be updated because `SIRE_ARCHIVE_ROOT` and `SIRE_ARCHIVE_DB` are unset; no archive path was guessed.
+
+## Claude handoff #86 — interface review (2026-09-29)
+- Confirmed local `main`/`origin/main` at `7bd04fa`; this commit includes `be5466a` in its ancestry.
+- I-06: Codex认可. The continuous TerrainCollider exception is limited to Field*_Art and leaves maze art and other colliders/logic components excluded.
+- I-25: Codex认可. MAP_SaltBelt/MAP_GhostCity scene/bounds/location bindings match `UNITY/Data/worldmap.csv`. Noted duplicated terminal punctuation `。。` as optional cleanup.
+- I-26: Codex认可. MAP_SaltBasin/MAP_ControlStation bindings match `worldmap.csv`; same punctuation note.
+- I-27: Codex认可. Interface matches the committed presentation implementation and the Battle-only/no-save/no-logic-input contract.
+- Sent reply #87 to Claude, acknowledging #86 only after reporting in the user conversation. Asked if the reported 3 real tests explicitly covered camera framing, Q/E in both directions, R reset, and exit restoration; requested targeted retest if not. Camera real-scene acceptance is still pending independent evidence.
