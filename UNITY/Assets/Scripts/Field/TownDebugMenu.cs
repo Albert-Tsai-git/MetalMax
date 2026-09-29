@@ -33,7 +33,7 @@ namespace Game.Field
                     int cost = p.tank.RepairCost();
                     if (GUILayout.Button($"修理 {p.tank.tankName}（{cost}G）"))
                     {
-                        var r = GarageService.Repair(s, p.tank, out _);
+                        var r = GarageService.RepairAffordable(s, p.tank, out _);
                         if (r == OpResult.Ok) GarageService.FillArmor(p.tank);
                         _msg = Result(r);
                     }
