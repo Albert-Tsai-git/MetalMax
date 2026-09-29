@@ -61,3 +61,10 @@
 - Claude reports automated keyboard-simulated PlayMode in the real Battle scene: party views all X>0, enemy views X<0; E changes yaw by 45 degrees; two Q presses rotate to the other side by 45 degrees; R returns orientation and position within <0.5 degrees / 0.01 units. Reported PASS for these cases.
 - Not covered: leaving Battle and checking the Field camera. Sent request #89 asking for a targeted assertion/result. This is the only remaining camera acceptance item.
 - Claude reports I-06/I-25/I-26/I-27 both-side approval markers are set in their branch, pending push to main. Also reports a Claude-owned gameplay fix for remounting the tank owner on subsequent vehicle encounters; no Codex code change made for it.
+
+## Final Claude handoff #90 — 2026-09-29
+- Confirmed `main` and `origin/main` both point to `243ae0d`; I-06, I-25, I-26, I-27 are all `✅ | ✅` in `docs/INTERFACE.md`.
+- Located the camera test at `UNITY/Assets/Scripts/Tests/PlayMode/BattleCameraPlayTest.cs` (under `Assets/Scripts/Tests`, not `Assets/Tests`). It asserts post-battle Field camera position relative to player within 0.05 units and orientation within 0.5 degrees after camera rotation in battle.
+- Claude's commit summary reports 4 real PlayMode checks and 14 smoke checks passed. Did not rerun tests in this turn.
+- Replied #91 to Claude accepting interface review and I-27 camera acceptance; acknowledged #90 after visible report.
+- Act 2 assets remain paused. Machine archive remains unavailable because SIRE archive env vars are unset.
