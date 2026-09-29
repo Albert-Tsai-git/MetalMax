@@ -165,7 +165,7 @@ namespace Game.EditorTools
             GameDB.Reload();
             var milestones = act.milestones;
             var reachedAt = milestones.Select(_ => new List<int>()).ToArray();
-            int defeats = 0, townTrips = 0;
+            int defeats = 0, townTrips = 0, totalFights = 0;
             long upkeep = 0, income = 0;
 
             for (int seed = 1; seed <= Runs; seed++)
@@ -175,6 +175,7 @@ namespace Game.EditorTools
                 var done = new bool[milestones.Length];
                 for (int fight = 1; fight <= MaxFights && done.Any(d => !d); fight++)
                 {
+                    totalFights++;
                     var enemies = Roll(act.table, rng).Select((id, i) => GameDB.Enemy(id).CreateCombatant($" {i}")).ToList();
                     var battle = new BattleSystem(s.party, enemies, seed * 1000 + fight) { Inventory = s };
                     while (battle.State == BattleState.WaitingForCommands && battle.Turn <= 60)
@@ -195,7 +196,8 @@ namespace Game.EditorTools
                     }
                     foreach (var p in s.party) if (p.hp <= 0) p.hp = 1;
 
-                    if (NeedTown(s))
+                    // 全灭后在最后城镇复活，与平时回城一样修理补给
+                    if (battle.State != BattleState.Victory || NeedTown(s))
                     {
                         townTrips++;
                         upkeep += VisitTown(s, act.town);
@@ -219,9 +221,8 @@ namespace Game.EditorTools
                 sb.AppendLine($"| {milestones[m].name} | {(float)l.Count / Runs:P0} | {dist} |");
             }
             sb.AppendLine();
-            int totalFights = reachedAt[milestones.Length - 1].DefaultIfEmpty(MaxFights).Sum();
             sb.AppendLine($"- 平均每场收入 {(float)income / Math.Max(1, totalFights):F0}G；每次回城开销 {(float)upkeep / Math.Max(1, townTrips):F0}G；每 {(float)totalFights / Math.Max(1, townTrips):F1} 场回城一次");
-            sb.AppendLine($"- 全灭 {defeats} 次（{Runs} 次模拟合计）");
+            sb.AppendLine($"- 全灭 {defeats} 次，共 {totalFights} 场（{Runs} 次模拟合计，全灭率 {(float)defeats / Math.Max(1, totalFights):P1}）");
 
             string full = Path.GetFullPath(act.outPath);
             Directory.CreateDirectory(Path.GetDirectoryName(full)!);
